@@ -1,4 +1,5 @@
 import type { Permission } from "./permissions";
+import { ROLE_PERMISSIONS } from "@/constans/auth.constants";
 
 export type Role = "ADMIN" | "MANAGER" | "VIEWER";
 export type UserRole = Role;
@@ -17,38 +18,6 @@ export interface NavItemConfig {
   iconName: string;
   requiredPermission: Permission;
 }
-
-export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
-  ADMIN: [
-    "VIEW_DASHBOARD",
-    "VIEW_ASSETS",
-    "CREATE_ASSET",
-    "EDIT_ASSET",
-    "DELETE_ASSET",
-    "ALLOCATE_ASSET",
-    "VIEW_EMPLOYEES",
-    "MANAGE_EMPLOYEES",
-    "VIEW_HISTORY",
-    "VIEW_REPORTS",
-    "MANAGE_SETTINGS",
-  ],
-
-  MANAGER: [
-    "VIEW_DASHBOARD",
-    "VIEW_ASSETS",
-    "CREATE_ASSET",
-    "EDIT_ASSET",
-    // "ALLOCATE_ASSET",
-    "VIEW_EMPLOYEES",
-    "VIEW_HISTORY",
-  ],
-
-  VIEWER: [
-    "VIEW_DASHBOARD",
-    "VIEW_ASSETS",
-    "VIEW_HISTORY",
-  ],
-};
 
 /**
  * Checks whether a given role has a specific permission.
