@@ -104,33 +104,44 @@ export const AssetDetailsModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Specs & Hardware Attributes if any */}
-          {selectedAsset.specifications && Object.keys(selectedAsset.specifications).length > 0 ? (
-            <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
+          {/* Specs & Hardware Attributes */}
+          <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300 text-xs">
                 <Shield className="size-3.5 text-[#4C40F7]" />
                 <span>Technical Specifications</span>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => {
+                  closeModals();
+                  openEditModal(selectedAsset);
+                }}
+                className="text-[11px] text-[#4C40F7] hover:underline font-medium cursor-pointer"
+              >
+                {selectedAsset.specifications && Object.keys(selectedAsset.specifications).length > 0
+                  ? 'Edit Specs'
+                  : '+ Add Specs'}
+              </button>
+            </div>
+
+            {selectedAsset.specifications && Object.keys(selectedAsset.specifications).length > 0 ? (
+              <div className="grid grid-cols-2 gap-2 text-xs pt-1">
                 {Object.entries(selectedAsset.specifications).map(([k, v]) => (
-                  <div key={k} className="flex flex-col">
-                    <span className="text-slate-400 text-[10.5px]">{k}</span>
-                    <span className="font-medium text-slate-800 dark:text-slate-200 truncate">
+                  <div key={k} className="flex flex-col bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200/60 dark:border-slate-800">
+                    <span className="text-slate-400 text-[10.5px] font-medium">{k}</span>
+                    <span className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                       {v}
                     </span>
                   </div>
                 ))}
               </div>
-            </div>
-          ) : <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
-            <div className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300 text-xs">
-              <Shield className="size-3.5 text-[#4C40F7]" />
-              <span>Technical Specifications</span>
-            </div>
-            <div className="grid gap-2 text-xs font-medium">
-              No specifications available for this asset
-            </div>
-          </div>}
+            ) : (
+              <p className="text-xs text-slate-400 py-1 italic">
+                No technical specifications recorded for this asset yet.
+              </p>
+            )}
+          </div>
 
           {/* Notes if any */}
           {selectedAsset.notes && (

@@ -88,6 +88,7 @@ export interface CreateAssetInput {
   warrantyExpiry?: string;
   assignedToId?: string | null;
   image?: string;
+  specifications?: Record<string, string>;
   notes?: string;
 }
 

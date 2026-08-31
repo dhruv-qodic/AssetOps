@@ -1,5 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Check, X } from 'lucide-react';
+import {
+  Search,
+  ChevronDown,
+  Check,
+  X,
+  Tag,
+  Activity,
+  MapPin,
+  ArrowUpDown,
+} from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAssetStore } from '@/store/useAssetStore';
 import {
@@ -14,6 +23,7 @@ import { cn } from '@/lib/utils';
 // Reusable Filter Select Menu matching the screenshot
 interface FilterDropdownProps<T extends string> {
   label: string;
+  icon?: React.ReactNode;
   value: T;
   options: { label: string; value: T }[];
   onChange: (val: T) => void;
@@ -21,6 +31,7 @@ interface FilterDropdownProps<T extends string> {
 
 function FilterDropdown<T extends string>({
   label,
+  icon,
   value,
   options,
   onChange,
@@ -44,15 +55,16 @@ function FilterDropdown<T extends string>({
 
   return (
     <div className="flex-1 min-w-[130px] sm:min-w-[160px] space-y-1 text-left" ref={dropdownRef}>
-      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
-        {label}
+      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
+        {icon}
+        <span>{label}</span>
       </label>
       <div className="relative">
         <button
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
+            'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
             isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]'
           )}
         >
@@ -141,7 +153,7 @@ export const AssetFiltersBar: React.FC = () => {
           value={filters.search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search assets by name, tag, serial..."
-          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-xl shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
+          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
         />
         {filters.search && (
           <button
@@ -159,6 +171,7 @@ export const AssetFiltersBar: React.FC = () => {
         {/* Category */}
         <FilterDropdown
           label="Category"
+          icon={<Tag className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.category}
           options={categoryOptions}
           onChange={(val) => setCategory(val)}
@@ -167,6 +180,7 @@ export const AssetFiltersBar: React.FC = () => {
         {/* Status */}
         <FilterDropdown
           label="Status"
+          icon={<Activity className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.status}
           options={statusOptions}
           onChange={(val) => setStatus(val)}
@@ -175,6 +189,7 @@ export const AssetFiltersBar: React.FC = () => {
         {/* Location */}
         <FilterDropdown
           label="Location"
+          icon={<MapPin className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.location}
           options={locationOptions}
           onChange={(val) => setLocation(val)}
@@ -183,6 +198,7 @@ export const AssetFiltersBar: React.FC = () => {
         {/* Sort */}
         <FilterDropdown
           label="Sort"
+          icon={<ArrowUpDown className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.sortBy}
           options={ASSET_SORT_OPTIONS}
           onChange={(val) => setSortBy(val as AssetSortOption)}
@@ -207,3 +223,4 @@ export const AssetFiltersBar: React.FC = () => {
 };
 
 export default AssetFiltersBar;
+
