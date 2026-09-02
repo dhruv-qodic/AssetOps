@@ -50,6 +50,7 @@ export const EMPLOYEE_SORT_OPTIONS: {
 export const DEFAULT_EMPLOYEE_FILTERS: EmployeeFilters = {
   search: '',
   status: 'All',
+  type: 'All',
   department: 'All',
   location: 'All',
   sortBy: 'recently_added',

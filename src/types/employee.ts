@@ -51,6 +51,7 @@ export interface Employee {
 export interface EmployeeFilters {
     search: string;
     status: EmployeeStatus | 'All';
+    type?: EmployeeType | 'All';
     department: string | 'All';
     location: string | 'All';
     sortBy: EmployeeSortOption;
