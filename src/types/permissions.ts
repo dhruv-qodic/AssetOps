@@ -1,0 +1,12 @@
+export type Permission =
+  | "VIEW_DASHBOARD"
+  | "VIEW_ASSETS"
+  | "CREATE_ASSET"
+  | "EDIT_ASSET"
+  | "DELETE_ASSET"
+  | "ALLOCATE_ASSET"
+  | "VIEW_EMPLOYEES"
+  | "MANAGE_EMPLOYEES"
+  | "VIEW_HISTORY"
+  | "VIEW_REPORTS"
+  | "MANAGE_SETTINGS";
