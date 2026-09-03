@@ -38,7 +38,7 @@ interface EmployeeStoreState {
   resetFilters: () => void;
 
   // CRUD actions
-  addEmployee: (input: CreateEmployeeInput) => Employee;
+  addEmployee: (data: CreateEmployeeInput) => Employee;
   updateEmployee: (id: string, updates: Partial<UpdateEmployeeInput>) => boolean;
   deleteEmployee: (id: string) => boolean;
   bulkAddEmployees: (inputs: CreateEmployeeInput[]) => number;
@@ -128,29 +128,27 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         })),
 
       // CRUD Actions
-      addEmployee: (input) => {
+      addEmployee: (data) => {
         const now = new Date().toISOString();
-        const firstName = input.firstName || input.name?.split(' ')[0] || 'Employee';
-        const lastName =
-          input.lastName || input.name?.split(' ').slice(1).join(' ') || '';
-
+        const firstName = data.firstName || data.name?.split(' ')[0] || 'Employee';
+        const lastName = data.lastName || data.name?.split(' ').slice(1).join(' ') || '';
         const newEmpIdNum = get().employees.length + 1001;
-        const employeeId = input.employeeId || `EMP-${newEmpIdNum}`;
+        const employeeId = data.employeeId || `EMP-${newEmpIdNum}`;
 
         const newEmployee: Employee = {
           id: `emp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
           employeeId,
           firstName,
           lastName,
-          email: input.email,
-          phone: input.phone || '',
-          department: input.department,
-          position: input.position,
-          status: input.status,
-          type: input.type,
-          location: input.location,
+          email: data.email,
+          phone: data.phone || '',
+          department: data.department,
+          position: data.position,
+          status: data.status,
+          type: data.type,
+          location: data.location,
           avatar:
-            input.avatar ||
+            data.avatar ||
             `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
               `${firstName}${lastName}`
             )}`,
@@ -169,18 +167,29 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       updateEmployee: (id, updates) => {
         let updated = false;
         set((state) => {
+          let updatedSelected = state.selectedEmployee;
           const newEmployees = state.employees.map((employee) => {
-            if (employee.id === id) {
+            if (employee.id === id || employee.employeeId === id) {
               updated = true;
-              return {
+              const newItem = {
                 ...employee,
                 ...updates,
                 updatedAt: new Date().toISOString(),
               };
+              if (
+                state.selectedEmployee &&
+                (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
+              ) {
+                updatedSelected = newItem;
+              }
+              return newItem;
             }
             return employee;
           });
-          return { employees: newEmployees };
+          return {
+            employees: newEmployees,
+            selectedEmployee: updatedSelected,
+          };
         });
         return updated;
       },
@@ -189,12 +198,23 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         let deleted = false;
         set((state) => {
           const initialLength = state.employees.length;
-          const filtered = state.employees.filter((e) => e.id !== id);
+          const filtered = state.employees.filter(
+            (e) => e.id !== id && e.employeeId !== id
+          );
           deleted = filtered.length !== initialLength;
+          const newTotalPages = Math.max(
+            1,
+            Math.ceil(filtered.length / state.filters.pageSize)
+          );
+          const newPage = Math.min(state.filters.page, newTotalPages);
+
           return {
             employees: filtered,
             selectedEmployee:
-              state.selectedEmployee?.id === id ? null : state.selectedEmployee,
+              state.selectedEmployee?.id === id || state.selectedEmployee?.employeeId === id
+                ? null
+                : state.selectedEmployee,
+            filters: { ...state.filters, page: newPage },
           };
         });
         return deleted;
@@ -418,7 +438,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         }),
     }),
     {
-      name: 'assetops_employees_store_v1',
+      name: 'assetops_employees_store_v2',
       partialize: (state) => ({
         employees: state.employees,
       }),

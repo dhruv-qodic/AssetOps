@@ -39,13 +39,13 @@ export const EMPLOYEE_SORT_OPTIONS: {
   label: string;
   value: EmployeeSortOption;
 }[] = [
-  { label: 'Recently Added', value: 'recently_added' },
-  { label: 'Name (A to Z)', value: 'name_asc' },
-  { label: 'Name (Z to A)', value: 'name_desc' },
-  { label: 'Employee ID (Ascending)', value: 'employee_id_asc' },
-  { label: 'Employee ID (Descending)', value: 'employee_id_desc' },
-  { label: 'Date Created (Newest)', value: 'date_created_desc' },
-];
+    { label: 'Recently Added', value: 'recently_added' },
+    { label: 'Name (A to Z)', value: 'name_asc' },
+    { label: 'Name (Z to A)', value: 'name_desc' },
+    { label: 'Employee ID (Ascending)', value: 'employee_id_asc' },
+    { label: 'Employee ID (Descending)', value: 'employee_id_desc' },
+    { label: 'Date Created (Newest)', value: 'date_created_desc' },
+  ];
 
 export const DEFAULT_EMPLOYEE_FILTERS: EmployeeFilters = {
   search: '',
@@ -53,7 +53,7 @@ export const DEFAULT_EMPLOYEE_FILTERS: EmployeeFilters = {
   type: 'All',
   department: 'All',
   location: 'All',
-  sortBy: 'recently_added',
+  sortBy: 'employee_id_asc',
   page: 1,
   pageSize: 10,
 };
@@ -138,4 +138,4 @@ export const DEPARTMENT_OPTIONS = EMPLOYEE_DEPARTMENTS.map((dept) => ({
 export const LOCATION_OPTIONS = EMPLOYEE_LOCATIONS.map((loc) => ({
   label: loc,
   value: loc,
-}));
+}));
