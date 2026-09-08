@@ -13,11 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { useAssetStore } from '@/store/useAssetStore';
-import {
-  ASSET_CATEGORIES,
-  ASSET_STATUSES,
-  ASSET_LOCATIONS,
-} from '@/constans/asset.constants';
+import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_LOCATIONS } from '@/constans/asset.constants';
 import { assetSchema, type AssetFormData } from '@/schemas/asset.schema';
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 import {
@@ -87,7 +83,7 @@ export const AddAssetModal: React.FC = () => {
   const selectedCategory = watch('category');
 
   useEffect(() => {
-    if (isEditing && selectedAsset) {
+    if (isEditing) {
       setValue('assetId', selectedAsset.assetId);
       setValue('name', selectedAsset.name);
       setValue('model', selectedAsset.model || '');
@@ -160,7 +156,7 @@ export const AddAssetModal: React.FC = () => {
       specifications: Object.keys(specsRecord).length > 0 ? specsRecord : undefined,
     };
 
-    if (isEditing && selectedAsset) {
+    if (isEditing) {
       updateAsset(selectedAsset.id, payload);
     } else {
       addAsset(payload);
@@ -187,14 +183,19 @@ export const AddAssetModal: React.FC = () => {
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {isEditing
-                  ? `Update specifications and details for ${selectedAsset?.assetId}`
+                  ? `Update specifications and details for ${selectedAsset.assetId}`
                   : 'Fill in the information below to register a new organization asset.'}
               </DialogDescription>
             </div>
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
+        <form
+          onSubmit={(e) => {
+            void handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-4 pt-1"
+        >
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-3">
             {/* Asset ID */}
             <div className="space-y-1 text-left">
@@ -206,8 +207,9 @@ export const AddAssetModal: React.FC = () => {
               <Input
                 {...register('assetId')}
                 placeholder="A1010"
-                className={`h-9 text-xs sm:text-sm rounded-md ${errors.assetId ? 'border-red-400 focus-visible:ring-red-400/20' : ''
-                  }`}
+                className={`h-9 text-xs sm:text-sm rounded-md ${
+                  errors.assetId ? 'border-red-400 focus-visible:ring-red-400/20' : ''
+                }`}
               />
               {errors.assetId && (
                 <p className="text-[11px] text-red-500 font-medium">{errors.assetId.message}</p>
@@ -224,8 +226,9 @@ export const AddAssetModal: React.FC = () => {
               <Input
                 {...register('name')}
                 placeholder="e.g. Dell Laptop"
-                className={`h-9 text-xs sm:text-sm rounded-md ${errors.name ? 'border-red-400 focus-visible:ring-red-400/20' : ''
-                  }`}
+                className={`h-9 text-xs sm:text-sm rounded-md ${
+                  errors.name ? 'border-red-400 focus-visible:ring-red-400/20' : ''
+                }`}
               />
               {errors.name && (
                 <p className="text-[11px] text-red-500 font-medium">{errors.name.message}</p>
@@ -255,8 +258,9 @@ export const AddAssetModal: React.FC = () => {
               <Input
                 {...register('serialNumber')}
                 placeholder="SN-078000"
-                className={`h-9 text-xs sm:text-sm font-mono rounded-md ${errors.serialNumber ? 'border-red-400 focus-visible:ring-red-400/20' : ''
-                  }`}
+                className={`h-9 text-xs sm:text-sm font-mono rounded-md ${
+                  errors.serialNumber ? 'border-red-400 focus-visible:ring-red-400/20' : ''
+                }`}
               />
               {errors.serialNumber && (
                 <p className="text-[11px] text-red-500 font-medium">
@@ -335,8 +339,9 @@ export const AddAssetModal: React.FC = () => {
               <Input
                 type="date"
                 {...register('purchaseDate')}
-                className={`h-9 text-xs sm:text-sm rounded-md ${errors.purchaseDate ? 'border-red-400 focus-visible:ring-red-400/20' : ''
-                  }`}
+                className={`h-9 text-xs sm:text-sm rounded-md ${
+                  errors.purchaseDate ? 'border-red-400 focus-visible:ring-red-400/20' : ''
+                }`}
               />
               {errors.purchaseDate && (
                 <p className="text-[11px] text-red-500 font-medium">

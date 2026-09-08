@@ -98,7 +98,7 @@ export const AllocationTable: React.FC<AllocationTableProps> = ({ allocations })
                 (asset.assignedTo?.employeeId && e.employeeId === asset.assignedTo.employeeId) ||
                 (asset.assignedTo?.name &&
                   `${e.firstName} ${e.lastName}`.trim().toLowerCase() ===
-                  asset.assignedTo.name.trim().toLowerCase())
+                    asset.assignedTo.name.trim().toLowerCase()),
             );
 
             const employeeName = assignedEmp
@@ -135,7 +135,7 @@ export const AllocationTable: React.FC<AllocationTableProps> = ({ allocations })
               }
 
               // When asset is allocated, check the assigned employee's live status
-              const empStatus = assignedEmp?.status?.toLowerCase();
+              const empStatus = assignedEmp?.status.toLowerCase();
               if (empStatus === 'inactive') {
                 return (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300">
@@ -193,9 +193,7 @@ export const AllocationTable: React.FC<AllocationTableProps> = ({ allocations })
                 </TableCell>
 
                 {/* Status Badge (Synced with Employee Status) */}
-                <TableCell>
-                  {getStatusBadge()}
-                </TableCell>
+                <TableCell>{getStatusBadge()}</TableCell>
 
                 {/* Allocated On */}
                 <TableCell className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm whitespace-nowrap">

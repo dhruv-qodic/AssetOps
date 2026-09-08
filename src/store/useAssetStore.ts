@@ -32,7 +32,7 @@ interface AssetStoreState {
   setSearch: (search: string) => void;
   setCategory: (category: AssetCategory | 'All') => void;
   setStatus: (status: AssetStatus | 'All') => void;
-  setLocation: (location: string | 'All') => void;
+  setLocation: (location: string) => void;
   setSortBy: (sortBy: AssetSortOption) => void;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
@@ -168,8 +168,7 @@ export const useAssetStore = create<AssetStoreState>()(
           deleted = filtered.length !== initialLength;
           return {
             assets: filtered,
-            selectedAsset:
-              state.selectedAsset?.id === id ? null : state.selectedAsset,
+            selectedAsset: state.selectedAsset?.id === id ? null : state.selectedAsset,
           };
         });
         return deleted;
@@ -183,7 +182,7 @@ export const useAssetStore = create<AssetStoreState>()(
               success = true;
               return {
                 ...asset,
-                status: 'Allocated' as AssetStatus,
+                status: 'Allocated' as const,
                 assignedTo: {
                   ...employee,
                   assignedDate: new Date().toISOString().split('T')[0],
@@ -206,7 +205,7 @@ export const useAssetStore = create<AssetStoreState>()(
               success = true;
               return {
                 ...asset,
-                status: 'Available' as AssetStatus,
+                status: 'Available' as const,
                 assignedTo: null,
                 updatedAt: new Date().toISOString(),
               };
@@ -238,8 +237,7 @@ export const useAssetStore = create<AssetStoreState>()(
       // Query Helpers
       getFilteredAssets: () => {
         const { assets, filters } = get();
-        const { search, category, status, location, sortBy, page, pageSize } =
-          filters;
+        const { search, category, status, location, sortBy, page, pageSize } = filters;
 
         let filtered = [...assets];
 
@@ -251,12 +249,9 @@ export const useAssetStore = create<AssetStoreState>()(
             const matchId = asset.assetId.toLowerCase().includes(query);
             const matchModel = asset.model?.toLowerCase().includes(query) || false;
             const matchSerial = asset.serialNumber.toLowerCase().includes(query);
-            const matchAssigned =
-              asset.assignedTo?.name.toLowerCase().includes(query) || false;
+            const matchAssigned = asset.assignedTo?.name.toLowerCase().includes(query) || false;
 
-            return (
-              matchName || matchId || matchModel || matchSerial || matchAssigned
-            );
+            return matchName || matchId || matchModel || matchSerial || matchAssigned;
           });
         }
 
@@ -291,15 +286,10 @@ export const useAssetStore = create<AssetStoreState>()(
                 numeric: true,
               });
             case 'purchase_date_desc':
-              return (
-                new Date(b.purchaseDate).getTime() -
-                new Date(a.purchaseDate).getTime()
-              );
+              return new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime();
             case 'recently_added':
             default:
-              return (
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-              );
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           }
         });
 
@@ -336,15 +326,11 @@ export const useAssetStore = create<AssetStoreState>()(
 
       // Modal Actions
       openAddModal: () => set({ isAddModalOpen: true, selectedAsset: null }),
-      openEditModal: (asset) =>
-        set({ isEditModalOpen: true, selectedAsset: asset }),
-      openDeleteModal: (asset) =>
-        set({ isDeleteModalOpen: true, selectedAsset: asset }),
-      openViewModal: (asset) =>
-        set({ isViewModalOpen: true, selectedAsset: asset }),
+      openEditModal: (asset) => set({ isEditModalOpen: true, selectedAsset: asset }),
+      openDeleteModal: (asset) => set({ isDeleteModalOpen: true, selectedAsset: asset }),
+      openViewModal: (asset) => set({ isViewModalOpen: true, selectedAsset: asset }),
       openImportModal: () => set({ isImportModalOpen: true }),
-      openAllocateModal: (asset) =>
-        set({ isAllocateModalOpen: true, selectedAsset: asset }),
+      openAllocateModal: (asset) => set({ isAllocateModalOpen: true, selectedAsset: asset }),
       closeModals: () =>
         set({
           isAddModalOpen: false,
@@ -361,6 +347,6 @@ export const useAssetStore = create<AssetStoreState>()(
       partialize: (state) => ({
         assets: state.assets,
       }),
-    }
-  )
+    },
+  ),
 );

@@ -50,13 +50,13 @@ export default function UserDropdown() {
   const handleLogout = () => {
     setIsOpen(false);
     logout();
-    navigate('/login');
+    void navigate('/login');
   };
 
   const handleLoginAsDifferent = () => {
     setIsOpen(false);
     logout();
-    navigate('/login');
+    void navigate('/login');
   };
 
   const getRoleConfig = () => {
@@ -64,16 +64,26 @@ export default function UserDropdown() {
       case 'ADMIN':
         return {
           title: 'Administrator',
-          color: 'bg-purple-100 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+          color:
+            'bg-purple-100 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300 border-purple-200 dark:border-purple-800',
           badgeGradient: 'from-purple-600 to-indigo-600',
           icon: ShieldCheck,
           description: 'Full administrative control over all modules & settings',
-          modules: ['Dashboard', 'Assets', 'Employees', 'Allocations', 'History', 'Reports', 'Settings'],
+          modules: [
+            'Dashboard',
+            'Assets',
+            'Employees',
+            'Allocations',
+            'History',
+            'Reports',
+            'Settings',
+          ],
         };
       case 'MANAGER':
         return {
           title: 'Manager',
-          color: 'bg-blue-100 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+          color:
+            'bg-blue-100 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 border-blue-200 dark:border-blue-800',
           badgeGradient: 'from-blue-600 to-cyan-600',
           icon: UserCheck,
           description: 'Operational management of assets, employees & maintenance',
@@ -82,7 +92,8 @@ export default function UserDropdown() {
       case 'VIEWER':
         return {
           title: 'Viewer',
-          color: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+          color:
+            'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
           badgeGradient: 'from-emerald-600 to-teal-600',
           icon: Eye,
           description: 'Read-only access to view dashboard, assets & history logs',
@@ -127,8 +138,9 @@ export default function UserDropdown() {
         </div>
 
         <ChevronDown
-          className={`size-3.5 text-muted-foreground group-hover:text-foreground transition-transform duration-200 hidden sm:block ${isOpen ? 'rotate-180 text-foreground' : ''
-            }`}
+          className={`size-3.5 text-muted-foreground group-hover:text-foreground transition-transform duration-200 hidden sm:block ${
+            isOpen ? 'rotate-180 text-foreground' : ''
+          }`}
         />
       </button>
 
@@ -186,7 +198,8 @@ export default function UserDropdown() {
             {/* Modules / Permissions */}
             <div className="pt-1">
               <span className="text-muted-foreground font-medium flex items-center gap-1 mb-1.5">
-                <Sparkles className="size-3 text-amber-500" /> Role Permissions ({roleConfig.modules.length}):
+                <Sparkles className="size-3 text-amber-500" /> Role Permissions (
+                {roleConfig.modules.length}):
               </span>
               <div className="flex flex-wrap gap-1">
                 {roleConfig.modules.map((mod) => (

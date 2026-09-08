@@ -1,14 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import {
-  Search,
-  ChevronDown,
-  Check,
-  X,
-  Tag,
-  Activity,
-  MapPin,
-  ArrowUpDown,
-} from 'lucide-react';
+import { Search, ChevronDown, Check, X, Tag, Activity, MapPin, ArrowUpDown } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAssetStore } from '@/store/useAssetStore';
 import {
@@ -17,7 +8,7 @@ import {
   ASSET_LOCATIONS,
   ASSET_SORT_OPTIONS,
 } from '@/constans/asset.constants';
-import type { AssetCategory, AssetStatus, AssetSortOption } from '@/types/asset';
+import type { AssetCategory, AssetStatus } from '@/types/asset';
 import { cn } from '@/lib/utils';
 
 // Reusable Filter Select Menu matching the screenshot
@@ -65,14 +56,14 @@ function FilterDropdown<T extends string>({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
-            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]'
+            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]',
           )}
         >
           <span className="truncate">{currentLabel}</span>
           <ChevronDown
             className={cn(
               'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-              isOpen && 'rotate-180 text-[#4C40F7]'
+              isOpen && 'rotate-180 text-[#4C40F7]',
             )}
           />
         </button>
@@ -93,7 +84,7 @@ function FilterDropdown<T extends string>({
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
                       ? 'font-semibold text-[#4C40F7] bg-indigo-50/50 dark:bg-indigo-950/40'
-                      : 'text-slate-700 dark:text-slate-300'
+                      : 'text-slate-700 dark:text-slate-300',
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
@@ -109,15 +100,8 @@ function FilterDropdown<T extends string>({
 }
 
 export const AssetFiltersBar: React.FC = () => {
-  const {
-    filters,
-    setSearch,
-    setCategory,
-    setStatus,
-    setLocation,
-    setSortBy,
-    resetFilters,
-  } = useAssetStore();
+  const { filters, setSearch, setCategory, setStatus, setLocation, setSortBy, resetFilters } =
+    useAssetStore();
 
   const categoryOptions = [
     { label: 'All', value: 'All' as AssetCategory | 'All' },
@@ -201,7 +185,7 @@ export const AssetFiltersBar: React.FC = () => {
           icon={<ArrowUpDown className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.sortBy}
           options={ASSET_SORT_OPTIONS}
-          onChange={(val) => setSortBy(val as AssetSortOption)}
+          onChange={(val) => setSortBy(val)}
         />
       </div>
 
@@ -223,4 +207,3 @@ export const AssetFiltersBar: React.FC = () => {
 };
 
 export default AssetFiltersBar;
-

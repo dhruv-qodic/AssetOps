@@ -13,7 +13,9 @@ export const EmployeeCards: React.FC = () => {
   const fullTimeStaff = stats.byType['full-time'] || 0;
 
   const activePercent = totalEmployees ? Math.round((activeEmployees / totalEmployees) * 100) : 0;
-  const inactivePercent = totalEmployees ? Math.round((inactiveAndTerminated / totalEmployees) * 100) : 0;
+  const inactivePercent = totalEmployees
+    ? Math.round((inactiveAndTerminated / totalEmployees) * 100)
+    : 0;
   const fullTimePercent = totalEmployees ? Math.round((fullTimeStaff / totalEmployees) * 100) : 0;
 
   const cardItems = [
@@ -23,7 +25,8 @@ export const EmployeeCards: React.FC = () => {
       badge: 'All staff',
       badgeBg: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
       icon: Users,
-      iconBg: 'bg-indigo-50/80 dark:bg-indigo-950/80 group-hover:bg-indigo-600 group-hover:text-white',
+      iconBg:
+        'bg-indigo-50/80 dark:bg-indigo-950/80 group-hover:bg-indigo-600 group-hover:text-white',
       iconColor: 'text-indigo-600 dark:text-indigo-400',
       accentGlow: 'hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-indigo-500/10',
       barColor: 'from-indigo-500 to-blue-500',
@@ -35,9 +38,11 @@ export const EmployeeCards: React.FC = () => {
       badge: `${activePercent}% active`,
       badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
       icon: UserCheck,
-      iconBg: 'bg-emerald-50/80 dark:bg-emerald-950/80 group-hover:bg-emerald-600 group-hover:text-white',
+      iconBg:
+        'bg-emerald-50/80 dark:bg-emerald-950/80 group-hover:bg-emerald-600 group-hover:text-white',
       iconColor: 'text-emerald-600 dark:text-emerald-400',
-      accentGlow: 'hover:border-emerald-300 dark:hover:border-emerald-800 hover:shadow-emerald-500/10',
+      accentGlow:
+        'hover:border-emerald-300 dark:hover:border-emerald-800 hover:shadow-emerald-500/10',
       barColor: 'from-emerald-500 to-teal-500',
       description: 'Currently active workforce',
     },
@@ -62,7 +67,7 @@ export const EmployeeCards: React.FC = () => {
       iconBg: 'bg-blue-50/80 dark:bg-blue-950/80 group-hover:bg-blue-600 group-hover:text-white',
       iconColor: 'text-blue-600 dark:text-blue-400',
       accentGlow: 'hover:border-blue-300 dark:hover:border-blue-800 hover:shadow-blue-500/10',
-      barColor: 'from-blue-500 to-blue-00',
+      barColor: 'from-blue-500 to-blue-600',
       description: 'Permanent employment status',
     },
   ];
@@ -118,4 +123,3 @@ export const EmployeeCards: React.FC = () => {
 };
 
 export default EmployeeCards;
-

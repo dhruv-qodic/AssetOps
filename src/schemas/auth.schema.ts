@@ -4,7 +4,7 @@ export const loginSchema = z.object({
   email: z
     .string()
     .min(1, { message: 'Email address is required' })
-    .email({ message: 'Please enter a valid email address' }),
+    .pipe(z.email({ message: 'Please enter a valid email address' })),
   password: z
     .string()
     .min(1, { message: 'Password is required' })
