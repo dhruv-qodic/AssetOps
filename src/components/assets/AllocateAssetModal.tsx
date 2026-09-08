@@ -153,18 +153,9 @@ export const AllocateAssetModal: React.FC = () => {
                       }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
-                      {emp.avatar ? (
-                        <img
-                          src={emp.avatar}
-                          alt={fullName}
-                          className="size-10 rounded-full object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="size-10 rounded-full bg-[#4C40F7]/10 text-[#4C40F7] font-bold text-xs flex items-center justify-center shrink-0">
-                          {emp.firstName?.[0]}
-                          {emp.lastName?.[0]}
-                        </div>
-                      )}
+                      <div className="size-10 rounded-full bg-[#4C40F7]/10 text-[#4C40F7] font-bold text-xs flex items-center justify-center shrink-0 select-none">
+                        {emp.firstName?.trim().charAt(0).toUpperCase() || fullName.trim().charAt(0).toUpperCase() || 'U'}
+                      </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <p className="text-xs font-bold text-slate-900 dark:text-white truncate">

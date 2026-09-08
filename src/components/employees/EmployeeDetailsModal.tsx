@@ -21,7 +21,6 @@ import {
   MapPin,
   Activity,
   Calendar,
-  Clock,
   Box,
   Pencil,
   Laptop,
@@ -54,14 +53,6 @@ export const EmployeeDetailsModal: React.FC = () => {
       })
     : 'N/A';
 
-  const formattedUpdated = selectedEmployee.updatedAt
-    ? new Date(selectedEmployee.updatedAt).toLocaleDateString('en-US', {
-        month: 'short',
-        day: 'numeric',
-        year: 'numeric',
-      })
-    : 'N/A';
-
   return (
     <Dialog open={isViewModalOpen} onOpenChange={closeModals}>
       <DialogContent onClose={closeModals} className="max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -86,18 +77,9 @@ export const EmployeeDetailsModal: React.FC = () => {
           {/* Profile Hero Header Card */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-slate-50 to-indigo-50/30 dark:from-slate-800/80 dark:to-indigo-950/30 border border-slate-200/80 dark:border-slate-800">
             <div className="flex items-center gap-3.5">
-              {selectedEmployee.avatar ? (
-                <img
-                  src={selectedEmployee.avatar}
-                  alt={fullName}
-                  className="size-14 rounded-2xl object-cover border-2 border-white dark:border-slate-700 shadow-xs"
-                />
-              ) : (
-                <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4C40F7] to-purple-600 text-white font-bold text-lg shadow-md">
-                  {selectedEmployee.firstName?.[0]}
-                  {selectedEmployee.lastName?.[0]}
-                </div>
-              )}
+              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4C40F7] to-purple-600 text-white font-bold text-lg shadow-md select-none">
+                {selectedEmployee.firstName?.trim().charAt(0).toUpperCase() || fullName.trim().charAt(0).toUpperCase() || 'U'}
+              </div>
 
               <div>
                 <div className="flex items-center gap-2">
