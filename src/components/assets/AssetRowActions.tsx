@@ -20,6 +20,7 @@ interface AssetRowActionsProps {
 
 export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -47,8 +48,23 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [isOpen]);
+
+  const handleToggle = () => {
+    if (!isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 230 && rect.top > 230) {
+        setOpenUpward(true);
+      } else {
+        setOpenUpward(false);
+      }
+    }
+    setIsOpen((prev) => !prev);
+  };
 
   const handleToggleMaintenance = () => {
     setIsOpen(false);
@@ -68,7 +84,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         className={cn(
           'flex size-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer',
           isOpen && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
@@ -79,7 +95,12 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div
+          className={cn(
+            'absolute right-0 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150',
+            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+          )}
+        >
           {/* View Details */}
           <button
             type="button"

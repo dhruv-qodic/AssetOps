@@ -3,6 +3,7 @@ import { MoreHorizontal, Eye, UserMinus, RefreshCw } from 'lucide-react';
 import type { Asset } from '@/types/asset';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
+import { cn } from '@/lib/utils';
 
 interface AllocationRowActionsProps {
   asset: Asset;
@@ -10,6 +11,7 @@ interface AllocationRowActionsProps {
 
 export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asset }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const { openViewModal, openAllocateModal, deallocateAsset } = useAssetStore();
   const { unassignAssetFromEmployee } = useEmployeeStore();
@@ -25,6 +27,19 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
     }
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
+
+  const handleToggle = () => {
+    if (!isOpen && menuRef.current) {
+      const rect = menuRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 180 && rect.top > 180) {
+        setOpenUpward(true);
+      } else {
+        setOpenUpward(false);
+      }
+    }
+    setIsOpen((prev) => !prev);
+  };
 
   const handleDeallocate = () => {
     setIsOpen(false);
@@ -48,15 +63,23 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
     <div className="relative inline-block text-right" ref={menuRef}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
-        className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+        onClick={handleToggle}
+        className={cn(
+          "p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer",
+          isOpen && "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200"
+        )}
         aria-label="Allocation actions"
       >
         <MoreHorizontal className="size-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150 text-left">
+        <div
+          className={cn(
+            "absolute right-0 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150 text-left",
+            openUpward ? "bottom-full mb-1.5" : "top-full mt-1.5"
+          )}
+        >
           <button
             type="button"
             onClick={handleView}
