@@ -26,6 +26,7 @@ interface AssetStoreState {
   isDeleteModalOpen: boolean;
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
+  isAllocateModalOpen: boolean;
 
   // Filter & Pagination actions
   setSearch: (search: string) => void;
@@ -62,6 +63,7 @@ interface AssetStoreState {
   openDeleteModal: (asset: Asset) => void;
   openViewModal: (asset: Asset) => void;
   openImportModal: () => void;
+  openAllocateModal: (asset: Asset) => void;
   closeModals: () => void;
 }
 
@@ -78,6 +80,7 @@ export const useAssetStore = create<AssetStoreState>()(
       isDeleteModalOpen: false,
       isViewModalOpen: false,
       isImportModalOpen: false,
+      isAllocateModalOpen: false,
 
       // Filter Actions
       setSearch: (search) =>
@@ -340,6 +343,8 @@ export const useAssetStore = create<AssetStoreState>()(
       openViewModal: (asset) =>
         set({ isViewModalOpen: true, selectedAsset: asset }),
       openImportModal: () => set({ isImportModalOpen: true }),
+      openAllocateModal: (asset) =>
+        set({ isAllocateModalOpen: true, selectedAsset: asset }),
       closeModals: () =>
         set({
           isAddModalOpen: false,
@@ -347,6 +352,7 @@ export const useAssetStore = create<AssetStoreState>()(
           isDeleteModalOpen: false,
           isViewModalOpen: false,
           isImportModalOpen: false,
+          isAllocateModalOpen: false,
           selectedAsset: null,
         }),
     }),

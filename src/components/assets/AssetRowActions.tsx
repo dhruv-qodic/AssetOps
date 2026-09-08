@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import type { Asset } from '@/types/asset';
 import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { usePermission } from '@/hooks/usePermission';
 import { cn } from '@/lib/utils';
 
@@ -25,9 +26,12 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
     openViewModal,
     openEditModal,
     openDeleteModal,
+    openAllocateModal,
     deallocateAsset,
     updateAsset,
   } = useAssetStore();
+
+  const { unassignAssetFromEmployee } = useEmployeeStore();
 
   const { hasPermission } = usePermission();
   const canEdit = hasPermission('EDIT_ASSET');
@@ -50,6 +54,14 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
     setIsOpen(false);
     const newStatus = asset.status === 'Maintenance' ? 'Available' : 'Maintenance';
     updateAsset(asset.id, { status: newStatus });
+  };
+
+  const handleDeallocate = () => {
+    setIsOpen(false);
+    if (asset.assignedTo?.id) {
+      unassignAssetFromEmployee(asset.assignedTo.id, asset.id);
+    }
+    deallocateAsset(asset.id);
   };
 
   return (
@@ -101,10 +113,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
             asset.assignedTo ? (
               <button
                 type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  deallocateAsset(asset.id);
-                }}
+                onClick={handleDeallocate}
                 className="w-full px-3 py-2 text-xs flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer text-left"
               >
                 <UserMinus className="size-3.5" />
@@ -115,7 +124,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
-                  openEditModal(asset);
+                  openAllocateModal(asset);
                 }}
                 className="w-full px-3 py-2 text-xs flex items-center gap-2 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer text-left"
               >
