@@ -1,23 +1,14 @@
 import { z } from 'zod';
 
 export const employeeSchema = z.object({
-  employeeId: z
-    .string()
-    .trim()
-    .min(1, { message: 'Employee ID is required' }),
-  firstName: z
-    .string()
-    .trim()
-    .min(1, { message: 'First name is required' }),
-  lastName: z
-    .string()
-    .trim()
-    .min(1, { message: 'Last name is required' }),
+  employeeId: z.string().trim().min(1, { message: 'Employee ID is required' }),
+  firstName: z.string().trim().min(1, { message: 'First name is required' }),
+  lastName: z.string().trim().min(1, { message: 'Last name is required' }),
   email: z
     .string()
     .trim()
     .min(1, { message: 'Email address is required' })
-    .email({ message: 'Invalid email address' }),
+    .pipe(z.email({ message: 'Invalid email address' })),
   phone: z.string().trim().optional(),
   department: z.string().trim().min(1, { message: 'Department is required' }),
   position: z.string().trim().min(1, { message: 'Position is required' }),

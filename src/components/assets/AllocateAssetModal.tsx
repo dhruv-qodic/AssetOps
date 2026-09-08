@@ -13,19 +13,11 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import type { Employee } from '@/types/employee';
 import type { AssignedEmployee } from '@/types/asset';
-import {
-  UserPlus,
-  Search,
-  Check,
-  Building2,
-  MapPin,
-  Laptop,
-  UserCheck,
-} from 'lucide-react';
+import { UserPlus, Search, Check, Building2, MapPin, Laptop, UserCheck } from 'lucide-react';
 
 export const AllocateAssetModal: React.FC = () => {
   const { isAllocateModalOpen, selectedAsset, closeModals, allocateAsset } = useAssetStore();
-  const { employees, assignAssetToEmployee } = useEmployeeStore();
+  const { employees, assignAssetToEmployee, unassignAssetFromEmployee } = useEmployeeStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEmp, setSelectedEmp] = useState<Employee | null>(null);
@@ -53,7 +45,12 @@ export const AllocateAssetModal: React.FC = () => {
   });
 
   const handleAllocate = () => {
-    if (!selectedEmp || !selectedAsset) return;
+    if (!selectedEmp) return;
+
+    // If this asset was previously assigned to another employee, unassign it first
+    if (selectedAsset.assignedTo?.id && selectedAsset.assignedTo.id !== selectedEmp.id) {
+      unassignAssetFromEmployee(selectedAsset.assignedTo.id, selectedAsset.id);
+    }
 
     const assignedDate = new Date().toISOString().split('T')[0];
     const assignedEmployeeData: AssignedEmployee = {
@@ -147,14 +144,17 @@ export const AllocateAssetModal: React.FC = () => {
                   <div
                     key={emp.id}
                     onClick={() => setSelectedEmp(emp)}
-                    className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${isSelected
-                      ? 'border-[#4C40F7] bg-indigo-50/70 dark:bg-indigo-950/50 shadow-2xs'
-                      : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
-                      }`}
+                    className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                      isSelected
+                        ? 'border-[#4C40F7] bg-indigo-50/70 dark:bg-indigo-950/50 shadow-2xs'
+                        : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
+                    }`}
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className="size-10 rounded-full bg-[#4C40F7]/10 text-[#4C40F7] font-bold text-xs flex items-center justify-center shrink-0 select-none">
-                        {emp.firstName?.trim().charAt(0).toUpperCase() || fullName.trim().charAt(0).toUpperCase() || 'U'}
+                        {emp.firstName.trim().charAt(0).toUpperCase() ||
+                          fullName.trim().charAt(0).toUpperCase() ||
+                          'U'}
                       </div>
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
@@ -166,7 +166,8 @@ export const AllocateAssetModal: React.FC = () => {
                           </span>
                         </div>
                         <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                          {emp.position} • <Building2 className="inline size-3 mb-0.5" /> {emp.department}
+                          {emp.position} • <Building2 className="inline size-3 mb-0.5" />{' '}
+                          {emp.department}
                         </p>
                       </div>
                     </div>
@@ -177,10 +178,11 @@ export const AllocateAssetModal: React.FC = () => {
                         {emp.location}
                       </span>
                       <div
-                        className={`size-5 rounded-full border flex items-center justify-center transition-colors ${isSelected
-                          ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
-                          : 'border-slate-300 dark:border-slate-700 bg-transparent'
-                          }`}
+                        className={`size-5 rounded-full border flex items-center justify-center transition-colors ${
+                          isSelected
+                            ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
+                            : 'border-slate-300 dark:border-slate-700 bg-transparent'
+                        }`}
                       >
                         {isSelected && <Check className="size-3 stroke-[3]" />}
                       </div>

@@ -42,7 +42,7 @@ export function AllocationsPage() {
           (asset.assignedTo?.employeeId && e.employeeId === asset.assignedTo.employeeId) ||
           (asset.assignedTo?.name &&
             `${e.firstName} ${e.lastName}`.trim().toLowerCase() ===
-            asset.assignedTo.name.trim().toLowerCase())
+              asset.assignedTo.name.trim().toLowerCase()),
       );
 
       const empFullName = assignedEmp
@@ -50,7 +50,7 @@ export function AllocationsPage() {
         : asset.assignedTo?.name || '';
 
       const empDepartment = assignedEmp?.department || asset.assignedTo?.department || '';
-      const empStatus = assignedEmp?.status?.toLowerCase() || 'active';
+      const empStatus = assignedEmp?.status.toLowerCase() || 'active';
 
       // 1. Text Search across asset name, assetId, employee name, employeeId, department
       if (search.trim()) {
@@ -62,7 +62,7 @@ export function AllocationsPage() {
         const matchEmp =
           empFullName.toLowerCase().includes(q) ||
           asset.assignedTo?.employeeId?.toLowerCase().includes(q) ||
-          assignedEmp?.employeeId?.toLowerCase().includes(q) ||
+          assignedEmp?.employeeId.toLowerCase().includes(q) ||
           empDepartment.toLowerCase().includes(q);
 
         if (!matchAsset && !matchEmp) return false;
@@ -77,7 +77,7 @@ export function AllocationsPage() {
       if (
         employeeFilter !== 'All' &&
         empFullName.toLowerCase() !== employeeFilter.toLowerCase() &&
-        asset.assignedTo?.name?.toLowerCase() !== employeeFilter.toLowerCase()
+        asset.assignedTo?.name.toLowerCase() !== employeeFilter.toLowerCase()
       ) {
         return false;
       }
@@ -85,7 +85,11 @@ export function AllocationsPage() {
       // 4. Status Filter (Evaluated with live employee status)
       if (statusFilter !== 'All') {
         if (statusFilter === 'Active') {
-          if (asset.status !== 'Allocated' || empStatus === 'inactive' || empStatus === 'terminated') {
+          if (
+            asset.status !== 'Allocated' ||
+            empStatus === 'inactive' ||
+            empStatus === 'terminated'
+          ) {
             return false;
           }
         } else if (statusFilter === 'Inactive') {
@@ -124,7 +128,7 @@ export function AllocationsPage() {
   const endIndex = Math.min(safePage * pageSize, totalFiltered);
   const paginatedAllocations = filteredAllocations.slice(
     (safePage - 1) * pageSize,
-    safePage * pageSize
+    safePage * pageSize,
   );
 
   return (
@@ -194,7 +198,7 @@ export function AllocationsPage() {
           />
 
           {/* Allocations Data Table */}
-          <div className='bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden'>
+          <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
             <AllocationTable allocations={paginatedAllocations} />
           </div>
 

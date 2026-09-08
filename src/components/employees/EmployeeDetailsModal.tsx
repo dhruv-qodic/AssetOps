@@ -40,8 +40,8 @@ export const EmployeeDetailsModal: React.FC = () => {
     return (
       asset.assignedTo.id === selectedEmployee.id ||
       asset.assignedTo.employeeId === selectedEmployee.employeeId ||
-      asset.assignedTo.name?.toLowerCase() === fullName.toLowerCase() ||
-      selectedEmployee.assignedAssets?.includes(asset.id)
+      asset.assignedTo.name.toLowerCase() === fullName.toLowerCase() ||
+      selectedEmployee.assignedAssets.includes(asset.id)
     );
   });
 
@@ -78,7 +78,9 @@ export const EmployeeDetailsModal: React.FC = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-slate-50 to-indigo-50/30 dark:from-slate-800/80 dark:to-indigo-950/30 border border-slate-200/80 dark:border-slate-800">
             <div className="flex items-center gap-3.5">
               <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4C40F7] to-purple-600 text-white font-bold text-lg shadow-md select-none">
-                {selectedEmployee.firstName?.trim().charAt(0).toUpperCase() || fullName.trim().charAt(0).toUpperCase() || 'U'}
+                {selectedEmployee.firstName.trim().charAt(0).toUpperCase() ||
+                  fullName.trim().charAt(0).toUpperCase() ||
+                  'U'}
               </div>
 
               <div>
@@ -125,9 +127,7 @@ export const EmployeeDetailsModal: React.FC = () => {
                 <span className="text-slate-400 text-[11px] font-medium flex items-center gap-1.5">
                   <User className="size-3.5 text-slate-400" /> Full Name
                 </span>
-                <p className="font-semibold text-slate-800 dark:text-slate-200">
-                  {fullName}
-                </p>
+                <p className="font-semibold text-slate-800 dark:text-slate-200">{fullName}</p>
               </div>
 
               <div className="p-3 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 space-y-1">
@@ -278,4 +278,3 @@ export const EmployeeDetailsModal: React.FC = () => {
 };
 
 export default EmployeeDetailsModal;
-

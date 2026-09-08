@@ -8,17 +8,28 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
+import { useAssetStore } from '@/store/useAssetStore';
 import { AlertTriangle } from 'lucide-react';
 
 export const DeleteEmployeeModal: React.FC = () => {
-  const { isDeleteModalOpen, selectedEmployee, closeModals, deleteEmployee } =
-    useEmployeeStore();
+  const { isDeleteModalOpen, selectedEmployee, closeModals, deleteEmployee } = useEmployeeStore();
+  const { assets, deallocateAsset } = useAssetStore();
 
   if (!selectedEmployee) return null;
 
   const fullName = `${selectedEmployee.firstName} ${selectedEmployee.lastName}`.trim();
 
   const handleDelete = () => {
+    // Deallocate any assets currently assigned to this employee
+    const assigned = assets.filter(
+      (a) =>
+        a.assignedTo?.id === selectedEmployee.id ||
+        a.assignedTo?.employeeId === selectedEmployee.employeeId,
+    );
+    assigned.forEach((a) => {
+      deallocateAsset(a.id);
+    });
+
     deleteEmployee(selectedEmployee.id);
     closeModals();
   };
@@ -35,9 +46,7 @@ export const DeleteEmployeeModal: React.FC = () => {
               <DialogTitle className="text-lg font-bold text-slate-900 dark:text-white">
                 Delete Employee
               </DialogTitle>
-              <p className="text-xs text-slate-500 mt-0.5">
-                This action cannot be undone.
-              </p>
+              <p className="text-xs text-slate-500 mt-0.5">This action cannot be undone.</p>
             </div>
           </div>
         </DialogHeader>

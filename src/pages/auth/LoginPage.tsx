@@ -36,7 +36,8 @@ function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectPath = (location.state as { from?: { pathname?: string } })?.from?.pathname || '/';
+  const redirectPath =
+    (location.state as { from?: { pathname?: string } } | null)?.from?.pathname || '/';
 
   // React Hook Form with Zod schema resolver
   const {
@@ -63,17 +64,17 @@ function LoginPage() {
     }
 
     if (success) {
-      navigate(redirectPath, { replace: true });
+      void navigate(redirectPath, { replace: true });
     }
   };
 
-  const handleFillDemo = async (demoEmail: string, demoPass: string, autoSubmit = false) => {
+  const handleFillDemo = (demoEmail: string, demoPass: string, autoSubmit = false) => {
     clearError();
     setValue('email', demoEmail, { shouldValidate: true });
     setValue('password', demoPass, { shouldValidate: true });
 
     if (autoSubmit) {
-      handleSubmit(onSubmit)();
+      void handleSubmit(onSubmit)();
     }
   };
 
@@ -106,9 +107,7 @@ function LoginPage() {
               <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-tr from-white-600 to-black-500 text-white shadow-lg shadow-indigo-500/40">
                 <Layers />
               </div>
-              <span className="text-2xl font-bold tracking-tight text-white">
-                AssetOps
-              </span>
+              <span className="text-2xl font-bold tracking-tight text-white">AssetOps</span>
             </div>
 
             {/* Slogan */}
@@ -169,12 +168,16 @@ function LoginPage() {
           )}
 
           {/* React Hook Form with Icons */}
-          <form className="space-y-3.5" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <form
+            className="space-y-3.5"
+            onSubmit={(e) => {
+              void handleSubmit(onSubmit)(e);
+            }}
+            noValidate
+          >
             {/* Email Field with Icon */}
             <div className="space-y-1 text-left">
-              <label className="text-xs font-semibold text-gray-700 block">
-                Email Address
-              </label>
+              <label className="text-xs font-semibold text-gray-700 block">Email Address</label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                   <Mail className="size-4" />
@@ -183,10 +186,11 @@ function LoginPage() {
                   type="email"
                   placeholder="Enter your email address"
                   {...register('email')}
-                  className={`h-9.5 pl-9.5 text-xs sm:text-sm bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus-visible:ring-2 ${errors.email
-                    ? 'border-red-400 focus-visible:ring-red-400/20 focus-visible:border-red-500'
-                    : 'border-gray-200 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]'
-                    }`}
+                  className={`h-9.5 pl-9.5 text-xs sm:text-sm bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus-visible:ring-2 ${
+                    errors.email
+                      ? 'border-red-400 focus-visible:ring-red-400/20 focus-visible:border-red-500'
+                      : 'border-gray-200 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]'
+                  }`}
                 />
               </div>
               {errors.email && (
@@ -196,9 +200,7 @@ function LoginPage() {
 
             {/* Password Field with Icons */}
             <div className="space-y-1 text-left">
-              <label className="text-xs font-semibold text-gray-700 block">
-                Password
-              </label>
+              <label className="text-xs font-semibold text-gray-700 block">Password</label>
               <div className="relative">
                 <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
                   <Lock className="size-4" />
@@ -207,10 +209,11 @@ function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Enter your password"
                   {...register('password')}
-                  className={`h-9.5 pl-9.5 pr-10 text-xs sm:text-sm bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus-visible:ring-2 ${errors.password
-                    ? 'border-red-400 focus-visible:ring-red-400/20 focus-visible:border-red-500'
-                    : 'border-gray-200 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]'
-                    }`}
+                  className={`h-9.5 pl-9.5 pr-10 text-xs sm:text-sm bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus-visible:ring-2 ${
+                    errors.password
+                      ? 'border-red-400 focus-visible:ring-red-400/20 focus-visible:border-red-500'
+                      : 'border-gray-200 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]'
+                  }`}
                 />
                 <button
                   type="button"
@@ -220,11 +223,7 @@ function LoginPage() {
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 cursor-pointer"
                   aria-label={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  {showPassword ? (
-                    <EyeOff className="size-4" />
-                  ) : (
-                    <Eye className="size-4" />
-                  )}
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
               {errors.password && (
