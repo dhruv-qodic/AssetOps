@@ -7,6 +7,7 @@ import AddAssetModal from '@/components/assets/AddAssetModal';
 import AssetDetailsModal from '@/components/assets/AssetDetailsModal';
 import DeleteAssetModal from '@/components/assets/DeleteAssetModal';
 import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
+import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 
 export function AssetListPage() {
   const { getFilteredAssets, filters } = useAssetStore();
@@ -47,6 +48,7 @@ export function AssetListPage() {
       <AssetDetailsModal />
       <DeleteAssetModal />
       <ImportAssetsModal />
+      <AllocateAssetModal />
     </div>
   );
 }

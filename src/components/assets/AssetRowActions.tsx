@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import type { Asset } from '@/types/asset';
 import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { usePermission } from '@/hooks/usePermission';
 import { cn } from '@/lib/utils';
 
@@ -19,15 +20,19 @@ interface AssetRowActionsProps {
 
 export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   const {
     openViewModal,
     openEditModal,
     openDeleteModal,
+    openAllocateModal,
     deallocateAsset,
     updateAsset,
   } = useAssetStore();
+
+  const { unassignAssetFromEmployee } = useEmployeeStore();
 
   const { hasPermission } = usePermission();
   const canEdit = hasPermission('EDIT_ASSET');
@@ -43,8 +48,23 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
     if (isOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
   }, [isOpen]);
+
+  const handleToggle = () => {
+    if (!isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const spaceBelow = window.innerHeight - rect.bottom;
+      if (spaceBelow < 230 && rect.top > 230) {
+        setOpenUpward(true);
+      } else {
+        setOpenUpward(false);
+      }
+    }
+    setIsOpen((prev) => !prev);
+  };
 
   const handleToggleMaintenance = () => {
     setIsOpen(false);
@@ -52,11 +72,19 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
     updateAsset(asset.id, { status: newStatus });
   };
 
+  const handleDeallocate = () => {
+    setIsOpen(false);
+    if (asset.assignedTo?.id) {
+      unassignAssetFromEmployee(asset.assignedTo.id, asset.id);
+    }
+    deallocateAsset(asset.id);
+  };
+
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggle}
         className={cn(
           'flex size-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer',
           isOpen && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
@@ -67,7 +95,12 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150">
+        <div
+          className={cn(
+            'absolute right-0 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150',
+            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+          )}
+        >
           {/* View Details */}
           <button
             type="button"
@@ -101,10 +134,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
             asset.assignedTo ? (
               <button
                 type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  deallocateAsset(asset.id);
-                }}
+                onClick={handleDeallocate}
                 className="w-full px-3 py-2 text-xs flex items-center gap-2 text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 transition-colors cursor-pointer text-left"
               >
                 <UserMinus className="size-3.5" />
@@ -115,7 +145,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset }) => {
                 type="button"
                 onClick={() => {
                   setIsOpen(false);
-                  openEditModal(asset);
+                  openAllocateModal(asset);
                 }}
                 className="w-full px-3 py-2 text-xs flex items-center gap-2 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 transition-colors cursor-pointer text-left"
               >

@@ -1,7 +1,7 @@
-import { useAuthStore } from "@/store/useAuthStore";
-import type { Permission } from "@/types/permissions";
-import { ROLE_PERMISSIONS } from "@/constans/auth.constants";
-import { type Role } from "@/types/auth";
+import { useAuthStore } from '@/store/useAuthStore';
+import type { Permission } from '@/types/permissions';
+import { ROLE_PERMISSIONS } from '@/constans/auth.constants';
+import { type Role } from '@/types/auth';
 
 export interface UsePermissionReturn {
   userRole: Role | undefined;
@@ -18,7 +18,7 @@ export interface UsePermissionReturn {
 export function usePermission(): UsePermissionReturn {
   const { user } = useAuthStore();
   const userRole = user?.role;
-  const permissions: Permission[] = userRole ? ROLE_PERMISSIONS[userRole] || [] : [];
+  const permissions: Permission[] = userRole ? ROLE_PERMISSIONS[userRole] : [];
 
   const hasPermission = (permission: Permission): boolean => {
     if (!userRole) return false;
@@ -42,20 +42,20 @@ export function usePermission(): UsePermissionReturn {
     if (!userRole) return false;
 
     switch (path) {
-      case "/":
-        return hasPermission("VIEW_DASHBOARD");
-      case "/assets":
-        return hasPermission("VIEW_ASSETS");
-      case "/employees":
-        return hasPermission("VIEW_EMPLOYEES");
-      case "/allocations":
-        return hasPermission("ALLOCATE_ASSET");
-      case "/history":
-        return hasPermission("VIEW_HISTORY");
-      case "/reports":
-        return hasPermission("VIEW_REPORTS");
-      case "/settings":
-        return hasPermission("MANAGE_SETTINGS");
+      case '/':
+        return hasPermission('VIEW_DASHBOARD');
+      case '/assets':
+        return hasPermission('VIEW_ASSETS');
+      case '/employees':
+        return hasPermission('VIEW_EMPLOYEES');
+      case '/allocations':
+        return hasPermission('ALLOCATE_ASSET');
+      case '/history':
+        return hasPermission('VIEW_HISTORY');
+      case '/reports':
+        return hasPermission('VIEW_REPORTS');
+      case '/settings':
+        return hasPermission('MANAGE_SETTINGS');
       default:
         return true;
     }
