@@ -1,69 +1,72 @@
 import React from 'react';
-import { Users, UserCheck, UserX, Briefcase, TrendingUp } from 'lucide-react';
+import { Layers, Box, Users, Laptop, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 
-export const EmployeeCards: React.FC = () => {
-  const { getStats } = useEmployeeStore();
-  const stats = getStats();
+export const AllocationCards: React.FC = () => {
+  const { assets } = useAssetStore();
+  const { employees } = useEmployeeStore();
 
-  const totalEmployees = stats.totalEmployees || 0;
-  const activeEmployees = stats.active || 0;
-  const inactiveAndTerminated = (stats.inactive || 0) + (stats.terminated || 0);
-  const fullTimeStaff = stats.byType['full-time'] || 0;
+  const totalAssets = assets.length || 0;
+  const allocatedAssets = assets.filter(
+    (a) => a.status === 'Allocated' && a.assignedTo !== null
+  );
+  const allocatedCount = allocatedAssets.length;
+  const availableCount = assets.filter((a) => a.status === 'Available').length;
+  const totalEmployees = employees.length || 0;
 
-  const activePercent = totalEmployees ? Math.round((activeEmployees / totalEmployees) * 100) : 0;
-  const inactivePercent = totalEmployees ? Math.round((inactiveAndTerminated / totalEmployees) * 100) : 0;
-  const fullTimePercent = totalEmployees ? Math.round((fullTimeStaff / totalEmployees) * 100) : 0;
+  const allocationPercent = totalAssets ? Math.round((allocatedCount / totalAssets) * 100) : 0;
+  const availablePercent = totalAssets ? Math.round((availableCount / totalAssets) * 100) : 0;
 
   const cardItems = [
     {
-      title: 'Total Employees',
-      value: totalEmployees,
-      badge: 'All staff',
+      title: 'Total Allocations',
+      value: allocatedCount,
+      badge: `${allocationPercent}% allocated`,
       badgeBg: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
-      icon: Users,
+      icon: Layers,
       iconBg: 'bg-indigo-50/80 dark:bg-indigo-950/80 group-hover:bg-indigo-600 group-hover:text-white',
       iconColor: 'text-indigo-600 dark:text-indigo-400',
       accentGlow: 'hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-indigo-500/10',
       barColor: 'from-indigo-500 to-blue-500',
-      description: 'Total workforce headcount',
+      description: 'Currently assigned hardware',
     },
     {
-      title: 'Active Employees',
-      value: activeEmployees,
-      badge: `${activePercent}% active`,
+      title: 'Available Assets',
+      value: availableCount,
+      badge: `${availablePercent}% ready`,
       badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
-      icon: UserCheck,
+      icon: Box,
       iconBg: 'bg-emerald-50/80 dark:bg-emerald-950/80 group-hover:bg-emerald-600 group-hover:text-white',
       iconColor: 'text-emerald-600 dark:text-emerald-400',
       accentGlow: 'hover:border-emerald-300 dark:hover:border-emerald-800 hover:shadow-emerald-500/10',
       barColor: 'from-emerald-500 to-teal-500',
-      description: 'Currently active workforce',
+      description: 'Ready for assignment',
     },
     {
-      title: 'Inactive & Terminated',
-      value: inactiveAndTerminated,
-      badge: `${inactivePercent}% of total`,
-      badgeBg: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300',
-      icon: UserX,
-      iconBg: 'bg-amber-50/80 dark:bg-amber-950/80 group-hover:bg-amber-600 group-hover:text-white',
-      iconColor: 'text-amber-600 dark:text-amber-400',
-      accentGlow: 'hover:border-amber-300 dark:hover:border-amber-800 hover:shadow-amber-500/10',
-      barColor: 'from-amber-500 to-orange-500',
-      description: 'On leave or departed',
+      title: 'Total Employees',
+      value: totalEmployees,
+      badge: 'All staff',
+      badgeBg: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300',
+      icon: Users,
+      iconBg: 'bg-purple-50/80 dark:bg-purple-950/80 group-hover:bg-purple-600 group-hover:text-white',
+      iconColor: 'text-purple-600 dark:text-purple-400',
+      accentGlow: 'hover:border-purple-300 dark:hover:border-purple-800 hover:shadow-purple-500/10',
+      barColor: 'from-purple-500 to-pink-500',
+      description: 'Staff directory members',
     },
     {
-      title: 'Full-Time Staff',
-      value: fullTimeStaff,
-      badge: `${fullTimePercent}% ratio`,
+      title: 'Deployment Rate',
+      value: `${allocationPercent}%`,
+      badge: `${allocatedCount}/${totalAssets} active`,
       badgeBg: 'bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300',
-      icon: Briefcase,
+      icon: Laptop,
       iconBg: 'bg-blue-50/80 dark:bg-blue-950/80 group-hover:bg-blue-600 group-hover:text-white',
       iconColor: 'text-blue-600 dark:text-blue-400',
       accentGlow: 'hover:border-blue-300 dark:hover:border-blue-800 hover:shadow-blue-500/10',
-      barColor: 'from-blue-500 to-blue-00',
-      description: 'Permanent employment status',
+      barColor: 'from-blue-500 to-cyan-500',
+      description: 'Asset utilization efficiency',
     },
   ];
 
@@ -96,7 +99,7 @@ export const EmployeeCards: React.FC = () => {
               <div className="space-y-1">
                 <div className="flex items-baseline justify-between">
                   <div className="text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors duration-300">
-                    {item.value.toLocaleString()}
+                    {typeof item.value === 'number' ? item.value.toLocaleString() : item.value}
                   </div>
                   <span
                     className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${item.badgeBg}`}
@@ -117,5 +120,4 @@ export const EmployeeCards: React.FC = () => {
   );
 };
 
-export default EmployeeCards;
-
+export default AllocationCards;
