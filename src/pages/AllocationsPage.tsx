@@ -188,17 +188,9 @@ export function AllocationsPage() {
                     <td className="py-3.5 px-4">
                       {asset.assignedTo ? (
                         <div className="flex items-center gap-2.5">
-                          {asset.assignedTo.avatar ? (
-                            <img
-                              src={asset.assignedTo.avatar}
-                              alt={asset.assignedTo.name}
-                              className="size-8 rounded-full object-cover shrink-0"
-                            />
-                          ) : (
-                            <div className="size-8 rounded-full bg-[#4C40F7]/10 text-[#4C40F7] font-bold text-xs flex items-center justify-center shrink-0">
-                              {asset.assignedTo.name?.[0]}
-                            </div>
-                          )}
+                          <div className="size-8 rounded-full bg-[#4C40F7]/10 text-[#4C40F7] font-bold text-xs flex items-center justify-center shrink-0 select-none">
+                            {asset.assignedTo.name?.trim().charAt(0).toUpperCase() || 'U'}
+                          </div>
                           <div>
                             <div className="font-bold text-slate-900 dark:text-white">
                               {asset.assignedTo.name}

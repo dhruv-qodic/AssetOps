@@ -31,12 +31,12 @@ export type AssetLocation =
 export interface AssignedEmployee {
   id: string;
   name: string;
-  employeeId: string;
+  employeeId?: string;
   email?: string;
   avatar?: string;
   department?: string;
   assignedDate?: string;
-  position?: string
+  position?: string;
 }
 
 export interface Asset {
