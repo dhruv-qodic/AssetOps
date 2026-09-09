@@ -11,29 +11,66 @@ import { AssetStatusBadge } from './AssetStatusBadge';
 import { AssetDeviceIcon } from './AssetDeviceIcon';
 import { AssetRowActions } from './AssetRowActions';
 import type { Asset } from '@/types/asset';
-import { PackageSearch } from 'lucide-react';
+import { Package, PackageSearch } from 'lucide-react';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
+import EmptyState from '@/components/common/EmptyState';
 
 interface AssetTableProps {
   assets: Asset[];
+  isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  onClearFilters?: () => void;
+  onAddAsset?: () => void;
 }
 
-export const AssetTable: React.FC<AssetTableProps> = ({ assets }) => {
-  if (assets.length === 0) {
+export const AssetTable: React.FC<AssetTableProps> = ({
+  assets,
+  isLoading = false,
+  error = null,
+  onRetry,
+  onClearFilters,
+  onAddAsset,
+}) => {
+  // 1. Loading State (with asset-related icon integrated into loader)
+  if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-[#4C40F7] mb-3">
-          <PackageSearch className="size-7" />
-        </div>
-        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
-          No assets found
-        </h3>
-        <p className="text-xs text-slate-500 max-w-sm mt-1">
-          No assets match your active search or filter criteria. Try clearing
-          filters or add a new asset.
-        </p>
-      </div>
+      <LoadingState
+        icon={Package}
+        title="Loading assets..."
+        description="Please wait while we retrieve the latest asset inventory."
+      />
     );
   }
+
+  // 2. Error State
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load assets"
+        message={error}
+        onRetry={onRetry}
+      />
+    );
+  }
+
+  // 3. Empty State
+  if (assets.length === 0) {
+    return (
+      <EmptyState
+        icon={PackageSearch}
+        title="No assets found"
+        description="No assets match your active search or filter criteria. Try clearing filters or add a new asset."
+        secondaryActionLabel={onClearFilters ? "Clear filters" : undefined}
+        onSecondaryAction={onClearFilters}
+        actionLabel={onAddAsset ? "Add Asset" : undefined}
+        onAction={onAddAsset}
+      />
+    );
+  }
+
+  // 4. Success State (Data Table)
 
   return (
     <div className="overflow-x-auto">

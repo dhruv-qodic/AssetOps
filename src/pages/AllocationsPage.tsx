@@ -11,8 +11,36 @@ import { Pagination } from '@/components/common/Pagination';
 import { Layers, Plus } from 'lucide-react';
 
 export function AllocationsPage() {
-  const { assets, openAllocateModal } = useAssetStore();
-  const { employees } = useEmployeeStore();
+  const {
+    assets,
+    openAllocateModal,
+    isLoading: isAssetLoading,
+    error: assetError,
+    reloadAssets,
+  } = useAssetStore();
+  const {
+    employees,
+    isLoading: isEmpLoading,
+    error: empError,
+    reloadEmployees,
+  } = useEmployeeStore();
+
+  const isLoading = isAssetLoading || isEmpLoading;
+  const error = assetError || empError;
+
+  const handleRetry = () => {
+    reloadAssets();
+    reloadEmployees();
+  };
+
+  const handleOpenNewAllocation = () => {
+    const availableAsset = assets.find((a) => a.status === 'Available');
+    if (availableAsset) {
+      openAllocateModal(availableAsset);
+    } else if (assets.length > 0) {
+      openAllocateModal(assets[0]);
+    }
+  };
 
   // Filter and Pagination States
   const [search, setSearch] = useState('');
@@ -131,6 +159,8 @@ export function AllocationsPage() {
     safePage * pageSize,
   );
 
+  const showPagination = !isLoading && !error && totalFiltered > 0;
+
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full text-left">
       {/* 1. Page Header with Title, Subtitle, and New Allocation Action */}
@@ -147,14 +177,7 @@ export function AllocationsPage() {
 
         <Button
           type="button"
-          onClick={() => {
-            const availableAsset = assets.find((a) => a.status === 'Available');
-            if (availableAsset) {
-              openAllocateModal(availableAsset);
-            } else if (assets.length > 0) {
-              openAllocateModal(assets[0]);
-            }
-          }}
+          onClick={handleOpenNewAllocation}
           className="h-10 px-5 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm shadow-indigo-600/20 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
         >
           <Plus className="size-4 stroke-[2.5]" />
@@ -197,22 +220,31 @@ export function AllocationsPage() {
             employees={employees}
           />
 
-          {/* Allocations Data Table */}
+          {/* Allocations Data Table with Loading -> Error -> Empty -> Success States */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-            <AllocationTable allocations={paginatedAllocations} />
+            <AllocationTable
+              allocations={paginatedAllocations}
+              isLoading={isLoading}
+              error={error}
+              onRetry={handleRetry}
+              onClearFilters={handleClearFilters}
+              onNewAllocation={handleOpenNewAllocation}
+            />
           </div>
 
           {/* Common Reusable Pagination Component */}
-          <Pagination
-            totalFiltered={totalFiltered}
-            startIndex={startIndex}
-            endIndex={endIndex}
-            totalPages={totalPages}
-            currentPage={safePage}
-            onPageChange={setCurrentPage}
-            entityLabel="allocations"
-            className="px-2 pt-3 border-t border-slate-100 dark:border-slate-800"
-          />
+          {showPagination && (
+            <Pagination
+              totalFiltered={totalFiltered}
+              startIndex={startIndex}
+              endIndex={endIndex}
+              totalPages={totalPages}
+              currentPage={safePage}
+              onPageChange={setCurrentPage}
+              entityLabel="allocations"
+              className="px-2 pt-3 border-t border-slate-100 dark:border-slate-800"
+            />
+          )}
         </div>
 
         {/* Right Column: Allocation Summary Card with Donut Chart */}

@@ -18,6 +18,7 @@ interface AssetStoreState {
   assets: Asset[];
   filters: AssetFilters;
   isLoading: boolean;
+  error: string | null;
   selectedAsset: Asset | null;
 
   // Modal dialog states
@@ -27,6 +28,11 @@ interface AssetStoreState {
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
   isAllocateModalOpen: boolean;
+
+  // State actions
+  setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reloadAssets: () => Promise<void>;
 
   // Filter & Pagination actions
   setSearch: (search: string) => void;
@@ -73,6 +79,7 @@ export const useAssetStore = create<AssetStoreState>()(
       assets: MOCK_ASSETS,
       filters: DEFAULT_ASSET_FILTERS,
       isLoading: false,
+      error: null,
       selectedAsset: null,
 
       isAddModalOpen: false,
@@ -81,6 +88,20 @@ export const useAssetStore = create<AssetStoreState>()(
       isViewModalOpen: false,
       isImportModalOpen: false,
       isAllocateModalOpen: false,
+
+      // State Actions
+      setIsLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+      reloadAssets: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // Simulate async fetch / store refresh
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          set({ isLoading: false, error: null });
+        } catch {
+          set({ isLoading: false, error: 'Failed to reload assets. Please try again.' });
+        }
+      },
 
       // Filter Actions
       setSearch: (search) =>

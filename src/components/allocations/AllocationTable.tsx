@@ -11,29 +11,67 @@ import type { Asset } from '@/types/asset';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { AllocationRowActions } from './AllocationRowActions';
 import { Layers } from 'lucide-react';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
+import EmptyState from '@/components/common/EmptyState';
 
 interface AllocationTableProps {
   allocations: Asset[];
+  isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  onClearFilters?: () => void;
+  onNewAllocation?: () => void;
 }
 
-export const AllocationTable: React.FC<AllocationTableProps> = ({ allocations }) => {
+export const AllocationTable: React.FC<AllocationTableProps> = ({
+  allocations,
+  isLoading = false,
+  error = null,
+  onRetry,
+  onClearFilters,
+  onNewAllocation,
+}) => {
   const { employees } = useEmployeeStore();
 
-  if (allocations.length === 0) {
+  // 1. Loading State (with asset-related icon integrated into loader)
+  if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-[#4C40F7] mb-3">
-          <Layers className="size-7" />
-        </div>
-        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
-          No allocations found
-        </h3>
-        <p className="text-xs text-slate-500 max-w-sm mt-1">
-          No asset allocations match your filter or search criteria. Try adjusting your filters.
-        </p>
-      </div>
+      <LoadingState
+        icon={Layers}
+        title="Loading asset allocations..."
+        description="Please wait while we retrieve allocation mappings."
+      />
     );
   }
+
+  // 2. Error State
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load allocations"
+        message={error}
+        onRetry={onRetry}
+      />
+    );
+  }
+
+  // 3. Empty State
+  if (allocations.length === 0) {
+    return (
+      <EmptyState
+        icon={Layers}
+        title="No allocations found"
+        description="No asset allocations match your filter or search criteria. Try adjusting your filters or create a new allocation."
+        secondaryActionLabel={onClearFilters ? "Clear filters" : undefined}
+        onSecondaryAction={onClearFilters}
+        actionLabel={onNewAllocation ? "New Allocation" : undefined}
+        onAction={onNewAllocation}
+      />
+    );
+  }
+
+  // 4. Success State (Data Table)
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'May 10, 2024';
