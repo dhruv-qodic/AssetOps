@@ -10,29 +10,66 @@ import {
 import { EmployeeStatusBadge } from './EmployeeStatusBadge';
 import { EmployeeRowActions } from './EmployeeRowActions';
 import type { Employee } from '@/types/employee';
-import { UserX } from 'lucide-react';
+import { Users, UserX } from 'lucide-react';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
+import EmptyState from '@/components/common/EmptyState';
 
 interface EmployeeTableProps {
   employees: Employee[];
+  isLoading?: boolean;
+  error?: string | null;
+  onRetry?: () => void;
+  onClearFilters?: () => void;
+  onAddEmployee?: () => void;
 }
 
-export const EmployeeTable: React.FC<EmployeeTableProps> = ({ employees }) => {
-  if (employees.length === 0) {
+export const EmployeeTable: React.FC<EmployeeTableProps> = ({
+  employees,
+  isLoading = false,
+  error = null,
+  onRetry,
+  onClearFilters,
+  onAddEmployee,
+}) => {
+  // 1. Loading State (with asset/employee-related icon in loader)
+  if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="flex size-14 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-[#4C40F7] mb-3">
-          <UserX className="size-7" />
-        </div>
-        <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
-          No employees found
-        </h3>
-        <p className="text-xs text-slate-500 max-w-sm mt-1">
-          No employees match your active search or filter criteria. Try clearing
-          filters or adding a new employee.
-        </p>
-      </div>
+      <LoadingState
+        icon={Users}
+        title="Loading employee directory..."
+        description="Please wait while we retrieve the latest employee records."
+      />
     );
   }
+
+  // 2. Error State
+  if (error) {
+    return (
+      <ErrorState
+        title="Failed to load employee directory"
+        message={error}
+        onRetry={onRetry}
+      />
+    );
+  }
+
+  // 3. Empty State
+  if (employees.length === 0) {
+    return (
+      <EmptyState
+        icon={UserX}
+        title="No employees found"
+        description="No employees match your active search or filter criteria. Try clearing filters or adding a new employee."
+        secondaryActionLabel={onClearFilters ? "Clear filters" : undefined}
+        onSecondaryAction={onClearFilters}
+        actionLabel={onAddEmployee ? "Add Employee" : undefined}
+        onAction={onAddEmployee}
+      />
+    );
+  }
+
+  // 4. Success State (Data Table)
 
   return (
     <div className="overflow-x-auto">
