@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { X, FileText, Download, CheckCircle2, Loader2, Calendar, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
+import { getAssetDepartment } from '@/utils/assetDepartment';
 
 interface GenerateReportModalProps {
   isOpen: boolean;
@@ -17,6 +20,8 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   timeRange,
   department,
 }) => {
+  const { assets } = useAssetStore();
+  const { employees } = useEmployeeStore();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [format, setFormat] = useState<'csv' | 'pdf'>('pdf');
@@ -28,15 +33,46 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
     setTimeout(() => {
       setIsGenerating(false);
       setIsCompleted(true);
-    }, 1200);
+    }, 1000);
   };
 
   const handleDownload = () => {
-    // Generate mock CSV / simulated download
-    const filename = `${reportType.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.${format}`;
-    const dummyContent = `Report: ${reportType}\nGenerated: ${new Date().toISOString()}\nTime Range: ${timeRange}\nDepartment: ${department}\nTotal Assets: 1,248\nAllocated: 982\nAvailable: 266\nMaintenance: 156`;
+    // Filter assets matching selected department
+    const exportAssets = department === 'All'
+      ? assets
+      : assets.filter((a) => getAssetDepartment(a, employees).toLowerCase() === department.toLowerCase());
 
-    const blob = new Blob([dummyContent], { type: format === 'csv' ? 'text/csv' : 'application/pdf' });
+    const filename = `${reportType.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.${format}`;
+
+    let content: string;
+    if (format === 'csv') {
+      const headers = ['Asset ID', 'Name', 'Category', 'Status', 'Location', 'Department', 'Assigned To', 'Purchase Date', 'Cost'];
+      const rows = exportAssets.map((a) => [
+        `"${a.assetId}"`,
+        `"${a.name}"`,
+        `"${a.category}"`,
+        `"${a.status}"`,
+        `"${a.location}"`,
+        `"${getAssetDepartment(a, employees)}"`,
+        `"${a.assignedTo?.name || 'Unassigned'}"`,
+        `"${a.purchaseDate}"`,
+        `"${a.purchaseCost || 0}"`,
+      ].join(','));
+      content = [headers.join(','), ...rows].join('\n');
+    } else {
+      content = `=====================================================
+AssetOps Operational Report: ${reportType}
+Generated: ${new Date().toLocaleString()}
+Filter Scope: Department = ${department} | Time Range = ${timeRange}
+Total Scope Assets: ${exportAssets.length}
+Allocated: ${exportAssets.filter((a) => a.status === 'Allocated').length}
+Available: ${exportAssets.filter((a) => a.status === 'Available').length}
+Maintenance: ${exportAssets.filter((a) => a.status === 'Maintenance').length}
+=====================================================
+${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.status} -> ${a.assignedTo?.name || 'Unassigned'} [${getAssetDepartment(a, employees)}]`).join('\n')}`;
+    }
+
+    const blob = new Blob([content], { type: format === 'csv' ? 'text/csv' : 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -62,7 +98,7 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-[#4C40F7]">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
               <FileText className="size-5" />
             </div>
             <div>
@@ -127,7 +163,7 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
                   onClick={() => setFormat('pdf')}
                   className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
                     format === 'pdf'
-                      ? 'border-[#4C40F7] bg-indigo-50/70 dark:bg-indigo-950/40 text-[#4C40F7]'
+                      ? 'border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -140,7 +176,7 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
                   onClick={() => setFormat('csv')}
                   className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
                     format === 'csv'
-                      ? 'border-[#4C40F7] bg-indigo-50/70 dark:bg-indigo-950/40 text-[#4C40F7]'
+                      ? 'border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -164,7 +200,7 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
                 type="button"
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="h-10 px-5 rounded-xl bg-[#4C40F7] hover:bg-[#3f34e3] text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
+                className="h-10 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm shadow-md shadow-blue-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
               >
                 {isGenerating ? (
                   <>
@@ -201,7 +237,7 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
               <button
                 type="button"
                 onClick={handleDownload}
-                className="h-10 px-5 rounded-xl bg-[#4C40F7] hover:bg-[#3f34e3] text-white font-medium text-xs sm:text-sm shadow-md shadow-indigo-600/25 flex items-center justify-center gap-2 cursor-pointer"
+                className="h-10 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm shadow-md shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Download className="size-4" />
                 <span>Download File</span>

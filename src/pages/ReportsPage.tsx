@@ -36,23 +36,27 @@ export function ReportsPage() {
       />
 
       {/* KPI Metrics Summary Row */}
-      <ReportsKpiCards departmentFilter={department} />
+      <ReportsKpiCards
+        departmentFilter={department}
+        timeRange={timeRange}
+        reportType={reportType}
+      />
 
       {/* Visual Analytics Grid (3 Charts Matching Reference Layout) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
         {/* Left: Asset Category Distribution (Donut Chart) */}
         <div className="lg:col-span-4 xl:col-span-3 flex flex-col">
-          <AssetCategoryDistributionChart />
+          <AssetCategoryDistributionChart departmentFilter={department} />
         </div>
 
         {/* Center: Asset Growth Trend (Area / Line Chart) */}
         <div className="lg:col-span-8 xl:col-span-6 flex flex-col">
-          <AssetGrowthTrendChart />
+          <AssetGrowthTrendChart timeRange={timeRange} />
         </div>
 
         {/* Right: Top Departments Breakdown */}
         <div className="lg:col-span-12 xl:col-span-3 flex flex-col">
-          <TopDepartmentsChart />
+          <TopDepartmentsChart selectedDepartment={department} />
         </div>
       </div>
 
