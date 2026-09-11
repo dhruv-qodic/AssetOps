@@ -11,7 +11,7 @@ import { AssetStatusBadge } from './AssetStatusBadge';
 import { AssetDeviceIcon } from './AssetDeviceIcon';
 import { AssetRowActions } from './AssetRowActions';
 import type { Asset } from '@/types/asset';
-import { Package, PackageSearch } from 'lucide-react';
+import { DollarSign, MapPin, Package, PackageSearch } from 'lucide-react';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
@@ -148,7 +148,8 @@ export const AssetTable: React.FC<AssetTableProps> = ({
               {/* Location */}
               <TableCell>
                 {asset.location ? (
-                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                  <span className="font-medium text-slate-800 dark:text-slate-200 flex gap-2 items-center">
+                    <MapPin className="size-3.5 text-slate-400 shrink-0" />
                     {asset.location}
                   </span>
                 ) : (
@@ -158,7 +159,10 @@ export const AssetTable: React.FC<AssetTableProps> = ({
 
               {/*Cost */}
               <TableCell>
-                {asset.purchaseCost}
+                <span className="font-medium text-slate-800 dark:text-slate-200 flex gap-2 items-center">
+                  <DollarSign className="size-3.5 text-slate-400 shrink-0" />
+                  {asset.purchaseCost}
+                </span>
               </TableCell>
 
               {/* Assigned To */}

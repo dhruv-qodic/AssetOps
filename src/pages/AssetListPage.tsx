@@ -2,6 +2,7 @@ import { useAssetStore } from '@/store/useAssetStore';
 import AssetHeader from '@/components/assets/AssetHeader';
 import AssetFiltersBar from '@/components/assets/AssetFiltersBar';
 import AssetTable from '@/components/assets/AssetTable';
+import AssetVisualizer from '@/components/assets/AssetVisualizer';
 import AssetPagination from '@/components/assets/AssetPagination';
 import AddAssetModal from '@/components/assets/AddAssetModal';
 import AssetDetailsModal from '@/components/assets/AssetDetailsModal';
@@ -18,9 +19,11 @@ export function AssetListPage() {
     reloadAssets,
     resetFilters,
     openAddModal,
+    viewMode,
   } = useAssetStore();
 
   const {
+    allFilteredAssets,
     paginatedAssets,
     totalFiltered,
     totalPages,
@@ -28,7 +31,7 @@ export function AssetListPage() {
     endIndex,
   } = getFilteredAssets();
 
-  const showPagination = !isLoading && !error && totalFiltered > 0;
+  const showPagination = viewMode === 'table' && !isLoading && !error && totalFiltered > 0;
 
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-5 max-w-7xl mx-auto w-full">
@@ -38,19 +41,29 @@ export function AssetListPage() {
       {/* 2. Search & Filter Bar */}
       <AssetFiltersBar />
 
-      {/* 3. Assets Data Table Card Container */}
+      {/* 3. Assets Data View Container (Visualizer vs Paginated Table) */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-        {/* Table Content with Loading -> Error -> Empty -> Success States */}
-        <AssetTable
-          assets={paginatedAssets}
-          isLoading={isLoading}
-          error={error}
-          onRetry={reloadAssets}
-          onClearFilters={resetFilters}
-          onAddAsset={openAddModal}
-        />
+        {viewMode === 'virtualized' ? (
+          <AssetVisualizer
+            assets={allFilteredAssets}
+            isLoading={isLoading}
+            error={error}
+            onRetry={reloadAssets}
+            onClearFilters={resetFilters}
+            onAddAsset={openAddModal}
+          />
+        ) : (
+          <AssetTable
+            assets={paginatedAssets}
+            isLoading={isLoading}
+            error={error}
+            onRetry={reloadAssets}
+            onClearFilters={resetFilters}
+            onAddAsset={openAddModal}
+          />
+        )}
 
-        {/* Pagination Footer */}
+        {/* Pagination Footer (Only displayed in Paginated Table Mode) */}
         {showPagination && (
           <AssetPagination
             totalFiltered={totalFiltered}
