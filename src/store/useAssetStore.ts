@@ -54,6 +54,7 @@ interface AssetStoreState {
 
   // Query helpers
   getFilteredAssets: () => {
+    allFilteredAssets: Asset[];
     paginatedAssets: Asset[];
     totalFiltered: number;
     totalPages: number;
@@ -71,7 +72,35 @@ interface AssetStoreState {
   openImportModal: () => void;
   openAllocateModal: (asset: Asset) => void;
   closeModals: () => void;
+
+  viewMode: 'virtualized' | 'table';
+  setViewMode: (mode: 'virtualized' | 'table') => void;
 }
+
+const safeStorage = {
+  getItem: (name: string) => {
+    try {
+      const item = localStorage.getItem(name);
+      return item ? JSON.parse(item) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: unknown) => {
+    try {
+      localStorage.setItem(name, JSON.stringify(value));
+    } catch {
+      // Gracefully handle storage quota limits for large datasets
+    }
+  },
+  removeItem: (name: string) => {
+    try {
+      localStorage.removeItem(name);
+    } catch {
+      // ignore
+    }
+  },
+};
 
 export const useAssetStore = create<AssetStoreState>()(
   persist(
@@ -88,6 +117,9 @@ export const useAssetStore = create<AssetStoreState>()(
       isViewModalOpen: false,
       isImportModalOpen: false,
       isAllocateModalOpen: false,
+
+      viewMode: 'virtualized',
+      setViewMode: (mode) => set({ viewMode: mode }),
 
       // State Actions
       setIsLoading: (loading) => set({ isLoading: loading }),
@@ -322,6 +354,7 @@ export const useAssetStore = create<AssetStoreState>()(
         const paginatedAssets = filtered.slice(startIndex, endIndex);
 
         return {
+          allFilteredAssets: filtered,
           paginatedAssets,
           totalFiltered,
           totalPages,
@@ -365,7 +398,9 @@ export const useAssetStore = create<AssetStoreState>()(
     }),
     {
       name: 'assetops_assets_store_v1',
+      storage: safeStorage,
       partialize: (state) => ({
+        viewMode: state.viewMode,
         assets: state.assets,
       }),
     },

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Check, X, Tag, Activity, MapPin, ArrowUpDown } from 'lucide-react';
+import { Search, ChevronDown, Check, X, Tag, Activity, MapPin, ArrowUpDown, Zap, Table2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAssetStore } from '@/store/useAssetStore';
 import {
@@ -100,8 +100,17 @@ function FilterDropdown<T extends string>({
 }
 
 export const AssetFiltersBar: React.FC = () => {
-  const { filters, setSearch, setCategory, setStatus, setLocation, setSortBy, resetFilters } =
-    useAssetStore();
+  const {
+    filters,
+    setSearch,
+    setCategory,
+    setStatus,
+    setLocation,
+    setSortBy,
+    resetFilters,
+    viewMode,
+    setViewMode,
+  } = useAssetStore();
 
   const categoryOptions = [
     { label: 'All', value: 'All' as AssetCategory | 'All' },
@@ -127,27 +136,61 @@ export const AssetFiltersBar: React.FC = () => {
 
   return (
     <div className="space-y-3.5 select-none">
-      {/* Search Input Bar */}
-      <div className="relative">
-        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-          <Search className="size-4.5" />
+      {/* Search Input Bar + View Mode Toggle Buttons */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="relative flex-1">
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            <Search className="size-4.5" />
+          </div>
+          <Input
+            type="text"
+            value={filters.search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search assets by name, tag, serial..."
+            className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
+          />
+          {filters.search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors"
+            >
+              <X className="size-4" />
+            </button>
+          )}
         </div>
-        <Input
-          type="text"
-          value={filters.search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search assets by name, tag, serial..."
-          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
-        />
-        {filters.search && (
+
+        {/* Visualizer and Paginator Toggle Buttons */}
+        <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0 self-end sm:self-auto">
           <button
             type="button"
-            onClick={() => setSearch('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors"
+            onClick={() => setViewMode?.('virtualized')}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+              viewMode === 'virtualized'
+                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-2xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+            )}
+            title="Virtualized Grid View"
           >
-            <X className="size-4" />
+            <Zap className="size-3.5 " />
+            <span>Visualizer</span>
           </button>
-        )}
+          <button
+            type="button"
+            onClick={() => setViewMode?.('table')}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+              viewMode === 'table'
+                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-2xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+            )}
+            title="Paginated Table View"
+          >
+            <Table2 className="size-3.5" />
+            <span>Paginator</span>
+          </button>
+        </div>
       </div>
 
       {/* 4 Filter Dropdowns in a clean row */}
