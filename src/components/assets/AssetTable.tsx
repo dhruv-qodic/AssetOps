@@ -78,22 +78,28 @@ export const AssetTable: React.FC<AssetTableProps> = ({
         <TableHeader>
           <TableRow className="border-b border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-slate-900/80">
             <TableHead className="w-[120px] pl-6 font-bold text-slate-700 dark:text-slate-300">
-              Asset ID
+              ASSET ID
             </TableHead>
             <TableHead className="min-w-[200px] font-bold text-slate-700 dark:text-slate-300">
-              Name
+              NAME
             </TableHead>
             <TableHead className="w-[140px] font-bold text-slate-700 dark:text-slate-300">
-              Category
+              CATEGORY
             </TableHead>
             <TableHead className="w-[130px] font-bold text-slate-700 dark:text-slate-300">
-              Status
+              STATUS
+            </TableHead>
+            <TableHead className="w-[130px] font-bold text-slate-700 dark:text-slate-300">
+              LOCATION
+            </TableHead>
+            <TableHead className="w-[130px] font-bold text-slate-700 dark:text-slate-300">
+              COST
             </TableHead>
             <TableHead className="min-w-[150px] font-bold text-slate-700 dark:text-slate-300">
-              Assigned To
+              ASSIGNED TO
             </TableHead>
             <TableHead className="w-[80px] text-right pr-6 font-bold text-slate-700 dark:text-slate-300">
-              Actions
+              ACTIONS
             </TableHead>
           </TableRow>
         </TableHeader>
@@ -137,6 +143,22 @@ export const AssetTable: React.FC<AssetTableProps> = ({
               {/* Status */}
               <TableCell>
                 <AssetStatusBadge status={asset.status} />
+              </TableCell>
+
+              {/* Location */}
+              <TableCell>
+                {asset.location ? (
+                  <span className="font-medium text-slate-800 dark:text-slate-200">
+                    {asset.location}
+                  </span>
+                ) : (
+                  <span className="text-slate-400 font-normal">-</span>
+                )}
+              </TableCell>
+
+              {/*Cost */}
+              <TableCell>
+                {asset.purchaseCost}
               </TableCell>
 
               {/* Assigned To */}
