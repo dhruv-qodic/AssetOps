@@ -18,6 +18,7 @@ interface AssetStoreState {
   assets: Asset[];
   filters: AssetFilters;
   isLoading: boolean;
+  error: string | null;
   selectedAsset: Asset | null;
 
   // Modal dialog states
@@ -27,6 +28,11 @@ interface AssetStoreState {
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
   isAllocateModalOpen: boolean;
+
+  // State actions
+  setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reloadAssets: () => Promise<void>;
 
   // Filter & Pagination actions
   setSearch: (search: string) => void;
@@ -48,6 +54,7 @@ interface AssetStoreState {
 
   // Query helpers
   getFilteredAssets: () => {
+    allFilteredAssets: Asset[];
     paginatedAssets: Asset[];
     totalFiltered: number;
     totalPages: number;
@@ -65,7 +72,35 @@ interface AssetStoreState {
   openImportModal: () => void;
   openAllocateModal: (asset: Asset) => void;
   closeModals: () => void;
+
+  viewMode: 'virtualized' | 'table';
+  setViewMode: (mode: 'virtualized' | 'table') => void;
 }
+
+const safeStorage = {
+  getItem: (name: string) => {
+    try {
+      const item = localStorage.getItem(name);
+      return item ? JSON.parse(item) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: unknown) => {
+    try {
+      localStorage.setItem(name, JSON.stringify(value));
+    } catch {
+      // Gracefully handle storage quota limits for large datasets
+    }
+  },
+  removeItem: (name: string) => {
+    try {
+      localStorage.removeItem(name);
+    } catch {
+      // ignore
+    }
+  },
+};
 
 export const useAssetStore = create<AssetStoreState>()(
   persist(
@@ -73,6 +108,7 @@ export const useAssetStore = create<AssetStoreState>()(
       assets: MOCK_ASSETS,
       filters: DEFAULT_ASSET_FILTERS,
       isLoading: false,
+      error: null,
       selectedAsset: null,
 
       isAddModalOpen: false,
@@ -81,6 +117,23 @@ export const useAssetStore = create<AssetStoreState>()(
       isViewModalOpen: false,
       isImportModalOpen: false,
       isAllocateModalOpen: false,
+
+      viewMode: 'virtualized',
+      setViewMode: (mode) => set({ viewMode: mode }),
+
+      // State Actions
+      setIsLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+      reloadAssets: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // Simulate async fetch / store refresh
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          set({ isLoading: false, error: null });
+        } catch {
+          set({ isLoading: false, error: 'Failed to reload assets. Please try again.' });
+        }
+      },
 
       // Filter Actions
       setSearch: (search) =>
@@ -301,6 +354,7 @@ export const useAssetStore = create<AssetStoreState>()(
         const paginatedAssets = filtered.slice(startIndex, endIndex);
 
         return {
+          allFilteredAssets: filtered,
           paginatedAssets,
           totalFiltered,
           totalPages,
@@ -344,7 +398,9 @@ export const useAssetStore = create<AssetStoreState>()(
     }),
     {
       name: 'assetops_assets_store_v1',
+      storage: safeStorage,
       partialize: (state) => ({
+        viewMode: state.viewMode,
         assets: state.assets,
       }),
     },

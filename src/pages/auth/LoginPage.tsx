@@ -16,7 +16,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import loginIllustration from '@/assets/login-illustration.jpg';
 import { useAuthStore } from '@/store/useAuthStore';
 import { loginSchema, type LoginFormData } from '@/schemas/auth.schema';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -135,13 +134,35 @@ function LoginPage() {
             </div>
           </div>
 
-          {/* Larger, Prominent 3D Tech Illustration */}
-          <div className="flex-1 flex items-start mt-8 justify-center">
-            <img
-              src={loginIllustration}
-              alt="AssetOps Smart 3D Visualization"
-              className="w-full max-w-[360px] lg:max-w-[420px] max-h-[44vh] object-contain drop-shadow-[0_20px_35px_rgba(0,140,255,0.35)] rounded-2xl [mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)] [-webkit-mask-image:radial-gradient(ellipse_at_center,black_75%,transparent_100%)]"
-            />
+          {/* Prominent 3D Tech & Asset Analytics Hero Visualization */}
+          <div className="flex-1 flex items-center justify-center mt-6">
+            <div className="relative w-full max-w-[380px] p-6 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="size-3 rounded-full bg-emerald-400 animate-ping" />
+                  <span className="text-xs font-semibold text-white/90">Live System Status</span>
+                </div>
+                <span className="text-[11px] font-mono text-indigo-200 bg-indigo-500/30 px-2 py-0.5 rounded-full border border-indigo-400/30">10,000 Assets Active</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex flex-col gap-1">
+                  <span className="text-[11px] text-white/70">System Health</span>
+                  <span className="text-sm font-bold text-white">99.98%</span>
+                </div>
+                <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex flex-col gap-1">
+                  <span className="text-[11px] text-white/70">Grid Speed</span>
+                  <span className="text-sm font-bold text-emerald-300">60 FPS</span>
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-xl border border-white/15 flex items-center justify-between text-xs text-white">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="size-4 text-emerald-400" />
+                  <span className="font-medium">Enterprise Security Active</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

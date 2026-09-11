@@ -1,6 +1,7 @@
-import type { Asset } from '@/types/asset';
+import type { Asset, AssetCategory, AssetStatus } from '@/types/asset';
 
-export const MOCK_ASSETS: Asset[] = [
+// 1. Core initial assets for deterministic test compatibility
+const INITIAL_ASSETS: Asset[] = [
   {
     id: 'ast_001',
     assetId: 'A1001',
@@ -266,3 +267,149 @@ export const MOCK_ASSETS: Asset[] = [
     updatedAt: '2024-02-18T14:30:00Z',
   },
 ];
+
+// Helper data templates for procedural 10,000 item generation
+const CATEGORY_TEMPLATES: Record<AssetCategory, { names: string[]; models: string[]; avgCost: number }> = {
+  Laptop: {
+    names: ['MacBook Pro 14"', 'MacBook Air 15"', 'Dell XPS 15', 'Lenovo ThinkPad P1', 'HP Spectre x360', 'Asus ROG Zephyrus', 'Surface Laptop 5'],
+    models: ['M3 Max 64GB', 'M2 16GB/512GB', 'Core i9-13900H', 'Ryzen 7 7840HS', 'Core i7 32GB', 'Ultra 7 155H'],
+    avgCost: 1850,
+  },
+  Mobile: {
+    names: ['iPhone 15 Pro', 'iPhone 14', 'Samsung Galaxy S24', 'Google Pixel 8 Pro', 'Samsung Galaxy Z Fold 5', 'iPhone SE'],
+    models: ['256GB Titanium', '128GB Midnight', '512GB Onyx', '128GB Bay', '256GB Cream', '64GB Starlight'],
+    avgCost: 899,
+  },
+  Monitor: {
+    names: ['Dell UltraSharp 32"', 'Apple Studio Display', 'LG Ergo 27"', 'ASUS ProArt 27"', 'BenQ DesignVue 32"', 'Samsung Odyssey G9'],
+    models: ['4K USB-C Hub', '5K Retina', 'QHD IPS', '4K Color Accurate', 'Thunderbolt 4', 'Dual QHD Curved'],
+    avgCost: 750,
+  },
+  Accessories: {
+    names: ['Logitech MX Keys', 'Keychron Q1 Max', 'Apple Magic Trackpad', 'CalDigit TS4 Dock', 'Anker 778 Thunderbolt Dock', 'Sony WH-1000XM5'],
+    models: ['Wireless Illuminated', 'Mechanical Gateron', 'Black Multi-Touch', '18-in-1 98W', 'USB-C Docking', 'Noise Canceling'],
+    avgCost: 180,
+  },
+  Tablet: {
+    names: ['iPad Pro 11"', 'iPad Air 10.9"', 'Samsung Galaxy Tab S9', 'Microsoft Surface Pro 9'],
+    models: ['M2 128GB Cellular', 'M1 256GB Wi-Fi', '12.4" 256GB', 'SQ3 5G 16GB'],
+    avgCost: 920,
+  },
+  Desktop: {
+    names: ['Mac Studio', 'Mac mini', 'Dell Precision 3660', 'HP Z2 Tower', 'Custom Workstation PC'],
+    models: ['M2 Ultra 64GB', 'M2 Pro 32GB', 'Core i9 64GB RTX 4080', 'Xeon w5-2455X', 'Ryzen Threadripper 64-Core'],
+    avgCost: 2800,
+  },
+  Audio: {
+    names: ['Jabra Speak 750', 'Sennheiser TeamConnect', 'Shure MV7 Podcaster', 'Bose QuietComfort Ultra'],
+    models: ['Full-Duplex Bluetooth', 'Ceiling Mic Array', 'USB/XLR Dynamic', 'Wireless Noise Canceling'],
+    avgCost: 350,
+  },
+  Networking: {
+    names: ['Cisco Catalyst 9300', 'Ubiquiti Dream Machine Pro', 'Aruba AP-535', 'Fortinet FortiGate 60F'],
+    models: ['48-Port PoE+ Switch', 'Enterprise Gateway', 'Wi-Fi 6 Access Point', 'Next-Gen Firewall'],
+    avgCost: 2100,
+  },
+  Other: {
+    names: ['Epson EcoTank Printer', 'APC Smart-UPS 1500', 'Logitech Rally Bar', 'YubiKey 5C NFC'],
+    models: ['Multifunction Wireless', '1500VA LCD 120V', 'All-in-One Video Bar', 'Hardware Security Key'],
+    avgCost: 420,
+  },
+};
+
+const LOCATIONS = ['Headquarters', 'New York Office', 'San Francisco', 'London Office', 'Remote'];
+const DEPARTMENTS = ['Engineering', 'Product Design', 'Marketing', 'Operations', 'Finance', 'Human Resources', 'Sales', 'IT Administration', 'QA & Compliance'];
+
+const FIRST_NAMES = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Sam', 'Chris', 'Pat', 'Dakota', 'Avery', 'Reese', 'Quinn', 'Skyler', 'Cameron'];
+const LAST_NAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson'];
+
+/**
+ * Procedurally generates `count` realistic asset seed objects.
+ * Guarantees high-performance seed creation while maintaining deterministic compatibility for the initial assets.
+ */
+export function generateAssetSeedData(count: number = 500): Asset[] {
+  const assets: Asset[] = [...INITIAL_ASSETS];
+  const categories = Object.keys(CATEGORY_TEMPLATES) as AssetCategory[];
+
+  for (let i = INITIAL_ASSETS.length + 1; i <= count; i++) {
+    const category = categories[(i * 7) % categories.length];
+    const template = CATEGORY_TEMPLATES[category];
+
+    const nameIndex = (i * 3) % template.names.length;
+    const modelIndex = (i * 5) % template.models.length;
+    const name = template.names[nameIndex];
+    const model = template.models[modelIndex];
+
+    // Status distribution: 48% Allocated, 32% Available, 12% Maintenance, 5% Retired, 3% Lost
+    const statusScore = (i * 13) % 100;
+    let status: AssetStatus = 'Available';
+    if (statusScore < 48) status = 'Allocated';
+    else if (statusScore < 80) status = 'Available';
+    else if (statusScore < 92) status = 'Maintenance';
+    else if (statusScore < 97) status = 'Retired';
+    else status = 'Lost';
+
+    const location = LOCATIONS[(i * 11) % LOCATIONS.length];
+    const assetIdNum = 1000 + i;
+    const assetId = `A${assetIdNum}`;
+    const id = `ast_${String(i).padStart(5, '0')}`;
+    const serialNumber = `${category.substring(0, 2).toUpperCase()}-${(i * 37) % 900000 + 100000}`;
+
+    // Dates
+    const year = 2021 + ((i * 2) % 4);
+    const month = String(((i * 3) % 12) + 1).padStart(2, '0');
+    const day = String(((i * 5) % 28) + 1).padStart(2, '0');
+    const purchaseDate = `${year}-${month}-${day}`;
+    const warrantyExpiry = `${year + 3}-${month}-${day}`;
+    const createdAt = `${purchaseDate}T09:00:00Z`;
+
+    // Pricing
+    const costVariance = ((i * 17) % 30) - 15;
+    const purchaseCost = Math.round(template.avgCost * (1 + costVariance / 100));
+
+    // Assigned Employee (if Allocated)
+    let assignedTo = null;
+    if (status === 'Allocated') {
+      const firstName = FIRST_NAMES[(i * 2) % FIRST_NAMES.length];
+      const lastName = LAST_NAMES[(i * 4) % LAST_NAMES.length];
+      const fullName = `${firstName} ${lastName}`;
+      const dept = DEPARTMENTS[(i * 3) % DEPARTMENTS.length];
+      const empId = `emp_${String((i % 500) + 1).padStart(3, '0')}`;
+
+      assignedTo = {
+        id: empId,
+        name: fullName,
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@company.com`,
+        department: dept,
+        assignedDate: `${year}-${month}-${day}`,
+      };
+    }
+
+    assets.push({
+      id,
+      assetId,
+      name,
+      model,
+      category,
+      status,
+      location,
+      assignedTo,
+      serialNumber,
+      purchaseDate,
+      purchaseCost,
+      warrantyExpiry,
+      specifications: {
+        Batch: `BATCH-${Math.floor(i / 100)}`,
+        Revision: `v${(i % 3) + 1}.0`,
+      },
+      notes: `Asset ${assetId} registered in inventory batch ${Math.floor(i / 100)}.`,
+      createdAt,
+      updatedAt: createdAt,
+    });
+  }
+
+  return assets;
+}
+
+// Generate the standard 10,000 mock assets dataset
+export const MOCK_ASSETS: Asset[] = generateAssetSeedData(500);

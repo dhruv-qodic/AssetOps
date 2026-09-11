@@ -10,7 +10,15 @@ import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 
 export function AssetListPage() {
-  const { getFilteredAssets, filters } = useAssetStore();
+  const {
+    getFilteredAssets,
+    filters,
+    isLoading,
+    error,
+    reloadAssets,
+    resetFilters,
+    openAddModal,
+  } = useAssetStore();
 
   const {
     paginatedAssets,
@@ -19,6 +27,8 @@ export function AssetListPage() {
     startIndex,
     endIndex,
   } = getFilteredAssets();
+
+  const showPagination = !isLoading && !error && totalFiltered > 0;
 
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-5 max-w-7xl mx-auto w-full">
@@ -30,17 +40,26 @@ export function AssetListPage() {
 
       {/* 3. Assets Data Table Card Container */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-        {/* Table Content */}
-        <AssetTable assets={paginatedAssets} />
+        {/* Table Content with Loading -> Error -> Empty -> Success States */}
+        <AssetTable
+          assets={paginatedAssets}
+          isLoading={isLoading}
+          error={error}
+          onRetry={reloadAssets}
+          onClearFilters={resetFilters}
+          onAddAsset={openAddModal}
+        />
 
         {/* Pagination Footer */}
-        <AssetPagination
-          totalFiltered={totalFiltered}
-          startIndex={startIndex}
-          endIndex={endIndex}
-          totalPages={totalPages}
-          currentPage={filters.page}
-        />
+        {showPagination && (
+          <AssetPagination
+            totalFiltered={totalFiltered}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalPages={totalPages}
+            currentPage={filters.page}
+          />
+        )}
       </div>
 
       {/* Modals & Dialogs */}
