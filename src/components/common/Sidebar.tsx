@@ -61,7 +61,15 @@ const allNavItems = [
 /**
  * Reusable Tooltip component for collapsed sidebar items on hover.
  */
-function SidebarTooltip({ label, show, children }: { label: string; show: boolean; children: React.ReactNode }) {
+function SidebarTooltip({
+  label,
+  show,
+  children,
+}: {
+  label: string;
+  show: boolean;
+  children: React.ReactNode;
+}) {
   const [isHovered, setIsHovered] = useState(false);
 
   if (!show) return <>{children}</>;
@@ -109,7 +117,7 @@ function Sidebar() {
   const handleLogout = () => {
     logout();
     setMobileOpen(false);
-    navigate('/login');
+    void navigate('/login');
   };
 
   const isActive = (path: string) => {
@@ -141,8 +149,9 @@ function Sidebar() {
       {/* DESKTOP SIDEBAR (DIV Container replacing aside tag)                        */}
       {/* ========================================================================= */}
       <div
-        className={`hidden lg:flex flex-col h-full shrink-0 select-none bg-sidebar border-r border-sidebar-border text-sidebar-foreground transition-all duration-300 relative ${isCollapsed ? 'w-20' : 'w-64'
-          }`}
+        className={`hidden lg:flex flex-col h-full shrink-0 select-none bg-sidebar border-r border-sidebar-border text-sidebar-foreground transition-all duration-300 relative ${
+          isCollapsed ? 'w-20' : 'w-64'
+        }`}
       >
         <div className="flex flex-col h-full px-3 py-6">
           {/* Top Logo Header */}
@@ -186,10 +195,12 @@ function Sidebar() {
                   to={item.path}
                   className={
                     active
-                      ? `flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'
-                      } rounded-xl bg-sidebar-primary text-sidebar-primary-foreground font-semibold transition-all shadow-md shadow-indigo-600/25`
-                      : `flex items-center ${isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'
-                      } rounded-xl text-sidebar-foreground/80 hover:text-sidebar-accent-foreground hover:bg-sidebar-accent transition-colors font-medium`
+                      ? `flex items-center ${
+                          isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'
+                        } rounded-xl bg-sidebar-primary text-sidebar-primary-foreground font-semibold transition-all shadow-md shadow-indigo-600/25`
+                      : `flex items-center ${
+                          isCollapsed ? 'justify-center p-3' : 'gap-3 px-3 py-2.5'
+                        } rounded-xl text-sidebar-foreground/80 hover:text-sidebar-accent-foreground hover:bg-sidebar-accent transition-colors font-medium`
                   }
                 >
                   <Icon className="size-5 shrink-0" />
@@ -212,8 +223,9 @@ function Sidebar() {
                 type="button"
                 variant="ghost"
                 onClick={handleLogout}
-                className={`w-full ${isCollapsed ? 'justify-center px-0 py-3' : 'justify-start px-3 py-2.5 gap-3'
-                  } flex items-center rounded-xl text-sidebar-foreground/80 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer`}
+                className={`w-full ${
+                  isCollapsed ? 'justify-center px-0 py-3' : 'justify-start px-3 py-2.5 gap-3'
+                } flex items-center rounded-xl text-sidebar-foreground/80 hover:text-destructive hover:bg-destructive/10 transition-colors cursor-pointer`}
               >
                 <LogOutIcon className="size-5 shrink-0" />
                 {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
