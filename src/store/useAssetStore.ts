@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
 import type {
   Asset,
   AssetCategory,
@@ -77,23 +77,22 @@ interface AssetStoreState {
   setViewMode: (mode: 'virtualized' | 'table') => void;
 }
 
-const safeStorage = {
-  getItem: (name: string) => {
+const safeStorage: StateStorage = {
+  getItem: (name: string): string | null => {
     try {
-      const item = localStorage.getItem(name);
-      return item ? (JSON.parse(item) as unknown) : null;
+      return localStorage.getItem(name);
     } catch {
       return null;
     }
   },
-  setItem: (name: string, value: unknown) => {
+  setItem: (name: string, value: string): void => {
     try {
-      localStorage.setItem(name, JSON.stringify(value));
+      localStorage.setItem(name, value);
     } catch {
       // Gracefully handle storage quota limits for large datasets
     }
   },
-  removeItem: (name: string) => {
+  removeItem: (name: string): void => {
     try {
       localStorage.removeItem(name);
     } catch {
@@ -398,7 +397,7 @@ export const useAssetStore = create<AssetStoreState>()(
     }),
     {
       name: 'assetops_assets_store_v1',
-      storage: safeStorage,
+      storage: createJSONStorage(() => safeStorage),
       partialize: (state) => ({
         viewMode: state.viewMode,
         assets: state.assets,
