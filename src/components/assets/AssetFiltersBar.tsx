@@ -168,7 +168,7 @@ export const AssetFiltersBar: React.FC = () => {
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'virtualized'
-                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-2xs'
+                ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
             )}
             title="Virtualized Grid View"
@@ -182,7 +182,7 @@ export const AssetFiltersBar: React.FC = () => {
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'table'
-                ? 'bg-white dark:bg-slate-900 text-indigo-600 dark:text-indigo-400 shadow-2xs'
+                ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
             )}
             title="Paginated Table View"
