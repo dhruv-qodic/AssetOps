@@ -10,6 +10,7 @@ import {
   ArrowUpDown,
   Zap,
   Table2,
+  Columns3,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAssetStore } from '@/store/useAssetStore';
@@ -21,6 +22,7 @@ import {
 } from '@/constans/asset.constants';
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 import { cn } from '@/lib/utils';
+import ColumnVisibilityModal from './ColumnVisibilityModal';
 
 // Reusable Filter Select Menu matching the screenshot
 interface FilterDropdownProps<T extends string> {
@@ -123,6 +125,8 @@ export const AssetFiltersBar: React.FC = () => {
     setViewMode,
   } = useAssetStore();
 
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
+
   const categoryOptions = [
     { label: 'All', value: 'All' as AssetCategory | 'All' },
     ...ASSET_CATEGORIES.map((c) => ({ label: c, value: c })),
@@ -147,7 +151,7 @@ export const AssetFiltersBar: React.FC = () => {
 
   return (
     <div className="space-y-3.5 select-none">
-      {/* Search Input Bar + View Mode Toggle Buttons */}
+      {/* Search Input Bar + View Mode Toggle Buttons + Column Visibility */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="relative flex-1">
           <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
@@ -164,42 +168,56 @@ export const AssetFiltersBar: React.FC = () => {
             <button
               type="button"
               onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors cursor-pointer"
             >
               <X className="size-4" />
             </button>
           )}
         </div>
 
-        {/* Visualizer and Paginator Toggle Buttons */}
-        <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0 self-end sm:self-auto">
+        {/* View Mode Toggle Buttons and Column Visibility Action */}
+        <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
+          {/* Visualizer and Paginator Toggle */}
+          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0">
+            <button
+              type="button"
+              onClick={() => setViewMode('virtualized')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+                viewMode === 'virtualized'
+                  ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+              )}
+              title="Virtualized Grid View"
+            >
+              <Zap className="size-3.5" />
+              <span>Visualizer</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('table')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+                viewMode === 'table'
+                  ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+              )}
+              title="Paginated Table View"
+            >
+              <Table2 className="size-3.5" />
+              <span>Paginator</span>
+            </button>
+          </div>
+
+          {/* Column Visibility Trigger Button */}
           <button
             type="button"
-            onClick={() => setViewMode('virtualized')}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
-              viewMode === 'virtualized'
-                ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
-            )}
-            title="Virtualized Grid View"
+            onClick={() => setIsColumnModalOpen(true)}
+            className="h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-xs sm:text-sm font-medium rounded-lg shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] select-none"
+            title="Configure Column Visibility"
           >
-            <Zap className="size-3.5 " />
-            <span>Visualizer</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('table')}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
-              viewMode === 'table'
-                ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
-            )}
-            title="Paginated Table View"
-          >
-            <Table2 className="size-3.5" />
-            <span>Paginator</span>
+            <Columns3 className="size-4 text-slate-500 dark:text-slate-400" />
+            <span>Column Visibility</span>
           </button>
         </div>
       </div>
@@ -256,6 +274,12 @@ export const AssetFiltersBar: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* Column Visibility Dialog */}
+      <ColumnVisibilityModal
+        isOpen={isColumnModalOpen}
+        onClose={() => setIsColumnModalOpen(false)}
+      />
     </div>
   );
 };
