@@ -1,17 +1,26 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Check, X, Tag, Activity, MapPin, ArrowUpDown, Zap, Table2 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { useAssetStore } from '@/store/useAssetStore';
 import {
-  ASSET_CATEGORIES,
-  ASSET_STATUSES,
-  ASSET_LOCATIONS,
-  ASSET_SORT_OPTIONS,
-} from '@/constans/asset.constants';
-import type { AssetCategory, AssetStatus } from '@/types/asset';
+  Search,
+  ChevronDown,
+  Check,
+  X,
+  Building2,
+  Activity,
+  UserCheck,
+  ArrowUpDown,
+} from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
+import {
+  EMPLOYEE_DEPARTMENTS,
+  EMPLOYEE_STATUS_OPTIONS,
+  EMPLOYEE_TYPE_OPTIONS,
+  EMPLOYEE_SORT_OPTIONS,
+} from '@/constans/employee.constants';
+import type { EmployeeStatus, EmployeeType } from '@/types/employee';
 import { cn } from '@/lib/utils';
 
-// Reusable Filter Select Menu matching the screenshot
+// Reusable Filter Select Dropdown
 interface FilterDropdownProps<T extends string> {
   label: string;
   icon?: React.ReactNode;
@@ -99,112 +108,69 @@ function FilterDropdown<T extends string>({
   );
 }
 
-export const AssetFiltersBar: React.FC = () => {
-  const {
-    filters,
-    setSearch,
-    setCategory,
-    setStatus,
-    setLocation,
-    setSortBy,
-    resetFilters,
-    viewMode,
-    setViewMode,
-  } = useAssetStore();
+export const EmployeeFiltersBar: React.FC = () => {
+  const { filters, setSearch, setDepartment, setStatus, setType, setSortBy, resetFilters } =
+    useEmployeeStore();
 
-  const categoryOptions = [
-    { label: 'All', value: 'All' as AssetCategory | 'All' },
-    ...ASSET_CATEGORIES.map((c) => ({ label: c, value: c })),
-  ];
-
-  const statusOptions = [
-    { label: 'All', value: 'All' as AssetStatus | 'All' },
-    ...ASSET_STATUSES.map((s) => ({ label: s, value: s })),
-  ];
-
-  const locationOptions = [
+  const departmentOptions = [
     { label: 'All', value: 'All' },
-    ...ASSET_LOCATIONS.map((l) => ({ label: l, value: l })),
+    ...EMPLOYEE_DEPARTMENTS.map((dept) => ({ label: dept, value: dept })),
+  ];
+
+  const statusOptions: { label: string; value: EmployeeStatus | 'All' }[] = [
+    { label: 'All', value: 'All' },
+    ...EMPLOYEE_STATUS_OPTIONS,
+  ];
+
+  const typeOptions: { label: string; value: EmployeeType | 'All' }[] = [
+    { label: 'All', value: 'All' },
+    ...EMPLOYEE_TYPE_OPTIONS,
   ];
 
   const hasActiveFilters =
     filters.search !== '' ||
-    filters.category !== 'All' ||
+    filters.department !== 'All' ||
     filters.status !== 'All' ||
-    filters.location !== 'All' ||
+    filters.type !== 'All' ||
     filters.sortBy !== 'recently_added';
 
   return (
     <div className="space-y-3.5 select-none">
-      {/* Search Input Bar + View Mode Toggle Buttons */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="relative flex-1">
-          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-            <Search className="size-4.5" />
-          </div>
-          <Input
-            type="text"
-            value={filters.search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search assets by name, tag, serial..."
-            className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
-          />
-          {filters.search && (
-            <button
-              type="button"
-              onClick={() => setSearch('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors"
-            >
-              <X className="size-4" />
-            </button>
-          )}
+      {/* Search Bar Input */}
+      <div className="relative">
+        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+          <Search className="size-4.5" />
         </div>
-
-        {/* Visualizer and Paginator Toggle Buttons */}
-        <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0 self-end sm:self-auto">
+        <Input
+          type="text"
+          value={filters.search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search employees by name, email, department..."
+          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
+        />
+        {filters.search && (
           <button
             type="button"
-            onClick={() => setViewMode?.('virtualized')}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
-              viewMode === 'virtualized'
-                ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
-            )}
-            title="Virtualized Grid View"
+            onClick={() => setSearch('')}
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors"
           >
-            <Zap className="size-3.5 " />
-            <span>Visualizer</span>
+            <X className="size-4" />
           </button>
-          <button
-            type="button"
-            onClick={() => setViewMode?.('table')}
-            className={cn(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
-              viewMode === 'table'
-                ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
-            )}
-            title="Paginated Table View"
-          >
-            <Table2 className="size-3.5" />
-            <span>Paginator</span>
-          </button>
-        </div>
+        )}
       </div>
 
-      {/* 4 Filter Dropdowns in a clean row */}
+      {/* Filter Dropdowns Row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 items-end">
-        {/* Category */}
+        {/* Department Filter */}
         <FilterDropdown
-          label="Category"
-          icon={<Tag className="size-3.5 text-slate-400 dark:text-slate-500" />}
-          value={filters.category}
-          options={categoryOptions}
-          onChange={(val) => setCategory(val)}
+          label="Department"
+          icon={<Building2 className="size-3.5 text-slate-400 dark:text-slate-500" />}
+          value={filters.department}
+          options={departmentOptions}
+          onChange={(val) => setDepartment(val)}
         />
 
-        {/* Status */}
+        {/* Status Filter */}
         <FilterDropdown
           label="Status"
           icon={<Activity className="size-3.5 text-slate-400 dark:text-slate-500" />}
@@ -213,21 +179,21 @@ export const AssetFiltersBar: React.FC = () => {
           onChange={(val) => setStatus(val)}
         />
 
-        {/* Location */}
+        {/* Employment Type Filter */}
         <FilterDropdown
-          label="Location"
-          icon={<MapPin className="size-3.5 text-slate-400 dark:text-slate-500" />}
-          value={filters.location}
-          options={locationOptions}
-          onChange={(val) => setLocation(val)}
+          label="Type"
+          icon={<UserCheck className="size-3.5 text-slate-400 dark:text-slate-500" />}
+          value={filters.type || 'All'}
+          options={typeOptions}
+          onChange={(val) => setType(val)}
         />
 
-        {/* Sort */}
+        {/* Sort Filter */}
         <FilterDropdown
           label="Sort"
           icon={<ArrowUpDown className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.sortBy}
-          options={ASSET_SORT_OPTIONS}
+          options={EMPLOYEE_SORT_OPTIONS}
           onChange={(val) => setSortBy(val)}
         />
       </div>
@@ -249,4 +215,4 @@ export const AssetFiltersBar: React.FC = () => {
   );
 };
 
-export default AssetFiltersBar;
+export default EmployeeFiltersBar;

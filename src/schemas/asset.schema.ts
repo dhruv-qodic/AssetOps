@@ -29,7 +29,7 @@ export const assetSchema = z.object({
   purchaseDate: z
     .string()
     .min(1, { message: 'Purchase date is required' }),
-  purchaseCost: z.coerce.number().min(0).optional(),
+  purchaseCost: z.number().min(0).optional(),
   warrantyExpiry: z.string().optional(),
   notes: z.string().optional(),
   specifications: z.record(z.string(), z.string()).optional(),

@@ -1,8 +1,8 @@
 import React from 'react';
-import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { Pagination } from '@/components/common/Pagination';
 
-interface AssetPaginationProps {
+interface EmployeePaginationProps {
   totalFiltered: number;
   startIndex: number;
   endIndex: number;
@@ -10,16 +10,16 @@ interface AssetPaginationProps {
   currentPage: number;
 }
 
-export const AssetPagination: React.FC<AssetPaginationProps> = (props) => {
-  const { setPage } = useAssetStore();
+export const EmployeePagination: React.FC<EmployeePaginationProps> = (props) => {
+  const { setPage } = useEmployeeStore();
 
   return (
     <Pagination
       {...props}
       onPageChange={setPage}
-      entityLabel="assets"
+      entityLabel="employees"
     />
   );
 };
 
-export default AssetPagination;
+export default EmployeePagination;
