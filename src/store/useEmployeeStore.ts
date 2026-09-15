@@ -17,6 +17,7 @@ interface EmployeeStoreState {
   employees: Employee[];
   filters: EmployeeFilters;
   isLoading: boolean;
+  error: string | null;
   selectedEmployee: Employee | null;
 
   // Modal dialog states
@@ -26,12 +27,17 @@ interface EmployeeStoreState {
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
 
+  // State actions
+  setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reloadEmployees: () => Promise<void>;
+
   // Filter & Pagination actions
   setSearch: (search: string) => void;
   setStatus: (status: EmployeeStatus | 'All') => void;
   setType: (type: EmployeeType | 'All') => void;
-  setDepartment: (department: string | 'All') => void;
-  setLocation: (location: string | 'All') => void;
+  setDepartment: (department: string) => void;
+  setLocation: (location: string) => void;
   setSortBy: (sortBy: EmployeeSortOption) => void;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
@@ -73,6 +79,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       employees: MOCK_EMPLOYEES,
       filters: DEFAULT_EMPLOYEE_FILTERS,
       isLoading: false,
+      error: null,
       selectedEmployee: null,
 
       isAddModalOpen: false,
@@ -80,6 +87,19 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       isDeleteModalOpen: false,
       isViewModalOpen: false,
       isImportModalOpen: false,
+
+      // State Actions
+      setIsLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+      reloadEmployees: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          set({ isLoading: false, error: null });
+        } catch {
+          set({ isLoading: false, error: 'Failed to reload employee directory. Please try again.' });
+        }
+      },
 
       // Filter Actions
       setSearch: (search) =>
@@ -150,7 +170,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
           avatar:
             data.avatar ||
             `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-              `${firstName}${lastName}`
+              `${firstName}${lastName}`,
             )}`,
           assignedAssets: [],
           createdAt: now,
@@ -198,14 +218,9 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         let deleted = false;
         set((state) => {
           const initialLength = state.employees.length;
-          const filtered = state.employees.filter(
-            (e) => e.id !== id && e.employeeId !== id
-          );
+          const filtered = state.employees.filter((e) => e.id !== id && e.employeeId !== id);
           deleted = filtered.length !== initialLength;
-          const newTotalPages = Math.max(
-            1,
-            Math.ceil(filtered.length / state.filters.pageSize)
-          );
+          const newTotalPages = Math.max(1, Math.ceil(filtered.length / state.filters.pageSize));
           const newPage = Math.min(state.filters.page, newTotalPages);
 
           return {
@@ -224,8 +239,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         const now = new Date().toISOString();
         const formatted: Employee[] = newItems.map((item, idx) => {
           const firstName = item.firstName || item.name?.split(' ')[0] || 'Employee';
-          const lastName =
-            item.lastName || item.name?.split(' ').slice(1).join(' ') || '';
+          const lastName = item.lastName || item.name?.split(' ').slice(1).join(' ') || '';
           return {
             id: `emp_${Date.now()}_${idx}`,
             employeeId: item.employeeId || `EMP-${1000 + idx}`,
@@ -241,7 +255,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
             avatar:
               item.avatar ||
               `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-                `${firstName}${lastName}`
+                `${firstName}${lastName}`,
               )}`,
             assignedAssets: [],
             createdAt: now,
@@ -301,8 +315,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       // Query Helpers
       getFilteredEmployees: () => {
         const { employees, filters } = get();
-        const { search, status, type, department, location, sortBy, page, pageSize } =
-          filters;
+        const { search, status, type, department, location, sortBy, page, pageSize } = filters;
 
         let filtered = [...employees];
 
@@ -317,9 +330,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
             const matchPosition = emp.position.toLowerCase().includes(query);
             const matchDept = emp.department.toLowerCase().includes(query);
 
-            return (
-              matchName || matchId || matchEmail || matchPosition || matchDept
-            );
+            return matchName || matchId || matchEmail || matchPosition || matchDept;
           });
         }
 
@@ -362,14 +373,10 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                 numeric: true,
               });
             case 'date_created_desc':
-              return (
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-              );
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
             case 'recently_added':
             default:
-              return (
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-              );
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           }
         });
 
@@ -413,19 +420,14 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       },
 
       getEmployeeById: (id) => {
-        return get().employees.find(
-          (e) => e.id === id || e.employeeId === id
-        );
+        return get().employees.find((e) => e.id === id || e.employeeId === id);
       },
 
       // Modal Actions
       openAddModal: () => set({ isAddModalOpen: true, selectedEmployee: null }),
-      openEditModal: (employee) =>
-        set({ isEditModalOpen: true, selectedEmployee: employee }),
-      openDeleteModal: (employee) =>
-        set({ isDeleteModalOpen: true, selectedEmployee: employee }),
-      openViewModal: (employee) =>
-        set({ isViewModalOpen: true, selectedEmployee: employee }),
+      openEditModal: (employee) => set({ isEditModalOpen: true, selectedEmployee: employee }),
+      openDeleteModal: (employee) => set({ isDeleteModalOpen: true, selectedEmployee: employee }),
+      openViewModal: (employee) => set({ isViewModalOpen: true, selectedEmployee: employee }),
       openImportModal: () => set({ isImportModalOpen: true }),
       closeModals: () =>
         set({
@@ -442,6 +444,6 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       partialize: (state) => ({
         employees: state.employees,
       }),
-    }
-  )
+    },
+  ),
 );

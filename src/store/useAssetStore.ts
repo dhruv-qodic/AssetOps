@@ -18,6 +18,7 @@ interface AssetStoreState {
   assets: Asset[];
   filters: AssetFilters;
   isLoading: boolean;
+  error: string | null;
   selectedAsset: Asset | null;
 
   // Modal dialog states
@@ -26,12 +27,18 @@ interface AssetStoreState {
   isDeleteModalOpen: boolean;
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
+  isAllocateModalOpen: boolean;
+
+  // State actions
+  setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reloadAssets: () => Promise<void>;
 
   // Filter & Pagination actions
   setSearch: (search: string) => void;
   setCategory: (category: AssetCategory | 'All') => void;
   setStatus: (status: AssetStatus | 'All') => void;
-  setLocation: (location: string | 'All') => void;
+  setLocation: (location: string) => void;
   setSortBy: (sortBy: AssetSortOption) => void;
   setPage: (page: number) => void;
   setPageSize: (pageSize: number) => void;
@@ -47,6 +54,7 @@ interface AssetStoreState {
 
   // Query helpers
   getFilteredAssets: () => {
+    allFilteredAssets: Asset[];
     paginatedAssets: Asset[];
     totalFiltered: number;
     totalPages: number;
@@ -62,8 +70,37 @@ interface AssetStoreState {
   openDeleteModal: (asset: Asset) => void;
   openViewModal: (asset: Asset) => void;
   openImportModal: () => void;
+  openAllocateModal: (asset: Asset) => void;
   closeModals: () => void;
+
+  viewMode: 'virtualized' | 'table';
+  setViewMode: (mode: 'virtualized' | 'table') => void;
 }
+
+const safeStorage = {
+  getItem: (name: string) => {
+    try {
+      const item = localStorage.getItem(name);
+      return item ? JSON.parse(item) : null;
+    } catch {
+      return null;
+    }
+  },
+  setItem: (name: string, value: unknown) => {
+    try {
+      localStorage.setItem(name, JSON.stringify(value));
+    } catch {
+      // Gracefully handle storage quota limits for large datasets
+    }
+  },
+  removeItem: (name: string) => {
+    try {
+      localStorage.removeItem(name);
+    } catch {
+      // ignore
+    }
+  },
+};
 
 export const useAssetStore = create<AssetStoreState>()(
   persist(
@@ -71,6 +108,7 @@ export const useAssetStore = create<AssetStoreState>()(
       assets: MOCK_ASSETS,
       filters: DEFAULT_ASSET_FILTERS,
       isLoading: false,
+      error: null,
       selectedAsset: null,
 
       isAddModalOpen: false,
@@ -78,6 +116,24 @@ export const useAssetStore = create<AssetStoreState>()(
       isDeleteModalOpen: false,
       isViewModalOpen: false,
       isImportModalOpen: false,
+      isAllocateModalOpen: false,
+
+      viewMode: 'virtualized',
+      setViewMode: (mode) => set({ viewMode: mode }),
+
+      // State Actions
+      setIsLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+      reloadAssets: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          // Simulate async fetch / store refresh
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          set({ isLoading: false, error: null });
+        } catch {
+          set({ isLoading: false, error: 'Failed to reload assets. Please try again.' });
+        }
+      },
 
       // Filter Actions
       setSearch: (search) =>
@@ -165,8 +221,7 @@ export const useAssetStore = create<AssetStoreState>()(
           deleted = filtered.length !== initialLength;
           return {
             assets: filtered,
-            selectedAsset:
-              state.selectedAsset?.id === id ? null : state.selectedAsset,
+            selectedAsset: state.selectedAsset?.id === id ? null : state.selectedAsset,
           };
         });
         return deleted;
@@ -180,7 +235,7 @@ export const useAssetStore = create<AssetStoreState>()(
               success = true;
               return {
                 ...asset,
-                status: 'Allocated' as AssetStatus,
+                status: 'Allocated' as const,
                 assignedTo: {
                   ...employee,
                   assignedDate: new Date().toISOString().split('T')[0],
@@ -203,7 +258,7 @@ export const useAssetStore = create<AssetStoreState>()(
               success = true;
               return {
                 ...asset,
-                status: 'Available' as AssetStatus,
+                status: 'Available' as const,
                 assignedTo: null,
                 updatedAt: new Date().toISOString(),
               };
@@ -235,8 +290,7 @@ export const useAssetStore = create<AssetStoreState>()(
       // Query Helpers
       getFilteredAssets: () => {
         const { assets, filters } = get();
-        const { search, category, status, location, sortBy, page, pageSize } =
-          filters;
+        const { search, category, status, location, sortBy, page, pageSize } = filters;
 
         let filtered = [...assets];
 
@@ -248,12 +302,9 @@ export const useAssetStore = create<AssetStoreState>()(
             const matchId = asset.assetId.toLowerCase().includes(query);
             const matchModel = asset.model?.toLowerCase().includes(query) || false;
             const matchSerial = asset.serialNumber.toLowerCase().includes(query);
-            const matchAssigned =
-              asset.assignedTo?.name.toLowerCase().includes(query) || false;
+            const matchAssigned = asset.assignedTo?.name.toLowerCase().includes(query) || false;
 
-            return (
-              matchName || matchId || matchModel || matchSerial || matchAssigned
-            );
+            return matchName || matchId || matchModel || matchSerial || matchAssigned;
           });
         }
 
@@ -288,15 +339,10 @@ export const useAssetStore = create<AssetStoreState>()(
                 numeric: true,
               });
             case 'purchase_date_desc':
-              return (
-                new Date(b.purchaseDate).getTime() -
-                new Date(a.purchaseDate).getTime()
-              );
+              return new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime();
             case 'recently_added':
             default:
-              return (
-                new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-              );
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           }
         });
 
@@ -308,6 +354,7 @@ export const useAssetStore = create<AssetStoreState>()(
         const paginatedAssets = filtered.slice(startIndex, endIndex);
 
         return {
+          allFilteredAssets: filtered,
           paginatedAssets,
           totalFiltered,
           totalPages,
@@ -333,13 +380,11 @@ export const useAssetStore = create<AssetStoreState>()(
 
       // Modal Actions
       openAddModal: () => set({ isAddModalOpen: true, selectedAsset: null }),
-      openEditModal: (asset) =>
-        set({ isEditModalOpen: true, selectedAsset: asset }),
-      openDeleteModal: (asset) =>
-        set({ isDeleteModalOpen: true, selectedAsset: asset }),
-      openViewModal: (asset) =>
-        set({ isViewModalOpen: true, selectedAsset: asset }),
+      openEditModal: (asset) => set({ isEditModalOpen: true, selectedAsset: asset }),
+      openDeleteModal: (asset) => set({ isDeleteModalOpen: true, selectedAsset: asset }),
+      openViewModal: (asset) => set({ isViewModalOpen: true, selectedAsset: asset }),
       openImportModal: () => set({ isImportModalOpen: true }),
+      openAllocateModal: (asset) => set({ isAllocateModalOpen: true, selectedAsset: asset }),
       closeModals: () =>
         set({
           isAddModalOpen: false,
@@ -347,14 +392,17 @@ export const useAssetStore = create<AssetStoreState>()(
           isDeleteModalOpen: false,
           isViewModalOpen: false,
           isImportModalOpen: false,
+          isAllocateModalOpen: false,
           selectedAsset: null,
         }),
     }),
     {
       name: 'assetops_assets_store_v1',
+      storage: safeStorage,
       partialize: (state) => ({
+        viewMode: state.viewMode,
         assets: state.assets,
       }),
-    }
-  )
+    },
+  ),
 );

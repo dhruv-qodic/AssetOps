@@ -14,27 +14,20 @@ export type AssetCategory =
   | 'Networking'
   | 'Other';
 
-export type AssetStatus =
-  | 'Allocated'
-  | 'Available'
-  | 'Maintenance'
-  | 'Retired'
-  | 'Lost';
+export type AssetStatus = 'Allocated' | 'Available' | 'Maintenance' | 'Retired' | 'Lost';
 
 export type AssetLocation =
-  | 'Headquarters'
-  | 'New York Office'
-  | 'San Francisco'
-  | 'London Office'
-  | 'Remote';
+  'Headquarters' | 'New York Office' | 'San Francisco' | 'London Office' | 'Remote';
 
 export interface AssignedEmployee {
   id: string;
   name: string;
+  employeeId?: string;
   email?: string;
   avatar?: string;
   department?: string;
   assignedDate?: string;
+  position?: string;
 }
 
 export interface Asset {
@@ -69,7 +62,7 @@ export interface AssetFilters {
   search: string;
   category: AssetCategory | 'All';
   status: AssetStatus | 'All';
-  location: string | 'All';
+  location: string;
   sortBy: AssetSortOption;
   page: number;
   pageSize: number;

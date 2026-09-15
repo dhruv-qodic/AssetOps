@@ -17,7 +17,7 @@ import {
   EMPLOYEE_TYPE_OPTIONS,
   EMPLOYEE_SORT_OPTIONS,
 } from '@/constans/employee.constants';
-import type { EmployeeStatus, EmployeeType, EmployeeSortOption } from '@/types/employee';
+import type { EmployeeStatus, EmployeeType } from '@/types/employee';
 import { cn } from '@/lib/utils';
 
 // Reusable Filter Select Dropdown
@@ -65,14 +65,14 @@ function FilterDropdown<T extends string>({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
-            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]'
+            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]',
           )}
         >
           <span className="truncate">{currentLabel}</span>
           <ChevronDown
             className={cn(
               'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-              isOpen && 'rotate-180 text-[#4C40F7]'
+              isOpen && 'rotate-180 text-[#4C40F7]',
             )}
           />
         </button>
@@ -93,7 +93,7 @@ function FilterDropdown<T extends string>({
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
                       ? 'font-semibold text-[#4C40F7] bg-indigo-50/50 dark:bg-indigo-950/40'
-                      : 'text-slate-700 dark:text-slate-300'
+                      : 'text-slate-700 dark:text-slate-300',
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
@@ -109,29 +109,22 @@ function FilterDropdown<T extends string>({
 }
 
 export const EmployeeFiltersBar: React.FC = () => {
-  const {
-    filters,
-    setSearch,
-    setDepartment,
-    setStatus,
-    setType,
-    setSortBy,
-    resetFilters,
-  } = useEmployeeStore();
+  const { filters, setSearch, setDepartment, setStatus, setType, setSortBy, resetFilters } =
+    useEmployeeStore();
 
   const departmentOptions = [
     { label: 'All', value: 'All' },
     ...EMPLOYEE_DEPARTMENTS.map((dept) => ({ label: dept, value: dept })),
   ];
 
-  const statusOptions = [
-    { label: 'All', value: 'All' as EmployeeStatus | 'All' },
-    ...EMPLOYEE_STATUS_OPTIONS.map((opt) => ({ label: opt.label, value: opt.value as EmployeeStatus | 'All' })),
+  const statusOptions: { label: string; value: EmployeeStatus | 'All' }[] = [
+    { label: 'All', value: 'All' },
+    ...EMPLOYEE_STATUS_OPTIONS,
   ];
 
-  const typeOptions = [
-    { label: 'All', value: 'All' as EmployeeType | 'All' },
-    ...EMPLOYEE_TYPE_OPTIONS.map((opt) => ({ label: opt.label, value: opt.value as EmployeeType | 'All' })),
+  const typeOptions: { label: string; value: EmployeeType | 'All' }[] = [
+    { label: 'All', value: 'All' },
+    ...EMPLOYEE_TYPE_OPTIONS,
   ];
 
   const hasActiveFilters =
@@ -183,7 +176,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           icon={<Activity className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.status}
           options={statusOptions}
-          onChange={(val) => setStatus(val as EmployeeStatus | 'All')}
+          onChange={(val) => setStatus(val)}
         />
 
         {/* Employment Type Filter */}
@@ -192,7 +185,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           icon={<UserCheck className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.type || 'All'}
           options={typeOptions}
-          onChange={(val) => setType(val as EmployeeType | 'All')}
+          onChange={(val) => setType(val)}
         />
 
         {/* Sort Filter */}
@@ -201,7 +194,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           icon={<ArrowUpDown className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.sortBy}
           options={EMPLOYEE_SORT_OPTIONS}
-          onChange={(val) => setSortBy(val as EmployeeSortOption)}
+          onChange={(val) => setSortBy(val)}
         />
       </div>
 

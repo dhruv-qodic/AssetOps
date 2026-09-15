@@ -13,10 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
-import {
-  EMPLOYEE_DEPARTMENTS,
-  EMPLOYEE_LOCATIONS,
-} from '@/constans/employee.constants';
+import { EMPLOYEE_DEPARTMENTS, EMPLOYEE_LOCATIONS } from '@/constans/employee.constants';
 import { employeeSchema, type EmployeeFormData } from '@/schemas/employee.schema';
 import {
   UserCog,
@@ -31,8 +28,7 @@ import {
 } from 'lucide-react';
 
 export const EditEmployeeModal: React.FC = () => {
-  const { isEditModalOpen, selectedEmployee, closeModals, updateEmployee } =
-    useEmployeeStore();
+  const { isEditModalOpen, selectedEmployee, closeModals, updateEmployee } = useEmployeeStore();
 
   const {
     register,
@@ -101,7 +97,12 @@ export const EditEmployeeModal: React.FC = () => {
           </div>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 pt-1">
+        <form
+          onSubmit={(e) => {
+            void handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-4 pt-1"
+        >
           {/* Employee ID */}
           <div className="space-y-1 text-left">
             <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
@@ -323,4 +324,3 @@ export const EditEmployeeModal: React.FC = () => {
 };
 
 export default EditEmployeeModal;
-
