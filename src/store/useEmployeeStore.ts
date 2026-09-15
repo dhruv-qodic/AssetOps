@@ -17,6 +17,7 @@ interface EmployeeStoreState {
   employees: Employee[];
   filters: EmployeeFilters;
   isLoading: boolean;
+  error: string | null;
   selectedEmployee: Employee | null;
 
   // Modal dialog states
@@ -25,6 +26,11 @@ interface EmployeeStoreState {
   isDeleteModalOpen: boolean;
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
+
+  // State actions
+  setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reloadEmployees: () => Promise<void>;
 
   // Filter & Pagination actions
   setSearch: (search: string) => void;
@@ -73,6 +79,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       employees: MOCK_EMPLOYEES,
       filters: DEFAULT_EMPLOYEE_FILTERS,
       isLoading: false,
+      error: null,
       selectedEmployee: null,
 
       isAddModalOpen: false,
@@ -80,6 +87,19 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       isDeleteModalOpen: false,
       isViewModalOpen: false,
       isImportModalOpen: false,
+
+      // State Actions
+      setIsLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+      reloadEmployees: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          set({ isLoading: false, error: null });
+        } catch {
+          set({ isLoading: false, error: 'Failed to reload employee directory. Please try again.' });
+        }
+      },
 
       // Filter Actions
       setSearch: (search) =>
