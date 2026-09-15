@@ -38,26 +38,41 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
 
   const handleDownload = () => {
     // Filter assets matching selected department
-    const exportAssets = department === 'All'
-      ? assets
-      : assets.filter((a) => getAssetDepartment(a, employees).toLowerCase() === department.toLowerCase());
+    const exportAssets =
+      department === 'All'
+        ? assets
+        : assets.filter(
+            (a) => getAssetDepartment(a, employees).toLowerCase() === department.toLowerCase(),
+          );
 
     const filename = `${reportType.toLowerCase().replace(/\s+/g, '_')}_${Date.now()}.${format}`;
 
     let content: string;
     if (format === 'csv') {
-      const headers = ['Asset ID', 'Name', 'Category', 'Status', 'Location', 'Department', 'Assigned To', 'Purchase Date', 'Cost'];
-      const rows = exportAssets.map((a) => [
-        `"${a.assetId}"`,
-        `"${a.name}"`,
-        `"${a.category}"`,
-        `"${a.status}"`,
-        `"${a.location}"`,
-        `"${getAssetDepartment(a, employees)}"`,
-        `"${a.assignedTo?.name || 'Unassigned'}"`,
-        `"${a.purchaseDate}"`,
-        `"${a.purchaseCost || 0}"`,
-      ].join(','));
+      const headers = [
+        'Asset ID',
+        'Name',
+        'Category',
+        'Status',
+        'Location',
+        'Department',
+        'Assigned To',
+        'Purchase Date',
+        'Cost',
+      ];
+      const rows = exportAssets.map((a) =>
+        [
+          `"${a.assetId}"`,
+          `"${a.name}"`,
+          `"${a.category}"`,
+          `"${a.status}"`,
+          `"${a.location}"`,
+          `"${getAssetDepartment(a, employees)}"`,
+          `"${a.assignedTo?.name || 'Unassigned'}"`,
+          `"${a.purchaseDate}"`,
+          `"${a.purchaseCost || 0}"`,
+        ].join(','),
+      );
       content = [headers.join(','), ...rows].join('\n');
     } else {
       content = `=====================================================

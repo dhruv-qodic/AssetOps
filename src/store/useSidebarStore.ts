@@ -33,6 +33,6 @@ export const useSidebarStore = create<SidebarState>()(
       partialize: (state) => ({
         isCollapsed: state.isCollapsed,
       }),
-    }
-  )
+    },
+  ),
 );

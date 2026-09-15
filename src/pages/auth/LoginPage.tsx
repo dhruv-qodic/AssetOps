@@ -142,9 +142,11 @@ function LoginPage() {
                   <div className="size-3 rounded-full bg-emerald-400 animate-ping" />
                   <span className="text-xs font-semibold text-white/90">Live System Status</span>
                 </div>
-                <span className="text-[11px] font-mono text-indigo-200 bg-indigo-500/30 px-2 py-0.5 rounded-full border border-indigo-400/30">10,000 Assets Active</span>
+                <span className="text-[11px] font-mono text-indigo-200 bg-indigo-500/30 px-2 py-0.5 rounded-full border border-indigo-400/30">
+                  10,000 Assets Active
+                </span>
               </div>
-              
+
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-white/10 rounded-xl border border-white/10 flex flex-col gap-1">
                   <span className="text-[11px] text-white/70">System Health</span>

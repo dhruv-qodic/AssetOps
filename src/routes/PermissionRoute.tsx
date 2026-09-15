@@ -1,8 +1,8 @@
-import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { useAuthStore } from "@/store/useAuthStore";
-import { usePermission } from "@/hooks/usePermission";
-import type { Permission } from "@/types/permissions";
-import type { Role } from "@/types/auth";
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuthStore } from '@/store/useAuthStore';
+import { usePermission } from '@/hooks/usePermission';
+import type { Permission } from '@/types/permissions';
+import type { Role } from '@/types/auth';
 
 interface PermissionRouteProps {
   permission?: Permission;

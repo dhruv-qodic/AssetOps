@@ -269,25 +269,85 @@ const INITIAL_ASSETS: Asset[] = [
 ];
 
 // Helper data templates for procedural 10,000 item generation
-const CATEGORY_TEMPLATES: Record<AssetCategory, { names: string[]; models: string[]; avgCost: number }> = {
+const CATEGORY_TEMPLATES: Record<
+  AssetCategory,
+  { names: string[]; models: string[]; avgCost: number }
+> = {
   Laptop: {
-    names: ['MacBook Pro 14"', 'MacBook Air 15"', 'Dell XPS 15', 'Lenovo ThinkPad P1', 'HP Spectre x360', 'Asus ROG Zephyrus', 'Surface Laptop 5'],
-    models: ['M3 Max 64GB', 'M2 16GB/512GB', 'Core i9-13900H', 'Ryzen 7 7840HS', 'Core i7 32GB', 'Ultra 7 155H'],
+    names: [
+      'MacBook Pro 14"',
+      'MacBook Air 15"',
+      'Dell XPS 15',
+      'Lenovo ThinkPad P1',
+      'HP Spectre x360',
+      'Asus ROG Zephyrus',
+      'Surface Laptop 5',
+    ],
+    models: [
+      'M3 Max 64GB',
+      'M2 16GB/512GB',
+      'Core i9-13900H',
+      'Ryzen 7 7840HS',
+      'Core i7 32GB',
+      'Ultra 7 155H',
+    ],
     avgCost: 1850,
   },
   Mobile: {
-    names: ['iPhone 15 Pro', 'iPhone 14', 'Samsung Galaxy S24', 'Google Pixel 8 Pro', 'Samsung Galaxy Z Fold 5', 'iPhone SE'],
-    models: ['256GB Titanium', '128GB Midnight', '512GB Onyx', '128GB Bay', '256GB Cream', '64GB Starlight'],
+    names: [
+      'iPhone 15 Pro',
+      'iPhone 14',
+      'Samsung Galaxy S24',
+      'Google Pixel 8 Pro',
+      'Samsung Galaxy Z Fold 5',
+      'iPhone SE',
+    ],
+    models: [
+      '256GB Titanium',
+      '128GB Midnight',
+      '512GB Onyx',
+      '128GB Bay',
+      '256GB Cream',
+      '64GB Starlight',
+    ],
     avgCost: 899,
   },
   Monitor: {
-    names: ['Dell UltraSharp 32"', 'Apple Studio Display', 'LG Ergo 27"', 'ASUS ProArt 27"', 'BenQ DesignVue 32"', 'Samsung Odyssey G9'],
-    models: ['4K USB-C Hub', '5K Retina', 'QHD IPS', '4K Color Accurate', 'Thunderbolt 4', 'Dual QHD Curved'],
+    names: [
+      'Dell UltraSharp 32"',
+      'Apple Studio Display',
+      'LG Ergo 27"',
+      'ASUS ProArt 27"',
+      'BenQ DesignVue 32"',
+      'Samsung Odyssey G9',
+    ],
+    models: [
+      '4K USB-C Hub',
+      '5K Retina',
+      'QHD IPS',
+      '4K Color Accurate',
+      'Thunderbolt 4',
+      'Dual QHD Curved',
+    ],
     avgCost: 750,
   },
   Accessories: {
-    names: ['Logitech MX Keys', 'Keychron Q1 Max', 'Apple Magic Trackpad', 'CalDigit TS4 Dock', 'Anker 778 Thunderbolt Dock', 'Sony WH-1000XM5'],
-    models: ['Wireless Illuminated', 'Mechanical Gateron', 'Black Multi-Touch', '18-in-1 98W', 'USB-C Docking', 'Noise Canceling'],
+    names: [
+      'Logitech MX Keys',
+      'Keychron Q1 Max',
+      'Apple Magic Trackpad',
+      'CalDigit TS4 Dock',
+      'Anker 778 Thunderbolt Dock',
+      'Sony WH-1000XM5',
+    ],
+    models: [
+      'Wireless Illuminated',
+      'Mechanical Gateron',
+      'Black Multi-Touch',
+      '18-in-1 98W',
+      'USB-C Docking',
+      'Noise Canceling',
+    ],
     avgCost: 180,
   },
   Tablet: {
@@ -296,32 +356,111 @@ const CATEGORY_TEMPLATES: Record<AssetCategory, { names: string[]; models: strin
     avgCost: 920,
   },
   Desktop: {
-    names: ['Mac Studio', 'Mac mini', 'Dell Precision 3660', 'HP Z2 Tower', 'Custom Workstation PC'],
-    models: ['M2 Ultra 64GB', 'M2 Pro 32GB', 'Core i9 64GB RTX 4080', 'Xeon w5-2455X', 'Ryzen Threadripper 64-Core'],
+    names: [
+      'Mac Studio',
+      'Mac mini',
+      'Dell Precision 3660',
+      'HP Z2 Tower',
+      'Custom Workstation PC',
+    ],
+    models: [
+      'M2 Ultra 64GB',
+      'M2 Pro 32GB',
+      'Core i9 64GB RTX 4080',
+      'Xeon w5-2455X',
+      'Ryzen Threadripper 64-Core',
+    ],
     avgCost: 2800,
   },
   Audio: {
-    names: ['Jabra Speak 750', 'Sennheiser TeamConnect', 'Shure MV7 Podcaster', 'Bose QuietComfort Ultra'],
-    models: ['Full-Duplex Bluetooth', 'Ceiling Mic Array', 'USB/XLR Dynamic', 'Wireless Noise Canceling'],
+    names: [
+      'Jabra Speak 750',
+      'Sennheiser TeamConnect',
+      'Shure MV7 Podcaster',
+      'Bose QuietComfort Ultra',
+    ],
+    models: [
+      'Full-Duplex Bluetooth',
+      'Ceiling Mic Array',
+      'USB/XLR Dynamic',
+      'Wireless Noise Canceling',
+    ],
     avgCost: 350,
   },
   Networking: {
-    names: ['Cisco Catalyst 9300', 'Ubiquiti Dream Machine Pro', 'Aruba AP-535', 'Fortinet FortiGate 60F'],
-    models: ['48-Port PoE+ Switch', 'Enterprise Gateway', 'Wi-Fi 6 Access Point', 'Next-Gen Firewall'],
+    names: [
+      'Cisco Catalyst 9300',
+      'Ubiquiti Dream Machine Pro',
+      'Aruba AP-535',
+      'Fortinet FortiGate 60F',
+    ],
+    models: [
+      '48-Port PoE+ Switch',
+      'Enterprise Gateway',
+      'Wi-Fi 6 Access Point',
+      'Next-Gen Firewall',
+    ],
     avgCost: 2100,
   },
   Other: {
     names: ['Epson EcoTank Printer', 'APC Smart-UPS 1500', 'Logitech Rally Bar', 'YubiKey 5C NFC'],
-    models: ['Multifunction Wireless', '1500VA LCD 120V', 'All-in-One Video Bar', 'Hardware Security Key'],
+    models: [
+      'Multifunction Wireless',
+      '1500VA LCD 120V',
+      'All-in-One Video Bar',
+      'Hardware Security Key',
+    ],
     avgCost: 420,
   },
 };
 
 const LOCATIONS = ['Headquarters', 'New York Office', 'San Francisco', 'London Office', 'Remote'];
-const DEPARTMENTS = ['Engineering', 'Product Design', 'Marketing', 'Operations', 'Finance', 'Human Resources', 'Sales', 'IT Administration', 'QA & Compliance'];
+const DEPARTMENTS = [
+  'Engineering',
+  'Product Design',
+  'Marketing',
+  'Operations',
+  'Finance',
+  'Human Resources',
+  'Sales',
+  'IT Administration',
+  'QA & Compliance',
+];
 
-const FIRST_NAMES = ['Alex', 'Jordan', 'Taylor', 'Morgan', 'Casey', 'Riley', 'Sam', 'Chris', 'Pat', 'Dakota', 'Avery', 'Reese', 'Quinn', 'Skyler', 'Cameron'];
-const LAST_NAMES = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson'];
+const FIRST_NAMES = [
+  'Alex',
+  'Jordan',
+  'Taylor',
+  'Morgan',
+  'Casey',
+  'Riley',
+  'Sam',
+  'Chris',
+  'Pat',
+  'Dakota',
+  'Avery',
+  'Reese',
+  'Quinn',
+  'Skyler',
+  'Cameron',
+];
+const LAST_NAMES = [
+  'Smith',
+  'Johnson',
+  'Williams',
+  'Brown',
+  'Jones',
+  'Garcia',
+  'Miller',
+  'Davis',
+  'Rodriguez',
+  'Martinez',
+  'Hernandez',
+  'Lopez',
+  'Gonzalez',
+  'Wilson',
+  'Anderson',
+];
 
 /**
  * Procedurally generates `count` realistic asset seed objects.
@@ -353,7 +492,7 @@ export function generateAssetSeedData(count: number = 500): Asset[] {
     const assetIdNum = 1000 + i;
     const assetId = `A${assetIdNum}`;
     const id = `ast_${String(i).padStart(5, '0')}`;
-    const serialNumber = `${category.substring(0, 2).toUpperCase()}-${(i * 37) % 900000 + 100000}`;
+    const serialNumber = `${category.substring(0, 2).toUpperCase()}-${((i * 37) % 900000) + 100000}`;
 
     // Dates
     const year = 2021 + ((i * 2) % 4);

@@ -7,10 +7,7 @@ interface EmployeeStatusBadgeProps {
   className?: string;
 }
 
-export const EmployeeStatusBadge: React.FC<EmployeeStatusBadgeProps> = ({
-  status,
-  className,
-}) => {
+export const EmployeeStatusBadge: React.FC<EmployeeStatusBadgeProps> = ({ status, className }) => {
   const getBadgeStyle = () => {
     switch (status) {
       case 'active':
@@ -42,7 +39,7 @@ export const EmployeeStatusBadge: React.FC<EmployeeStatusBadgeProps> = ({
       className={cn(
         'inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold tracking-wide transition-colors select-none',
         getBadgeStyle(),
-        className
+        className,
       )}
     >
       {getLabel()}

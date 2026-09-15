@@ -20,13 +20,8 @@ export function EmployeeListPage() {
     openAddModal,
   } = useEmployeeStore();
 
-  const {
-    paginatedEmployees,
-    totalFiltered,
-    totalPages,
-    startIndex,
-    endIndex,
-  } = getFilteredEmployees();
+  const { paginatedEmployees, totalFiltered, totalPages, startIndex, endIndex } =
+    getFilteredEmployees();
 
   const showPagination = !isLoading && !error && totalFiltered > 0;
 

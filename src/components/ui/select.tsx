@@ -56,7 +56,7 @@ export const Select: React.FC<SelectProps> = ({
         className={cn(
           'flex h-9 w-full items-center justify-between rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-3 py-1.5 text-xs sm:text-sm text-slate-800 dark:text-slate-200 shadow-2xs transition-all focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7] disabled:cursor-not-allowed disabled:opacity-50 hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer',
           isOpen && 'border-[#4C40F7] ring-2 ring-[#4C40F7]/20',
-          className
+          className,
         )}
       >
         <span className="truncate flex items-center gap-2">
@@ -72,7 +72,7 @@ export const Select: React.FC<SelectProps> = ({
         <ChevronDown
           className={cn(
             'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-            isOpen && 'rotate-180 text-[#4C40F7]'
+            isOpen && 'rotate-180 text-[#4C40F7]',
           )}
         />
       </button>
@@ -93,7 +93,7 @@ export const Select: React.FC<SelectProps> = ({
                   'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                   isSelected
                     ? 'font-semibold text-[#4C40F7] bg-indigo-50/60 dark:bg-indigo-950/40'
-                    : 'text-slate-700 dark:text-slate-300'
+                    : 'text-slate-700 dark:text-slate-300',
                 )}
               >
                 <div className="flex items-center gap-2 truncate">

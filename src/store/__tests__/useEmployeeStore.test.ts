@@ -19,9 +19,7 @@ describe('useEmployeeStore', () => {
     store.setSearch('John');
     const { paginatedEmployees } = store.getFilteredEmployees();
     expect(
-      paginatedEmployees.some((e) =>
-        `${e.firstName} ${e.lastName}`.toLowerCase().includes('john')
-      )
+      paginatedEmployees.some((e) => `${e.firstName} ${e.lastName}`.toLowerCase().includes('john')),
     ).toBe(true);
   });
 
@@ -68,9 +66,7 @@ describe('useEmployeeStore', () => {
     const updated = store.getEmployeeById(firstEmp.id);
 
     expect(updated?.firstName).toBe('UpdatedName');
-    expect(useEmployeeStore.getState().selectedEmployee?.firstName).toBe(
-      'UpdatedName'
-    );
+    expect(useEmployeeStore.getState().selectedEmployee?.firstName).toBe('UpdatedName');
   });
 
   it('should delete an employee and update pagination page if out of bounds', () => {
@@ -79,8 +75,6 @@ describe('useEmployeeStore', () => {
     const initialCount = store.employees.length;
 
     store.deleteEmployee(firstEmp.id);
-    expect(useEmployeeStore.getState().employees.length).toBe(
-      initialCount - 1
-    );
+    expect(useEmployeeStore.getState().employees.length).toBe(initialCount - 1);
   });
 });

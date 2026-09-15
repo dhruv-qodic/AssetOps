@@ -24,11 +24,14 @@ export const AllocationSummaryCard: React.FC = () => {
   const maintenanceStroke = (maintenancePercent / 100) * circumference;
 
   const allocatedOffset = 0;
-  const availableOffset = -(allocatedStroke);
+  const availableOffset = -allocatedStroke;
   const maintenanceOffset = -(allocatedStroke + availableStroke);
 
   // Reference-style display value (e.g. 1,248 or dynamic assets)
-  const displayTotal = totalAssets > 0 ? (totalAssets < 100 ? totalAssets * 31 + 4 : totalAssets).toLocaleString() : '1,248';
+  const displayTotal =
+    totalAssets > 0
+      ? (totalAssets < 100 ? totalAssets * 31 + 4 : totalAssets).toLocaleString()
+      : '1,248';
 
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs p-6 space-y-6 text-left">
@@ -38,10 +41,7 @@ export const AllocationSummaryCard: React.FC = () => {
 
       {/* Modern SVG Donut Chart */}
       <div className="relative flex items-center justify-center py-2">
-        <svg
-          className="size-48 sm:size-52 -rotate-90 transform"
-          viewBox="0 0 180 180"
-        >
+        <svg className="size-48 sm:size-52 -rotate-90 transform" viewBox="0 0 180 180">
           {/* Background Ring */}
           <circle
             cx="90"
@@ -100,9 +100,7 @@ export const AllocationSummaryCard: React.FC = () => {
           <span className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             {displayTotal}
           </span>
-          <span className="text-xs text-slate-400 font-medium mt-0.5">
-            Total Assets
-          </span>
+          <span className="text-xs text-slate-400 font-medium mt-0.5">Total Assets</span>
         </div>
       </div>
 
@@ -111,37 +109,25 @@ export const AllocationSummaryCard: React.FC = () => {
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-2.5">
             <span className="size-2.5 rounded-full bg-[#4C40F7]" />
-            <span className="font-medium text-slate-700 dark:text-slate-300">
-              Allocated
-            </span>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Allocated</span>
           </div>
-          <span className="font-bold text-slate-900 dark:text-white">
-            {allocatedPercent}%
-          </span>
+          <span className="font-bold text-slate-900 dark:text-white">{allocatedPercent}%</span>
         </div>
 
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-2.5">
             <span className="size-2.5 rounded-full bg-[#38BDF8]" />
-            <span className="font-medium text-slate-700 dark:text-slate-300">
-              Available
-            </span>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Available</span>
           </div>
-          <span className="font-bold text-slate-900 dark:text-white">
-            {availablePercent}%
-          </span>
+          <span className="font-bold text-slate-900 dark:text-white">{availablePercent}%</span>
         </div>
 
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-2.5">
             <span className="size-2.5 rounded-full bg-[#F97316]" />
-            <span className="font-medium text-slate-700 dark:text-slate-300">
-              Maintenance
-            </span>
+            <span className="font-medium text-slate-700 dark:text-slate-300">Maintenance</span>
           </div>
-          <span className="font-bold text-slate-900 dark:text-white">
-            {maintenancePercent}%
-          </span>
+          <span className="font-bold text-slate-900 dark:text-white">{maintenancePercent}%</span>
         </div>
       </div>
     </div>

@@ -9,9 +9,7 @@ export const AllocationCards: React.FC = () => {
   const { employees } = useEmployeeStore();
 
   const totalAssets = assets.length || 0;
-  const allocatedAssets = assets.filter(
-    (a) => a.status === 'Allocated' && a.assignedTo !== null
-  );
+  const allocatedAssets = assets.filter((a) => a.status === 'Allocated' && a.assignedTo !== null);
   const allocatedCount = allocatedAssets.length;
   const availableCount = assets.filter((a) => a.status === 'Available').length;
   const totalEmployees = employees.length || 0;
@@ -26,7 +24,8 @@ export const AllocationCards: React.FC = () => {
       badge: `${allocationPercent}% allocated`,
       badgeBg: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
       icon: Layers,
-      iconBg: 'bg-indigo-50/80 dark:bg-indigo-950/80 group-hover:bg-indigo-600 group-hover:text-white',
+      iconBg:
+        'bg-indigo-50/80 dark:bg-indigo-950/80 group-hover:bg-indigo-600 group-hover:text-white',
       iconColor: 'text-indigo-600 dark:text-indigo-400',
       accentGlow: 'hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-indigo-500/10',
       barColor: 'from-indigo-500 to-blue-500',
@@ -38,9 +37,11 @@ export const AllocationCards: React.FC = () => {
       badge: `${availablePercent}% ready`,
       badgeBg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
       icon: Box,
-      iconBg: 'bg-emerald-50/80 dark:bg-emerald-950/80 group-hover:bg-emerald-600 group-hover:text-white',
+      iconBg:
+        'bg-emerald-50/80 dark:bg-emerald-950/80 group-hover:bg-emerald-600 group-hover:text-white',
       iconColor: 'text-emerald-600 dark:text-emerald-400',
-      accentGlow: 'hover:border-emerald-300 dark:hover:border-emerald-800 hover:shadow-emerald-500/10',
+      accentGlow:
+        'hover:border-emerald-300 dark:hover:border-emerald-800 hover:shadow-emerald-500/10',
       barColor: 'from-emerald-500 to-teal-500',
       description: 'Ready for assignment',
     },
@@ -50,7 +51,8 @@ export const AllocationCards: React.FC = () => {
       badge: 'All staff',
       badgeBg: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300',
       icon: Users,
-      iconBg: 'bg-purple-50/80 dark:bg-purple-950/80 group-hover:bg-purple-600 group-hover:text-white',
+      iconBg:
+        'bg-purple-50/80 dark:bg-purple-950/80 group-hover:bg-purple-600 group-hover:text-white',
       iconColor: 'text-purple-600 dark:text-purple-400',
       accentGlow: 'hover:border-purple-300 dark:hover:border-purple-800 hover:shadow-purple-500/10',
       barColor: 'from-purple-500 to-pink-500',

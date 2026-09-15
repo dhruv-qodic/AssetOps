@@ -76,9 +76,7 @@ export const ImportAssetsModal: React.FC = () => {
             <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
               Drag & Drop your CSV file here
             </p>
-            <p className="text-[11px] text-slate-400 mt-0.5">
-              Supports .csv, .xlsx up to 10MB
-            </p>
+            <p className="text-[11px] text-slate-400 mt-0.5">Supports .csv, .xlsx up to 10MB</p>
           </div>
 
           <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 text-xs">
@@ -104,12 +102,7 @@ export const ImportAssetsModal: React.FC = () => {
         </div>
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={closeModals}
-            className="h-9 text-xs"
-          >
+          <Button type="button" variant="outline" onClick={closeModals} className="h-9 text-xs">
             Cancel
           </Button>
           <Button

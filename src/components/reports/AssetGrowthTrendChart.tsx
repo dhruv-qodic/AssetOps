@@ -50,8 +50,16 @@ export const AssetGrowthTrendChart: React.FC<AssetGrowthTrendChartProps> = ({
         ];
       case 'Last 90 Days':
         return [
-          { date: 'Month 1', allocated: calcPoint(0.4, endAlloc), available: calcPoint(0.5, endAvail) },
-          { date: 'Month 2', allocated: calcPoint(0.7, endAlloc), available: calcPoint(0.8, endAvail) },
+          {
+            date: 'Month 1',
+            allocated: calcPoint(0.4, endAlloc),
+            available: calcPoint(0.5, endAvail),
+          },
+          {
+            date: 'Month 2',
+            allocated: calcPoint(0.7, endAlloc),
+            available: calcPoint(0.8, endAvail),
+          },
           { date: 'Month 3', allocated: endAlloc, available: endAvail },
         ];
       case 'Year to Date':
@@ -59,25 +67,69 @@ export const AssetGrowthTrendChart: React.FC<AssetGrowthTrendChartProps> = ({
           { date: 'Jan', allocated: calcPoint(0.3, endAlloc), available: calcPoint(0.4, endAvail) },
           { date: 'Feb', allocated: calcPoint(0.5, endAlloc), available: calcPoint(0.6, endAvail) },
           { date: 'Mar', allocated: calcPoint(0.7, endAlloc), available: calcPoint(0.7, endAvail) },
-          { date: 'Apr', allocated: calcPoint(0.85, endAlloc), available: calcPoint(0.85, endAvail) },
+          {
+            date: 'Apr',
+            allocated: calcPoint(0.85, endAlloc),
+            available: calcPoint(0.85, endAvail),
+          },
           { date: 'May', allocated: endAlloc, available: endAvail },
         ];
       case 'All Time':
         return [
-          { date: '2022', allocated: calcPoint(0.2, endAlloc), available: calcPoint(0.3, endAvail) },
-          { date: '2023', allocated: calcPoint(0.4, endAlloc), available: calcPoint(0.5, endAvail) },
-          { date: '2024', allocated: calcPoint(0.7, endAlloc), available: calcPoint(0.7, endAvail) },
-          { date: '2025', allocated: calcPoint(0.85, endAlloc), available: calcPoint(0.9, endAvail) },
+          {
+            date: '2022',
+            allocated: calcPoint(0.2, endAlloc),
+            available: calcPoint(0.3, endAvail),
+          },
+          {
+            date: '2023',
+            allocated: calcPoint(0.4, endAlloc),
+            available: calcPoint(0.5, endAvail),
+          },
+          {
+            date: '2024',
+            allocated: calcPoint(0.7, endAlloc),
+            available: calcPoint(0.7, endAvail),
+          },
+          {
+            date: '2025',
+            allocated: calcPoint(0.85, endAlloc),
+            available: calcPoint(0.9, endAvail),
+          },
           { date: '2026', allocated: endAlloc, available: endAvail },
         ];
       default: // Last 30 Days
         return [
-          { date: 'May 10', allocated: calcPoint(0.5, endAlloc), available: calcPoint(0.5, endAvail) },
-          { date: 'May 12', allocated: calcPoint(0.6, endAlloc), available: calcPoint(0.6, endAvail) },
-          { date: 'May 14', allocated: calcPoint(0.7, endAlloc), available: calcPoint(0.7, endAvail) },
-          { date: 'May 16', allocated: calcPoint(0.75, endAlloc), available: calcPoint(0.8, endAvail) },
-          { date: 'May 18', allocated: calcPoint(0.85, endAlloc), available: calcPoint(0.85, endAvail) },
-          { date: 'May 20', allocated: calcPoint(0.95, endAlloc), available: calcPoint(0.95, endAvail) },
+          {
+            date: 'May 10',
+            allocated: calcPoint(0.5, endAlloc),
+            available: calcPoint(0.5, endAvail),
+          },
+          {
+            date: 'May 12',
+            allocated: calcPoint(0.6, endAlloc),
+            available: calcPoint(0.6, endAvail),
+          },
+          {
+            date: 'May 14',
+            allocated: calcPoint(0.7, endAlloc),
+            available: calcPoint(0.7, endAvail),
+          },
+          {
+            date: 'May 16',
+            allocated: calcPoint(0.75, endAlloc),
+            available: calcPoint(0.8, endAvail),
+          },
+          {
+            date: 'May 18',
+            allocated: calcPoint(0.85, endAlloc),
+            available: calcPoint(0.85, endAvail),
+          },
+          {
+            date: 'May 20',
+            allocated: calcPoint(0.95, endAlloc),
+            available: calcPoint(0.95, endAvail),
+          },
           { date: 'May 22', allocated: endAlloc, available: endAvail },
         ];
     }
@@ -95,9 +147,7 @@ export const AssetGrowthTrendChart: React.FC<AssetGrowthTrendChartProps> = ({
             <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
               Asset Growth Trend
             </h3>
-            <span className="text-[11px] text-slate-400 font-medium">
-              Timeline: {timeRange}
-            </span>
+            <span className="text-[11px] text-slate-400 font-medium">Timeline: {timeRange}</span>
           </div>
         </div>
 
@@ -117,10 +167,7 @@ export const AssetGrowthTrendChart: React.FC<AssetGrowthTrendChartProps> = ({
       {/* Area Chart Container */}
       <div className="w-full h-64 sm:h-72">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={trendData}
-            margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
-          >
+          <AreaChart data={trendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorAllocated" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#2563EB" stopOpacity={0.25} />

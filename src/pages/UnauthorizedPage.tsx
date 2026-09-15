@@ -14,12 +14,19 @@ export default function UnauthorizedPage() {
 
       <h1 className="text-3xl font-bold tracking-tight mb-2">Access Restricted</h1>
       <p className="text-muted-foreground max-w-md mb-4 text-sm sm:text-base">
-        Your current role (<span className="font-semibold text-foreground uppercase tracking-wide">{user?.role || 'User'}</span>) does not have permission to view or manage this module.
+        Your current role (
+        <span className="font-semibold text-foreground uppercase tracking-wide">
+          {user?.role || 'User'}
+        </span>
+        ) does not have permission to view or manage this module.
       </p>
 
       <div className="p-4 bg-muted/40 rounded-xl border border-border text-xs text-muted-foreground max-w-sm mb-6 text-left space-y-1">
         <p className="font-medium text-foreground">Need access?</p>
-        <p>Please contact your System Administrator to request elevated permissions for your account ({user?.email}).</p>
+        <p>
+          Please contact your System Administrator to request elevated permissions for your account
+          ({user?.email}).
+        </p>
       </div>
 
       <Link to="/">

@@ -46,11 +46,7 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
   // 2. Error State
   if (error) {
     return (
-      <ErrorState
-        title="Failed to load employee directory"
-        message={error}
-        onRetry={onRetry}
-      />
+      <ErrorState title="Failed to load employee directory" message={error} onRetry={onRetry} />
     );
   }
 
@@ -61,9 +57,9 @@ export const EmployeeTable: React.FC<EmployeeTableProps> = ({
         icon={UserX}
         title="No employees found"
         description="No employees match your active search or filter criteria. Try clearing filters or adding a new employee."
-        secondaryActionLabel={onClearFilters ? "Clear filters" : undefined}
+        secondaryActionLabel={onClearFilters ? 'Clear filters' : undefined}
         onSecondaryAction={onClearFilters}
-        actionLabel={onAddEmployee ? "Add Employee" : undefined}
+        actionLabel={onAddEmployee ? 'Add Employee' : undefined}
         onAction={onAddEmployee}
       />
     );

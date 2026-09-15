@@ -22,13 +22,8 @@ export const assetSchema = z.object({
     error: 'Please select a valid status',
   }),
   location: z.string().trim().min(1, { message: 'Location is required' }),
-  serialNumber: z
-    .string()
-    .trim()
-    .min(1, { message: 'Serial number is required' }),
-  purchaseDate: z
-    .string()
-    .min(1, { message: 'Purchase date is required' }),
+  serialNumber: z.string().trim().min(1, { message: 'Serial number is required' }),
+  purchaseDate: z.string().min(1, { message: 'Purchase date is required' }),
   purchaseCost: z.number().min(0).optional(),
   warrantyExpiry: z.string().optional(),
   notes: z.string().optional(),

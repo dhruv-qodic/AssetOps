@@ -33,7 +33,7 @@ export const useAuthStore = create<AuthState>()(
         const matchedUser = MOCK_USERS.find(
           (u) =>
             u.email.toLowerCase() === credentials.email.trim().toLowerCase() &&
-            u.password === credentials.password
+            u.password === credentials.password,
         );
 
         if (!matchedUser) {
@@ -75,6 +75,6 @@ export const useAuthStore = create<AuthState>()(
         user: state.user,
         isAuthenticated: state.isAuthenticated,
       }),
-    }
-  )
+    },
+  ),
 );

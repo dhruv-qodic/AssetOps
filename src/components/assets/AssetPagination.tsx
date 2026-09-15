@@ -13,13 +13,7 @@ interface AssetPaginationProps {
 export const AssetPagination: React.FC<AssetPaginationProps> = (props) => {
   const { setPage } = useAssetStore();
 
-  return (
-    <Pagination
-      {...props}
-      onPageChange={setPage}
-      entityLabel="assets"
-    />
-  );
+  return <Pagination {...props} onPageChange={setPage} entityLabel="assets" />;
 };
 
 export default AssetPagination;

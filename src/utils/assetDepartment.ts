@@ -19,7 +19,7 @@ export function getAssetDepartment(asset: Asset, employees: Employee[]): string 
         (asset.assignedTo?.employeeId && e.employeeId === asset.assignedTo.employeeId) ||
         (asset.assignedTo?.name &&
           `${e.firstName} ${e.lastName}`.trim().toLowerCase() ===
-            asset.assignedTo.name.trim().toLowerCase())
+            asset.assignedTo.name.trim().toLowerCase()),
     );
 
     if (assignedEmp?.department) {

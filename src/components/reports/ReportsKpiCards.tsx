@@ -1,5 +1,12 @@
 import React, { useMemo } from 'react';
-import { ArrowUpRight, ArrowDownRight, Package, UserCheck, CheckCircle2, Wrench } from 'lucide-react';
+import {
+  ArrowUpRight,
+  ArrowDownRight,
+  Package,
+  UserCheck,
+  CheckCircle2,
+  Wrench,
+} from 'lucide-react';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { getAssetDepartment } from '@/utils/assetDepartment';
@@ -105,7 +112,9 @@ export const ReportsKpiCards: React.FC<ReportsKpiCardsProps> = ({
               <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
                 {kpi.title}
               </p>
-              <div className={`p-2.5 rounded-xl ${kpi.iconBg} transition-transform group-hover:scale-110 duration-200`}>
+              <div
+                className={`p-2.5 rounded-xl ${kpi.iconBg} transition-transform group-hover:scale-110 duration-200`}
+              >
                 <Icon className="size-4.5" />
               </div>
             </div>

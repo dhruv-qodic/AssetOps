@@ -36,7 +36,9 @@ function Navbar() {
         </button>
 
         <div className="hidden lg:block">
-          <h1 className="text-xl font-bold tracking-tight text-navbar-foreground">AssetOps Overview</h1>
+          <h1 className="text-xl font-bold tracking-tight text-navbar-foreground">
+            AssetOps Overview
+          </h1>
         </div>
       </div>
 

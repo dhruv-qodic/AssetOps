@@ -46,13 +46,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
 
   // 2. Error State
   if (error) {
-    return (
-      <ErrorState
-        title="Failed to load assets"
-        message={error}
-        onRetry={onRetry}
-      />
-    );
+    return <ErrorState title="Failed to load assets" message={error} onRetry={onRetry} />;
   }
 
   // 3. Empty State
@@ -62,9 +56,9 @@ export const AssetTable: React.FC<AssetTableProps> = ({
         icon={PackageSearch}
         title="No assets found"
         description="No assets match your active search or filter criteria. Try clearing filters or add a new asset."
-        secondaryActionLabel={onClearFilters ? "Clear filters" : undefined}
+        secondaryActionLabel={onClearFilters ? 'Clear filters' : undefined}
         onSecondaryAction={onClearFilters}
-        actionLabel={onAddAsset ? "Add Asset" : undefined}
+        actionLabel={onAddAsset ? 'Add Asset' : undefined}
         onAction={onAddAsset}
       />
     );
@@ -118,10 +112,7 @@ export const AssetTable: React.FC<AssetTableProps> = ({
               {/* Name with Device Icon + Model Subtitle */}
               <TableCell>
                 <div className="flex items-center gap-3">
-                  <AssetDeviceIcon
-                    category={asset.category}
-                    name={asset.name}
-                  />
+                  <AssetDeviceIcon category={asset.category} name={asset.name} />
                   <div className="flex flex-col text-left">
                     <span className="font-semibold text-slate-900 dark:text-slate-100 text-xs sm:text-sm leading-tight">
                       {asset.name}

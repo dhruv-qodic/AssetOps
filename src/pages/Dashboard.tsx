@@ -47,7 +47,9 @@ function Dashboard() {
 
       <div className="flex flex-col items-center gap-2">
         <p className="text-muted-foreground text-center max-w-md text-sm">
-          Welcome back, <strong className="text-foreground font-semibold">{user?.name || 'User'}</strong>! You are logged in with role:
+          Welcome back,{' '}
+          <strong className="text-foreground font-semibold">{user?.name || 'User'}</strong>! You are
+          logged in with role:
         </p>
         {getRoleBadge()}
       </div>

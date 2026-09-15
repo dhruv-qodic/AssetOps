@@ -14,8 +14,7 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { Calendar, MapPin, Tag, Hash, UserCheck, Shield } from 'lucide-react';
 
 export const AssetDetailsModal: React.FC = () => {
-  const { isViewModalOpen, selectedAsset, closeModals, openEditModal } =
-    useAssetStore();
+  const { isViewModalOpen, selectedAsset, closeModals, openEditModal } = useAssetStore();
 
   if (!selectedAsset) return null;
 
@@ -30,9 +29,7 @@ export const AssetDetailsModal: React.FC = () => {
               className="size-11"
             />
             <div>
-              <DialogTitle className="text-base sm:text-lg">
-                {selectedAsset.name}
-              </DialogTitle>
+              <DialogTitle className="text-base sm:text-lg">{selectedAsset.name}</DialogTitle>
               <DialogDescription className="flex items-center gap-2 mt-0.5">
                 <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">
                   {selectedAsset.assetId}
@@ -119,16 +116,21 @@ export const AssetDetailsModal: React.FC = () => {
                 }}
                 className="text-[11px] text-[#4C40F7] hover:underline font-medium cursor-pointer"
               >
-                {selectedAsset.specifications && Object.keys(selectedAsset.specifications).length > 0
+                {selectedAsset.specifications &&
+                Object.keys(selectedAsset.specifications).length > 0
                   ? 'Edit Specs'
                   : '+ Add Specs'}
               </button>
             </div>
 
-            {selectedAsset.specifications && Object.keys(selectedAsset.specifications).length > 0 ? (
+            {selectedAsset.specifications &&
+            Object.keys(selectedAsset.specifications).length > 0 ? (
               <div className="grid grid-cols-2 gap-2 text-xs pt-1">
                 {Object.entries(selectedAsset.specifications).map(([k, v]) => (
-                  <div key={k} className="flex flex-col bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200/60 dark:border-slate-800">
+                  <div
+                    key={k}
+                    className="flex flex-col bg-white dark:bg-slate-900 p-2 rounded-lg border border-slate-200/60 dark:border-slate-800"
+                  >
                     <span className="text-slate-400 text-[10.5px] font-medium">{k}</span>
                     <span className="font-semibold text-slate-800 dark:text-slate-200 truncate">
                       {v}
@@ -153,12 +155,7 @@ export const AssetDetailsModal: React.FC = () => {
         </div>
 
         <DialogFooter>
-          <Button
-            type="button"
-            variant="outline"
-            onClick={closeModals}
-            className="h-9 text-xs"
-          >
+          <Button type="button" variant="outline" onClick={closeModals} className="h-9 text-xs">
             Close
           </Button>
           <Button

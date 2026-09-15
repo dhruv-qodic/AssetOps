@@ -47,13 +47,7 @@ export const AllocationTable: React.FC<AllocationTableProps> = ({
 
   // 2. Error State
   if (error) {
-    return (
-      <ErrorState
-        title="Failed to load allocations"
-        message={error}
-        onRetry={onRetry}
-      />
-    );
+    return <ErrorState title="Failed to load allocations" message={error} onRetry={onRetry} />;
   }
 
   // 3. Empty State
@@ -63,9 +57,9 @@ export const AllocationTable: React.FC<AllocationTableProps> = ({
         icon={Layers}
         title="No allocations found"
         description="No asset allocations match your filter or search criteria. Try adjusting your filters or create a new allocation."
-        secondaryActionLabel={onClearFilters ? "Clear filters" : undefined}
+        secondaryActionLabel={onClearFilters ? 'Clear filters' : undefined}
         onSecondaryAction={onClearFilters}
-        actionLabel={onNewAllocation ? "New Allocation" : undefined}
+        actionLabel={onNewAllocation ? 'New Allocation' : undefined}
         onAction={onNewAllocation}
       />
     );

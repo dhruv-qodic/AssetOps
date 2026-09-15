@@ -41,14 +41,14 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'w-full h-9 px-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
-            isOpen && 'border-[#4C40F7] ring-2 ring-[#4C40F7]/20'
+            isOpen && 'border-[#4C40F7] ring-2 ring-[#4C40F7]/20',
           )}
         >
           <span className="truncate">{currentLabel}</span>
           <ChevronDown
             className={cn(
               'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-              isOpen && 'rotate-180 text-[#4C40F7]'
+              isOpen && 'rotate-180 text-[#4C40F7]',
             )}
           />
         </button>
@@ -69,7 +69,7 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
                       ? 'font-semibold text-[#4C40F7] bg-indigo-50/60 dark:bg-indigo-950/40'
-                      : 'text-slate-700 dark:text-slate-300'
+                      : 'text-slate-700 dark:text-slate-300',
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
@@ -191,7 +191,7 @@ export const AllocationFiltersBar: React.FC<AllocationFiltersBarProps> = ({
               'text-xs font-semibold transition-colors cursor-pointer',
               hasFilters
                 ? 'text-[#4C40F7] hover:underline hover:text-[#3D31E5]'
-                : 'text-slate-400 hover:text-slate-600'
+                : 'text-slate-400 hover:text-slate-600',
             )}
           >
             Clear Filters

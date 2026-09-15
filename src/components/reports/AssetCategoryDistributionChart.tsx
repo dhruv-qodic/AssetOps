@@ -37,7 +37,7 @@ export const AssetCategoryDistributionChart: React.FC<AssetCategoryDistributionC
   const monitorCount = filteredAssets.filter((a) => a.category === 'Monitor').length;
   const accessoriesCount = filteredAssets.filter((a) => a.category === 'Accessories').length;
   const othersCount = filteredAssets.filter(
-    (a) => !['Laptop', 'Mobile', 'Monitor', 'Accessories'].includes(a.category)
+    (a) => !['Laptop', 'Mobile', 'Monitor', 'Accessories'].includes(a.category),
   ).length;
 
   const totalAssetsCount = filteredAssets.length;
@@ -68,19 +68,25 @@ export const AssetCategoryDistributionChart: React.FC<AssetCategoryDistributionC
     {
       name: 'Accessories',
       count: accessoriesCount,
-      percentage: totalAssetsCount > 0 ? Math.round((accessoriesCount / totalAssetsCount) * 100) : 0,
+      percentage:
+        totalAssetsCount > 0 ? Math.round((accessoriesCount / totalAssetsCount) * 100) : 0,
       color: '#10B981', // Emerald 500
       icon: Headphones,
     },
     {
       name: 'Others',
       count: othersCount,
-      percentage: totalAssetsCount > 0 ? Math.max(0, 100 - (
-        Math.round((laptopCount / totalAssetsCount) * 100) +
-        Math.round((mobileCount / totalAssetsCount) * 100) +
-        Math.round((monitorCount / totalAssetsCount) * 100) +
-        Math.round((accessoriesCount / totalAssetsCount) * 100)
-      )) : 0,
+      percentage:
+        totalAssetsCount > 0
+          ? Math.max(
+              0,
+              100 -
+                (Math.round((laptopCount / totalAssetsCount) * 100) +
+                  Math.round((mobileCount / totalAssetsCount) * 100) +
+                  Math.round((monitorCount / totalAssetsCount) * 100) +
+                  Math.round((accessoriesCount / totalAssetsCount) * 100)),
+            )
+          : 0,
       color: '#64748B', // Slate Blue 500
       icon: Boxes,
     },
@@ -118,10 +124,7 @@ export const AssetCategoryDistributionChart: React.FC<AssetCategoryDistributionC
 
         {/* Donut Chart Container */}
         <div className="relative flex items-center justify-center my-4">
-          <svg
-            className="size-44 sm:size-48 -rotate-90 transform"
-            viewBox="0 0 170 170"
-          >
+          <svg className="size-44 sm:size-48 -rotate-90 transform" viewBox="0 0 170 170">
             {/* Background Track */}
             <circle
               cx="85"
@@ -155,9 +158,7 @@ export const AssetCategoryDistributionChart: React.FC<AssetCategoryDistributionC
             <span className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               {displayTotal}
             </span>
-            <span className="text-[11px] font-medium text-slate-400">
-              Total Assets
-            </span>
+            <span className="text-[11px] font-medium text-slate-400">Total Assets</span>
           </div>
         </div>
       </div>
@@ -177,9 +178,7 @@ export const AssetCategoryDistributionChart: React.FC<AssetCategoryDistributionC
                   style={{ backgroundColor: item.color }}
                 />
                 <Icon className="size-3.5 text-slate-400 group-hover:text-blue-600 transition-colors" />
-                <span className="text-slate-600 dark:text-slate-300 font-medium">
-                  {item.name}
-                </span>
+                <span className="text-slate-600 dark:text-slate-300 font-medium">{item.name}</span>
               </div>
               <span className="font-bold text-slate-800 dark:text-slate-200">
                 {item.percentage}%

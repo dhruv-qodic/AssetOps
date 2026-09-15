@@ -9,9 +9,7 @@ interface EmployeeRowActionsProps {
   employee: Employee;
 }
 
-export const EmployeeRowActions: React.FC<EmployeeRowActionsProps> = ({
-  employee,
-}) => {
+export const EmployeeRowActions: React.FC<EmployeeRowActionsProps> = ({ employee }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -53,7 +51,7 @@ export const EmployeeRowActions: React.FC<EmployeeRowActionsProps> = ({
         onClick={handleToggle}
         className={cn(
           'flex size-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer',
-          isOpen && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
+          isOpen && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200',
         )}
         title="Employee actions"
         aria-label="Employee actions"
@@ -65,7 +63,7 @@ export const EmployeeRowActions: React.FC<EmployeeRowActionsProps> = ({
         <div
           className={cn(
             'absolute right-0 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150',
-            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5',
           )}
         >
           {/* View Details */}

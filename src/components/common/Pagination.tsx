@@ -72,20 +72,14 @@ export const Pagination: React.FC<PaginationProps> = ({
     <div
       className={cn(
         'flex flex-col sm:flex-row items-center justify-between gap-3 px-6 py-3.5 border-t border-slate-200/80 dark:border-slate-800 text-xs sm:text-sm select-none',
-        className
+        className,
       )}
     >
       {/* Showing X to Y of Z {entityLabel} */}
       <div className="text-slate-500 dark:text-slate-400 font-medium">
         Showing{' '}
-        <span className="font-semibold text-slate-700 dark:text-slate-200">
-          {startIndex}
-        </span>{' '}
-        to{' '}
-        <span className="font-semibold text-slate-700 dark:text-slate-200">
-          {endIndex}
-        </span>{' '}
-        of{' '}
+        <span className="font-semibold text-slate-700 dark:text-slate-200">{startIndex}</span> to{' '}
+        <span className="font-semibold text-slate-700 dark:text-slate-200">{endIndex}</span> of{' '}
         <span className="font-semibold text-slate-700 dark:text-slate-200">
           {totalFiltered.toLocaleString()}
         </span>{' '}
@@ -130,7 +124,7 @@ export const Pagination: React.FC<PaginationProps> = ({
                 'flex size-7.5 items-center justify-center rounded-full font-medium text-xs sm:text-sm transition-all cursor-pointer',
                 isActive
                   ? 'border border-[#4C40F7] text-[#4C40F7] bg-indigo-50/60 dark:bg-indigo-950/40 font-semibold shadow-2xs'
-                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                  : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800',
               )}
             >
               {pageNum}

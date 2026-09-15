@@ -22,14 +22,8 @@ export function AssetListPage() {
     viewMode,
   } = useAssetStore();
 
-  const {
-    allFilteredAssets,
-    paginatedAssets,
-    totalFiltered,
-    totalPages,
-    startIndex,
-    endIndex,
-  } = getFilteredAssets();
+  const { allFilteredAssets, paginatedAssets, totalFiltered, totalPages, startIndex, endIndex } =
+    getFilteredAssets();
 
   const showPagination = viewMode === 'table' && !isLoading && !error && totalFiltered > 0;
 

@@ -5,25 +5,11 @@ import type {
   EmployeeFilters,
 } from '@/types/employee';
 
-export const EMPLOYEE_STATUSES: EmployeeStatus[] = [
-  'active',
-  'inactive',
-  'terminated',
-];
+export const EMPLOYEE_STATUSES: EmployeeStatus[] = ['active', 'inactive', 'terminated'];
 
-export const EMPLOYEE_TYPES: EmployeeType[] = [
-  'full-time',
-  'contractor',
-  'intern',
-];
+export const EMPLOYEE_TYPES: EmployeeType[] = ['full-time', 'contractor', 'intern'];
 
-export const EMPLOYEE_DEPARTMENTS: string[] = [
-  'IT',
-  'HR',
-  'Sales',
-  'Marketing',
-  'Finance',
-];
+export const EMPLOYEE_DEPARTMENTS: string[] = ['IT', 'HR', 'Sales', 'Marketing', 'Finance'];
 export const DEPARTMENTS = EMPLOYEE_DEPARTMENTS;
 
 export const EMPLOYEE_LOCATIONS: string[] = [
@@ -39,13 +25,13 @@ export const EMPLOYEE_SORT_OPTIONS: {
   label: string;
   value: EmployeeSortOption;
 }[] = [
-    { label: 'Recently Added', value: 'recently_added' },
-    { label: 'Name (A to Z)', value: 'name_asc' },
-    { label: 'Name (Z to A)', value: 'name_desc' },
-    { label: 'Employee ID (Ascending)', value: 'employee_id_asc' },
-    { label: 'Employee ID (Descending)', value: 'employee_id_desc' },
-    { label: 'Date Created (Newest)', value: 'date_created_desc' },
-  ];
+  { label: 'Recently Added', value: 'recently_added' },
+  { label: 'Name (A to Z)', value: 'name_asc' },
+  { label: 'Name (Z to A)', value: 'name_desc' },
+  { label: 'Employee ID (Ascending)', value: 'employee_id_asc' },
+  { label: 'Employee ID (Descending)', value: 'employee_id_desc' },
+  { label: 'Date Created (Newest)', value: 'date_created_desc' },
+];
 
 export const DEFAULT_EMPLOYEE_FILTERS: EmployeeFilters = {
   search: '',
@@ -66,10 +52,7 @@ export interface StatusBadgeConfig {
   dot: string;
 }
 
-export const EMPLOYEE_STATUS_CONFIG: Record<
-  EmployeeStatus,
-  StatusBadgeConfig
-> = {
+export const EMPLOYEE_STATUS_CONFIG: Record<EmployeeStatus, StatusBadgeConfig> = {
   active: {
     label: 'Active',
     bg: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400',
@@ -93,10 +76,7 @@ export const EMPLOYEE_STATUS_CONFIG: Record<
   },
 };
 
-export const EMPLOYEE_TYPE_CONFIG: Record<
-  EmployeeType,
-  StatusBadgeConfig
-> = {
+export const EMPLOYEE_TYPE_CONFIG: Record<EmployeeType, StatusBadgeConfig> = {
   'full-time': {
     label: 'Full-Time',
     bg: 'bg-blue-50 text-blue-700 dark:bg-blue-950/40 dark:text-blue-400',

@@ -1,13 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  MoreHorizontal,
-  Eye,
-  Edit2,
-  Trash2,
-  UserPlus,
-  UserMinus,
-  Wrench,
-} from 'lucide-react';
+import { MoreHorizontal, Eye, Edit2, Trash2, UserPlus, UserMinus, Wrench } from 'lucide-react';
 import type { Asset } from '@/types/asset';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
@@ -98,7 +90,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
         onClick={handleToggle}
         className={cn(
           'flex size-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer',
-          isOpen && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200'
+          isOpen && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200',
         )}
         title="Asset actions"
       >
@@ -109,7 +101,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
         <div
           className={cn(
             'absolute right-0 w-44 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl shadow-xl py-1 z-50 animate-in fade-in zoom-in-95 duration-150 select-none',
-            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+            openUpward ? 'bottom-full mb-1.5' : 'top-full mt-1.5',
           )}
           onClick={(e) => e.stopPropagation()}
         >
@@ -144,8 +136,8 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
           )}
 
           {/* Quick Allocate / Deallocate */}
-          {canAllocate && (
-            asset.assignedTo ? (
+          {canAllocate &&
+            (asset.assignedTo ? (
               <button
                 type="button"
                 onClick={handleDeallocate}
@@ -167,8 +159,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
                 <UserPlus className="size-3.5 shrink-0" />
                 <span>Allocate to Employee</span>
               </button>
-            )
-          )}
+            ))}
 
           {/* Toggle Maintenance */}
           <button
@@ -177,11 +168,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
             className="w-full px-3 py-2 text-xs flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer text-left font-medium"
           >
             <Wrench className="size-3.5 text-amber-500 shrink-0" />
-            <span>
-              {asset.status === 'Maintenance'
-                ? 'Mark Available'
-                : 'Mark Maintenance'}
-            </span>
+            <span>{asset.status === 'Maintenance' ? 'Mark Available' : 'Mark Maintenance'}</span>
           </button>
 
           {/* Delete Asset */}

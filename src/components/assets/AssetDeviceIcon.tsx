@@ -58,7 +58,7 @@ export const AssetDeviceIcon: React.FC<AssetDeviceIconProps> = ({
     <div
       className={cn(
         'flex size-9.5 shrink-0 items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200/70 dark:border-slate-700/60 shadow-2xs select-none transition-transform group-hover:scale-105',
-        className
+        className,
       )}
     >
       {getIcon()}

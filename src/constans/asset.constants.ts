@@ -1,9 +1,4 @@
-import type {
-  AssetCategory,
-  AssetStatus,
-  AssetSortOption,
-  AssetFilters,
-} from '@/types/asset';
+import type { AssetCategory, AssetStatus, AssetSortOption, AssetFilters } from '@/types/asset';
 
 export const ASSET_CATEGORIES: AssetCategory[] = [
   'Laptop',

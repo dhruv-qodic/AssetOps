@@ -21,11 +21,7 @@ export function ReportsPage() {
     reloadAssets,
     openAddModal,
   } = useAssetStore();
-  const {
-    isLoading: isEmpLoading,
-    error: empError,
-    reloadEmployees,
-  } = useEmployeeStore();
+  const { isLoading: isEmpLoading, error: empError, reloadEmployees } = useEmployeeStore();
 
   const [reportType, setReportType] = useState('Asset Overview');
   const [timeRange, setTimeRange] = useState('Last 30 Days');
@@ -78,11 +74,7 @@ export function ReportsPage() {
       {/* 2. Error State */}
       {!isLoading && error && (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
-          <ErrorState
-            title="Failed to generate reports"
-            message={error}
-            onRetry={handleRetry}
-          />
+          <ErrorState title="Failed to generate reports" message={error} onRetry={handleRetry} />
         </div>
       )}
 

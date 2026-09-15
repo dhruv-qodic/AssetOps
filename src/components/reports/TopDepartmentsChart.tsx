@@ -42,7 +42,7 @@ export const TopDepartmentsChart: React.FC<TopDepartmentsChartProps> = ({
 
     const deptStats = Array.from(allDepts).map((dept) => {
       const count = allocatedAssets.filter(
-        (asset) => getAssetDepartment(asset, employees).toLowerCase() === dept.toLowerCase()
+        (asset) => getAssetDepartment(asset, employees).toLowerCase() === dept.toLowerCase(),
       ).length;
 
       let icon = Building;
@@ -54,9 +54,7 @@ export const TopDepartmentsChart: React.FC<TopDepartmentsChartProps> = ({
       else if (lower.includes('hr')) icon = Users;
 
       // Proportional percentage
-      const percentage = totalAllocated > 0
-        ? Math.round((count / totalAllocated) * 100)
-        : 0;
+      const percentage = totalAllocated > 0 ? Math.round((count / totalAllocated) * 100) : 0;
 
       return {
         name: dept,
@@ -97,7 +95,9 @@ export const TopDepartmentsChart: React.FC<TopDepartmentsChartProps> = ({
               <div key={dept.name} className="space-y-1.5">
                 <div className="flex items-center justify-between text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
-                    <Icon className={`size-3.5 ${isHighlighted ? 'text-blue-600' : 'text-slate-400'}`} />
+                    <Icon
+                      className={`size-3.5 ${isHighlighted ? 'text-blue-600' : 'text-slate-400'}`}
+                    />
                     <span
                       className={`font-semibold ${
                         isHighlighted

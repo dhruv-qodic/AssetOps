@@ -26,7 +26,7 @@ describe('Route Protection Components', () => {
               <Route path="/dashboard" element={<div>Protected Dashboard</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Login Page')).toBeInTheDocument();
@@ -52,7 +52,7 @@ describe('Route Protection Components', () => {
               <Route path="/dashboard" element={<div>Protected Dashboard</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Protected Dashboard')).toBeInTheDocument();
@@ -70,7 +70,7 @@ describe('Route Protection Components', () => {
               <Route path="/login" element={<div>Login Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Login Page')).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe('Route Protection Components', () => {
               <Route path="/login" element={<div>Login Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Home Dashboard')).toBeInTheDocument();
@@ -115,7 +115,7 @@ describe('Route Protection Components', () => {
               <Route path="/settings" element={<div>Settings Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Login Page')).toBeInTheDocument();
@@ -142,7 +142,7 @@ describe('Route Protection Components', () => {
               <Route path="/admin-panel" element={<div>Admin Only Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Unauthorized Page')).toBeInTheDocument();
@@ -168,7 +168,7 @@ describe('Route Protection Components', () => {
               <Route path="/settings" element={<div>Settings Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Unauthorized Page')).toBeInTheDocument();
@@ -190,15 +190,11 @@ describe('Route Protection Components', () => {
         <MemoryRouter initialEntries={['/manage']}>
           <Routes>
             <Route path="/unauthorized" element={<div>Unauthorized Page</div>} />
-            <Route
-              element={
-                <PermissionRoute permissions={['CREATE_ASSET', 'EDIT_ASSET']} />
-              }
-            >
+            <Route element={<PermissionRoute permissions={['CREATE_ASSET', 'EDIT_ASSET']} />}>
               <Route path="/manage" element={<div>Management Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Unauthorized Page')).toBeInTheDocument();
@@ -224,7 +220,7 @@ describe('Route Protection Components', () => {
               <Route path="/settings" element={<div>Settings Page</div>} />
             </Route>
           </Routes>
-        </MemoryRouter>
+        </MemoryRouter>,
       );
 
       expect(screen.getByText('Settings Page')).toBeInTheDocument();

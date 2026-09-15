@@ -29,7 +29,7 @@ describe('LoginPage Component', () => {
     render(
       <MemoryRouter initialEntries={['/login']}>
         <LoginPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(screen.getByRole('heading', { name: /welcome back/i })).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('LoginPage Component', () => {
     render(
       <MemoryRouter initialEntries={['/login']}>
         <LoginPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const passwordInput = screen.getByPlaceholderText(/enter your password/i);
@@ -63,7 +63,7 @@ describe('LoginPage Component', () => {
     render(
       <MemoryRouter initialEntries={['/login']}>
         <LoginPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const submitButton = screen.getByRole('button', { name: /sign in/i });
@@ -83,11 +83,11 @@ describe('LoginPage Component', () => {
     render(
       <MemoryRouter initialEntries={['/login']}>
         <LoginPage />
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     expect(
-      screen.getByText('Invalid email address or password. Please try again.')
+      screen.getByText('Invalid email address or password. Please try again.'),
     ).toBeInTheDocument();
   });
 
@@ -100,7 +100,7 @@ describe('LoginPage Component', () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/" element={<div>Dashboard Home</div>} />
         </Routes>
-      </MemoryRouter>
+      </MemoryRouter>,
     );
 
     const adminDemoButton = screen.getByRole('button', { name: /admin:/i });

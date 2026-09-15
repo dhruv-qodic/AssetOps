@@ -70,7 +70,7 @@ export function AllocationsPage() {
           (asset.assignedTo?.employeeId && e.employeeId === asset.assignedTo.employeeId) ||
           (asset.assignedTo?.name &&
             `${e.firstName} ${e.lastName}`.trim().toLowerCase() ===
-            asset.assignedTo.name.trim().toLowerCase()),
+              asset.assignedTo.name.trim().toLowerCase()),
       );
 
       const empFullName = assignedEmp

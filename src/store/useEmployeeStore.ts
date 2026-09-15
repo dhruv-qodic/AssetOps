@@ -97,7 +97,10 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
           await new Promise((resolve) => setTimeout(resolve, 300));
           set({ isLoading: false, error: null });
         } catch {
-          set({ isLoading: false, error: 'Failed to reload employee directory. Please try again.' });
+          set({
+            isLoading: false,
+            error: 'Failed to reload employee directory. Please try again.',
+          });
         }
       },
 

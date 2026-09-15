@@ -53,13 +53,7 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
 
   // 2. Error State
   if (error) {
-    return (
-      <ErrorState
-        title="Failed to load assets"
-        message={error}
-        onRetry={onRetry}
-      />
-    );
+    return <ErrorState title="Failed to load assets" message={error} onRetry={onRetry} />;
   }
 
   // 3. Empty State
@@ -140,7 +134,9 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
                     data-index={virtualRow.index}
                     data-selected={isSelected}
                     aria-selected={isSelected}
-                    onClick={() => setSelectedRowId((prev) => (prev === asset.id ? null : asset.id))}
+                    onClick={() =>
+                      setSelectedRowId((prev) => (prev === asset.id ? null : asset.id))
+                    }
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -150,10 +146,11 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
                       transform: `translateY(${virtualRow.start}px)`,
                       zIndex: isRowOpen ? 50 : 1,
                     }}
-                    className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 transition-colors group text-xs sm:text-sm cursor-pointer select-none ${isSelected
-                      ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-blue-600 dark:border-l-blue-400 font-medium'
-                      : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
-                      }`}
+                    className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 transition-colors group text-xs sm:text-sm cursor-pointer select-none ${
+                      isSelected
+                        ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-blue-600 dark:border-l-blue-400 font-medium'
+                        : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
+                    }`}
                   >
                     {/* Asset ID */}
                     <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
@@ -162,10 +159,7 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
 
                     {/* Name + Icon + Model */}
                     <div className="flex items-center gap-3 pr-2 min-w-0">
-                      <AssetDeviceIcon
-                        category={asset.category}
-                        name={asset.name}
-                      />
+                      <AssetDeviceIcon category={asset.category} name={asset.name} />
                       <div className="flex flex-col text-left min-w-0 truncate">
                         <span className="font-semibold text-slate-900 dark:text-slate-100 leading-tight truncate">
                           {asset.name}

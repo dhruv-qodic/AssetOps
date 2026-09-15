@@ -7,10 +7,7 @@ interface AssetStatusBadgeProps {
   className?: string;
 }
 
-export const AssetStatusBadge: React.FC<AssetStatusBadgeProps> = ({
-  status,
-  className,
-}) => {
+export const AssetStatusBadge: React.FC<AssetStatusBadgeProps> = ({ status, className }) => {
   const getBadgeStyle = (st: AssetStatus) => {
     switch (st) {
       case 'Allocated':
@@ -33,7 +30,7 @@ export const AssetStatusBadge: React.FC<AssetStatusBadgeProps> = ({
       className={cn(
         'inline-flex items-center justify-center font-medium text-xs px-3 py-1 rounded-full whitespace-nowrap transition-colors select-none',
         getBadgeStyle(status),
-        className
+        className,
       )}
     >
       {status}
