@@ -36,8 +36,8 @@ export function ReportsPage() {
   const error = assetError || empError;
 
   const handleRetry = () => {
-    reloadAssets();
-    reloadEmployees();
+    void reloadAssets();
+    void reloadEmployees();
   };
 
   return (

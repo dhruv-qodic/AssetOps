@@ -26,7 +26,7 @@ describe('auth.schema - loginSchema', () => {
     const result = loginSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const emailError = result.error.format().email?._errors[0];
+      const emailError = result.error.issues.find((i) => i.path.includes('email'))?.message;
       expect(emailError).toBe('Email address is required');
     }
   });
@@ -41,7 +41,7 @@ describe('auth.schema - loginSchema', () => {
     const result = loginSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const emailError = result.error.format().email?._errors[0];
+      const emailError = result.error.issues.find((i) => i.path.includes('email'))?.message;
       expect(emailError).toBe('Please enter a valid email address');
     }
   });
@@ -56,7 +56,9 @@ describe('auth.schema - loginSchema', () => {
     const result = loginSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const passwordErrors = result.error.format().password?._errors;
+      const passwordErrors = result.error.issues
+        .filter((i) => i.path.includes('password'))
+        .map((i) => i.message);
       expect(passwordErrors).toContain('Password is required');
     }
   });
@@ -71,7 +73,9 @@ describe('auth.schema - loginSchema', () => {
     const result = loginSchema.safeParse(data);
     expect(result.success).toBe(false);
     if (!result.success) {
-      const passwordErrors = result.error.format().password?._errors;
+      const passwordErrors = result.error.issues
+        .filter((i) => i.path.includes('password'))
+        .map((i) => i.message);
       expect(passwordErrors).toContain('Password must be at least 6 characters long');
     }
   });

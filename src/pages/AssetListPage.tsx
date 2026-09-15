@@ -48,7 +48,7 @@ export function AssetListPage() {
             assets={allFilteredAssets}
             isLoading={isLoading}
             error={error}
-            onRetry={reloadAssets}
+            onRetry={() => void reloadAssets()}
             onClearFilters={resetFilters}
             onAddAsset={openAddModal}
           />
@@ -57,7 +57,7 @@ export function AssetListPage() {
             assets={paginatedAssets}
             isLoading={isLoading}
             error={error}
-            onRetry={reloadAssets}
+            onRetry={() => void reloadAssets()}
             onClearFilters={resetFilters}
             onAddAsset={openAddModal}
           />

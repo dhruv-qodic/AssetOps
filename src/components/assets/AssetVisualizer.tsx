@@ -31,6 +31,7 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
 }) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [openRowId, setOpenRowId] = useState<string | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const rowVirtualizer = useVirtualizer({
     count: assets.length,
@@ -88,8 +89,15 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
           <span className="text-slate-400">•</span>
           <span>High-performance windowed virtual grid</span>
         </div>
-        <div className="font-mono text-[11px] bg-slate-200/70 dark:bg-slate-700/60 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
-          {assets.length.toLocaleString()} items virtualized
+        <div className="flex items-center gap-2">
+          <div className="font-mono text-[11px] bg-slate-200/70 dark:bg-slate-700/60 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
+            {assets.length.toLocaleString()} items virtualized
+          </div>
+          {selectedRowId && (
+            <div className="font-mono text-[11px] bg-blue-100 text-blue-800 dark:bg-blue-900/60 dark:text-blue-200 px-2 py-0.5 rounded font-medium">
+              1 row selected
+            </div>
+          )}
         </div>
       </div>
 
@@ -123,13 +131,16 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
             >
               {rowVirtualizer.getVirtualItems().map((virtualRow) => {
                 const asset = assets[virtualRow.index];
-                if (!asset) return null;
                 const isRowOpen = openRowId === asset.id;
+                const isSelected = selectedRowId === asset.id;
 
                 return (
                   <div
                     key={asset.id}
                     data-index={virtualRow.index}
+                    data-selected={isSelected}
+                    aria-selected={isSelected}
+                    onClick={() => setSelectedRowId((prev) => (prev === asset.id ? null : asset.id))}
                     style={{
                       position: 'absolute',
                       top: 0,
@@ -139,7 +150,10 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
                       transform: `translateY(${virtualRow.start}px)`,
                       zIndex: isRowOpen ? 50 : 1,
                     }}
-                    className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 hover:bg-slate-50/80 dark:hover:bg-slate-800/50 transition-colors group text-xs sm:text-sm bg-white dark:bg-slate-900`}
+                    className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 transition-colors group text-xs sm:text-sm cursor-pointer select-none ${isSelected
+                      ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-blue-600 dark:border-l-blue-400 font-medium'
+                      : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
+                      }`}
                   >
                     {/* Asset ID */}
                     <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
@@ -204,7 +218,7 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
                     </div>
 
                     {/* Actions */}
-                    <div className="text-right">
+                    <div className="text-right" onClick={(e) => e.stopPropagation()}>
                       <AssetRowActions
                         asset={asset}
                         onOpenChange={(isOpen) => setOpenRowId(isOpen ? asset.id : null)}

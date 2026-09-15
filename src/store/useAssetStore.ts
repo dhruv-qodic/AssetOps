@@ -81,7 +81,7 @@ const safeStorage = {
   getItem: (name: string) => {
     try {
       const item = localStorage.getItem(name);
-      return item ? JSON.parse(item) : null;
+      return item ? (JSON.parse(item) as unknown) : null;
     } catch {
       return null;
     }

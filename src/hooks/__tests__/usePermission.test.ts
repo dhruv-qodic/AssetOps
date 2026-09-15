@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { usePermission } from '../usePermission';
 import { useAuthStore } from '@/store/useAuthStore';
 import { hasPermission as hasRolePermission } from '@/types/auth';
+import type { Permission } from '@/types/permissions';
 
 describe('hooks/usePermission & auth permission helpers', () => {
   beforeEach(() => {
@@ -55,10 +56,13 @@ describe('hooks/usePermission & auth permission helpers', () => {
       expect(result.current.hasPermission('DELETE_ASSET')).toBe(true);
 
       expect(
-        result.current.hasAnyPermission(['MANAGE_SETTINGS', 'NON_EXISTENT' as any])
+        result.current.hasAnyPermission([
+          'MANAGE_SETTINGS',
+          'NON_EXISTENT' as unknown as Permission,
+        ]),
       ).toBe(true);
       expect(
-        result.current.hasAllPermissions(['VIEW_DASHBOARD', 'MANAGE_SETTINGS', 'VIEW_ASSETS'])
+        result.current.hasAllPermissions(['VIEW_DASHBOARD', 'MANAGE_SETTINGS', 'VIEW_ASSETS']),
       ).toBe(true);
 
       expect(result.current.canAccessRoute('/')).toBe(true);

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import {
   MoreHorizontal,
   Eye,
@@ -40,10 +40,10 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
   const canDelete = hasPermission('DELETE_ASSET');
   const canAllocate = hasPermission('ALLOCATE_ASSET');
 
-  const closeDropdown = () => {
+  const closeDropdown = useCallback(() => {
     setIsOpen(false);
     onOpenChange?.(false);
-  };
+  }, [onOpenChange]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -57,7 +57,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, closeDropdown]);
 
   const handleToggle = (e: React.MouseEvent) => {
     e.stopPropagation();

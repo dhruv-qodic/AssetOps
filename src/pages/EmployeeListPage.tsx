@@ -48,7 +48,7 @@ export function EmployeeListPage() {
           employees={paginatedEmployees}
           isLoading={isLoading}
           error={error}
-          onRetry={reloadEmployees}
+          onRetry={() => void reloadEmployees()}
           onClearFilters={resetFilters}
           onAddEmployee={openAddModal}
         />

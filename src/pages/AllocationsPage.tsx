@@ -29,8 +29,8 @@ export function AllocationsPage() {
   const error = assetError || empError;
 
   const handleRetry = () => {
-    reloadAssets();
-    reloadEmployees();
+    void reloadAssets();
+    void reloadEmployees();
   };
 
   const handleOpenNewAllocation = () => {
@@ -70,7 +70,7 @@ export function AllocationsPage() {
           (asset.assignedTo?.employeeId && e.employeeId === asset.assignedTo.employeeId) ||
           (asset.assignedTo?.name &&
             `${e.firstName} ${e.lastName}`.trim().toLowerCase() ===
-              asset.assignedTo.name.trim().toLowerCase()),
+            asset.assignedTo.name.trim().toLowerCase()),
       );
 
       const empFullName = assignedEmp

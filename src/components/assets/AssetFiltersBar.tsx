@@ -164,7 +164,7 @@ export const AssetFiltersBar: React.FC = () => {
         <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0 self-end sm:self-auto">
           <button
             type="button"
-            onClick={() => setViewMode?.('virtualized')}
+            onClick={() => setViewMode('virtualized')}
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'virtualized'
@@ -178,7 +178,7 @@ export const AssetFiltersBar: React.FC = () => {
           </button>
           <button
             type="button"
-            onClick={() => setViewMode?.('table')}
+            onClick={() => setViewMode('table')}
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'table'

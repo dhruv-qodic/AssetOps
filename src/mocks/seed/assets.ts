@@ -342,7 +342,7 @@ export function generateAssetSeedData(count: number = 500): Asset[] {
 
     // Status distribution: 48% Allocated, 32% Available, 12% Maintenance, 5% Retired, 3% Lost
     const statusScore = (i * 13) % 100;
-    let status: AssetStatus = 'Available';
+    let status: AssetStatus;
     if (statusScore < 48) status = 'Allocated';
     else if (statusScore < 80) status = 'Available';
     else if (statusScore < 92) status = 'Maintenance';
