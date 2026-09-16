@@ -11,16 +11,14 @@ import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 
 export function AssetListPage() {
-  const {
-    getFilteredAssets,
-    filters,
-    isLoading,
-    error,
-    reloadAssets,
-    resetFilters,
-    openAddModal,
-    viewMode,
-  } = useAssetStore();
+  const filters = useAssetStore((s) => s.filters);
+  const getFilteredAssets = useAssetStore((s) => s.getFilteredAssets);
+  const isLoading = useAssetStore((s) => s.isLoading);
+  const error = useAssetStore((s) => s.error);
+  const reloadAssets = useAssetStore((s) => s.reloadAssets);
+  const resetFilters = useAssetStore((s) => s.resetFilters);
+  const openAddModal = useAssetStore((s) => s.openAddModal);
+  const viewMode = useAssetStore((s) => s.viewMode);
 
   const { allFilteredAssets, paginatedAssets, totalFiltered, totalPages, startIndex, endIndex } =
     getFilteredAssets();

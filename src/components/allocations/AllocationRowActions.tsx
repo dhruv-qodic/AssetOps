@@ -13,8 +13,10 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
   const [isOpen, setIsOpen] = useState(false);
   const [openUpward, setOpenUpward] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { openViewModal, openAllocateModal, deallocateAsset } = useAssetStore();
-  const { unassignAssetFromEmployee } = useEmployeeStore();
+  const openViewModal = useAssetStore((s) => s.openViewModal);
+  const openAllocateModal = useAssetStore((s) => s.openAllocateModal);
+  const deallocateAsset = useAssetStore((s) => s.deallocateAsset);
+  const unassignAssetFromEmployee = useEmployeeStore((s) => s.unassignAssetFromEmployee);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

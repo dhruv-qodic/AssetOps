@@ -11,19 +11,16 @@ import { Pagination } from '@/components/common/Pagination';
 import { Layers, Plus } from 'lucide-react';
 
 export function AllocationsPage() {
-  const {
-    assets,
-    openAllocateModal,
-    isLoading: isAssetLoading,
-    error: assetError,
-    reloadAssets,
-  } = useAssetStore();
-  const {
-    employees,
-    isLoading: isEmpLoading,
-    error: empError,
-    reloadEmployees,
-  } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const openAllocateModal = useAssetStore((s) => s.openAllocateModal);
+  const isAssetLoading = useAssetStore((s) => s.isLoading);
+  const assetError = useAssetStore((s) => s.error);
+  const reloadAssets = useAssetStore((s) => s.reloadAssets);
+
+  const employees = useEmployeeStore((s) => s.employees);
+  const isEmpLoading = useEmployeeStore((s) => s.isLoading);
+  const empError = useEmployeeStore((s) => s.error);
+  const reloadEmployees = useEmployeeStore((s) => s.reloadEmployees);
 
   const isLoading = isAssetLoading || isEmpLoading;
   const error = assetError || empError;
@@ -63,15 +60,31 @@ export function AllocationsPage() {
 
   // Filtered allocations list (includes both allocated and available/returned for full visibility)
   const filteredAllocations = useMemo(() => {
+    // Pre-index employees for O(1) lookup
+    const empById = new Map<string, (typeof employees)[0]>();
+    const empByCode = new Map<string, (typeof employees)[0]>();
+    const empByName = new Map<string, (typeof employees)[0]>();
+
+    for (const e of employees) {
+      if (e.id) empById.set(e.id, e);
+      if (e.employeeId) empByCode.set(e.employeeId.toLowerCase(), e);
+      const nameKey = `${e.firstName} ${e.lastName}`.trim().toLowerCase();
+      if (nameKey) empByName.set(nameKey, e);
+    }
+
+    const q = search.trim().toLowerCase();
+
     return assets.filter((asset) => {
-      const assignedEmp = employees.find(
-        (e) =>
-          (asset.assignedTo?.id && e.id === asset.assignedTo.id) ||
-          (asset.assignedTo?.employeeId && e.employeeId === asset.assignedTo.employeeId) ||
-          (asset.assignedTo?.name &&
-            `${e.firstName} ${e.lastName}`.trim().toLowerCase() ===
-              asset.assignedTo.name.trim().toLowerCase()),
-      );
+      let assignedEmp = undefined;
+      if (asset.assignedTo?.id) {
+        assignedEmp = empById.get(asset.assignedTo.id);
+      }
+      if (!assignedEmp && asset.assignedTo?.employeeId) {
+        assignedEmp = empByCode.get(asset.assignedTo.employeeId.toLowerCase());
+      }
+      if (!assignedEmp && asset.assignedTo?.name) {
+        assignedEmp = empByName.get(asset.assignedTo.name.trim().toLowerCase());
+      }
 
       const empFullName = assignedEmp
         ? `${assignedEmp.firstName} ${assignedEmp.lastName}`.trim()
@@ -81,8 +94,7 @@ export function AllocationsPage() {
       const empStatus = assignedEmp?.status.toLowerCase() || 'active';
 
       // 1. Text Search across asset name, assetId, employee name, employeeId, department
-      if (search.trim()) {
-        const q = search.toLowerCase();
+      if (q) {
         const matchAsset =
           asset.name.toLowerCase().includes(q) ||
           asset.assetId.toLowerCase().includes(q) ||

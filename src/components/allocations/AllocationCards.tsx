@@ -5,8 +5,8 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 
 export const AllocationCards: React.FC = () => {
-  const { assets } = useAssetStore();
-  const { employees } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const employees = useEmployeeStore((s) => s.employees);
 
   const totalAssets = assets.length || 0;
   const allocatedAssets = assets.filter((a) => a.status === 'Allocated' && a.assignedTo !== null);

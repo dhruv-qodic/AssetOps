@@ -14,14 +14,15 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 
 export function ReportsPage() {
-  const {
-    assets,
-    isLoading: isAssetLoading,
-    error: assetError,
-    reloadAssets,
-    openAddModal,
-  } = useAssetStore();
-  const { isLoading: isEmpLoading, error: empError, reloadEmployees } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const isAssetLoading = useAssetStore((s) => s.isLoading);
+  const assetError = useAssetStore((s) => s.error);
+  const reloadAssets = useAssetStore((s) => s.reloadAssets);
+  const openAddModal = useAssetStore((s) => s.openAddModal);
+
+  const isEmpLoading = useEmployeeStore((s) => s.isLoading);
+  const empError = useEmployeeStore((s) => s.error);
+  const reloadEmployees = useEmployeeStore((s) => s.reloadEmployees);
 
   const [reportType, setReportType] = useState('Asset Overview');
   const [timeRange, setTimeRange] = useState('Last 30 Days');

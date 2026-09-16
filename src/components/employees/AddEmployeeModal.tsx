@@ -29,8 +29,12 @@ import {
 } from 'lucide-react';
 
 export const AddEmployeeModal: React.FC = () => {
-  const { isAddModalOpen, closeModals, addEmployee, employees } = useEmployeeStore();
-  const nextEmpNum = employees.length + 101;
+  const isAddModalOpen = useEmployeeStore((s) => s.isAddModalOpen);
+  const closeModals = useEmployeeStore((s) => s.closeModals);
+  const addEmployee = useEmployeeStore((s) => s.addEmployee);
+  const employeesCount = useEmployeeStore((s) => s.employees.length);
+
+  const nextEmpNum = employeesCount + 101;
   const defaultEmpId = `E${nextEmpNum}`;
 
   const {

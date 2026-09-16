@@ -14,7 +14,9 @@ export const EmployeeRowActions: React.FC<EmployeeRowActionsProps> = ({ employee
   const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { openViewModal, openEditModal, openDeleteModal } = useEmployeeStore();
+  const openViewModal = useEmployeeStore((s) => s.openViewModal);
+  const openEditModal = useEmployeeStore((s) => s.openEditModal);
+  const openDeleteModal = useEmployeeStore((s) => s.openDeleteModal);
   const { hasPermission } = usePermission();
 
   const canManage = hasPermission('MANAGE_EMPLOYEES');

@@ -13,7 +13,9 @@ import { UploadCloud, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
 import type { CreateAssetInput } from '@/types/asset';
 
 export const ImportAssetsModal: React.FC = () => {
-  const { isImportModalOpen, closeModals, bulkAddAssets } = useAssetStore();
+  const isImportModalOpen = useAssetStore((s) => s.isImportModalOpen);
+  const closeModals = useAssetStore((s) => s.closeModals);
+  const bulkAddAssets = useAssetStore((s) => s.bulkAddAssets);
   const [isImporting, setIsImporting] = useState(false);
   const [successCount, setSuccessCount] = useState<number | null>(null);
 

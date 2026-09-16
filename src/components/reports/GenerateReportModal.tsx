@@ -20,8 +20,8 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
   timeRange,
   department,
 }) => {
-  const { assets } = useAssetStore();
-  const { employees } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const employees = useEmployeeStore((s) => s.employees);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [format, setFormat] = useState<'csv' | 'pdf'>('pdf');

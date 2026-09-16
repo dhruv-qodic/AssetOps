@@ -2,7 +2,7 @@ import React from 'react';
 import { useAssetStore } from '@/store/useAssetStore';
 
 export const AllocationSummaryCard: React.FC = () => {
-  const { assets } = useAssetStore();
+  const assets = useAssetStore((s) => s.assets);
 
   const totalAssets = assets.length;
   const allocatedCount = assets.filter((a) => a.status === 'Allocated').length;

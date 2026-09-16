@@ -38,20 +38,18 @@ interface SpecRow {
 }
 
 export const AddAssetModal: React.FC = () => {
-  const {
-    isAddModalOpen,
-    isEditModalOpen,
-    selectedAsset,
-    closeModals,
-    addAsset,
-    updateAsset,
-    assets,
-  } = useAssetStore();
+  const isAddModalOpen = useAssetStore((s) => s.isAddModalOpen);
+  const isEditModalOpen = useAssetStore((s) => s.isEditModalOpen);
+  const selectedAsset = useAssetStore((s) => s.selectedAsset);
+  const closeModals = useAssetStore((s) => s.closeModals);
+  const addAsset = useAssetStore((s) => s.addAsset);
+  const updateAsset = useAssetStore((s) => s.updateAsset);
+  const assetsCount = useAssetStore((s) => s.assets.length);
 
   const isOpen = isAddModalOpen || isEditModalOpen;
   const isEditing = isEditModalOpen && selectedAsset !== null;
 
-  const nextAssetId = `A${1000 + assets.length + 1}`;
+  const nextAssetId = `A${1000 + assetsCount + 1}`;
 
   // Dynamic Technical Specifications rows
   const [specRows, setSpecRows] = useState<SpecRow[]>([]);

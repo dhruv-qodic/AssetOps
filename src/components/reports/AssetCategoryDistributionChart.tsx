@@ -19,8 +19,8 @@ interface AssetCategoryDistributionChartProps {
 export const AssetCategoryDistributionChart: React.FC<AssetCategoryDistributionChartProps> = ({
   departmentFilter = 'All',
 }) => {
-  const { assets } = useAssetStore();
-  const { employees } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const employees = useEmployeeStore((s) => s.employees);
 
   // Filter assets dynamically by department
   const filteredAssets = useMemo(() => {

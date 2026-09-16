@@ -12,8 +12,11 @@ import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { AlertTriangle } from 'lucide-react';
 
 export const DeleteAssetModal: React.FC = () => {
-  const { isDeleteModalOpen, selectedAsset, closeModals, deleteAsset } = useAssetStore();
-  const { unassignAssetFromEmployee } = useEmployeeStore();
+  const isDeleteModalOpen = useAssetStore((s) => s.isDeleteModalOpen);
+  const selectedAsset = useAssetStore((s) => s.selectedAsset);
+  const closeModals = useAssetStore((s) => s.closeModals);
+  const deleteAsset = useAssetStore((s) => s.deleteAsset);
+  const unassignAssetFromEmployee = useEmployeeStore((s) => s.unassignAssetFromEmployee);
 
   if (!selectedAsset) return null;
 
