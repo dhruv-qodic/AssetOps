@@ -49,11 +49,7 @@ export function Dashboard() {
       {/* Error State */}
       {!isLoading && error && (
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
-          <ErrorState
-            title="Failed to load dashboard data"
-            message={error}
-            onRetry={handleRetry}
-          />
+          <ErrorState title="Failed to load dashboard data" message={error} onRetry={handleRetry} />
         </div>
       )}
 
@@ -78,10 +74,7 @@ export function Dashboard() {
       )}
 
       {/* Customization Modal */}
-      <DashboardCustomizationModal
-        isOpen={isCustomizationOpen}
-        onClose={closeCustomization}
-      />
+      <DashboardCustomizationModal isOpen={isCustomizationOpen} onClose={closeCustomization} />
     </div>
   );
 }

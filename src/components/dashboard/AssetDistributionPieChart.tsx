@@ -19,9 +19,7 @@ export const AssetDistributionPieChart: React.FC = () => {
 
   const filteredAssets = useMemo(() => {
     if (selectedLocation === 'All') return assets;
-    return assets.filter(
-      (a) => a.location.toLowerCase() === selectedLocation.toLowerCase(),
-    );
+    return assets.filter((a) => a.location.toLowerCase() === selectedLocation.toLowerCase());
   }, [assets, selectedLocation]);
 
   const totalAssetsCount = filteredAssets.length;
@@ -93,7 +91,14 @@ export const AssetDistributionPieChart: React.FC = () => {
     });
 
     return computedSegments;
-  }, [totalAssetsCount, inUseCount, inStorageCount, inMaintenanceCount, deployedCount, circumference]);
+  }, [
+    totalAssetsCount,
+    inUseCount,
+    inStorageCount,
+    inMaintenanceCount,
+    deployedCount,
+    circumference,
+  ]);
 
   const mainCenterPercentage = segmentsData[0]?.percentage ?? 22;
 

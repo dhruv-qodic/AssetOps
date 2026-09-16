@@ -19,9 +19,7 @@ export const AssetTrendsLineChart: React.FC = () => {
 
   const filteredAssets = useMemo(() => {
     if (selectedLocation === 'All') return assets;
-    return assets.filter(
-      (a) => a.location.toLowerCase() === selectedLocation.toLowerCase(),
-    );
+    return assets.filter((a) => a.location.toLowerCase() === selectedLocation.toLowerCase());
   }, [assets, selectedLocation]);
 
   const totalCount = filteredAssets.length;
@@ -44,9 +42,17 @@ export const AssetTrendsLineChart: React.FC = () => {
       case 'Last 90 Days':
         return [
           { time: 'M1 - W1', total: scale(0.65, totalCount), assigned: scale(0.6, allocatedCount) },
-          { time: 'M1 - W3', total: scale(0.72, totalCount), assigned: scale(0.68, allocatedCount) },
+          {
+            time: 'M1 - W3',
+            total: scale(0.72, totalCount),
+            assigned: scale(0.68, allocatedCount),
+          },
           { time: 'M2 - W1', total: scale(0.8, totalCount), assigned: scale(0.76, allocatedCount) },
-          { time: 'M2 - W3', total: scale(0.88, totalCount), assigned: scale(0.84, allocatedCount) },
+          {
+            time: 'M2 - W3',
+            total: scale(0.88, totalCount),
+            assigned: scale(0.84, allocatedCount),
+          },
           { time: 'M3 - W1', total: scale(0.94, totalCount), assigned: scale(0.9, allocatedCount) },
           { time: 'M3 - W4', total: totalCount, assigned: allocatedCount },
         ];
@@ -90,9 +96,7 @@ export const AssetTrendsLineChart: React.FC = () => {
             <h3 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
               Fleet Growth & Allocation Trend
             </h3>
-            <span className="text-[11px] text-slate-400 font-medium">
-              Timeframe: {timeRange}
-            </span>
+            <span className="text-[11px] text-slate-400 font-medium">Timeframe: {timeRange}</span>
           </div>
         </div>
 
@@ -157,10 +161,7 @@ export const AssetTrendsLineChart: React.FC = () => {
                 return null;
               }}
             />
-            <Legend
-              iconType="circle"
-              wrapperStyle={{ paddingBottom: '12px', fontSize: '11px' }}
-            />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: '12px', fontSize: '11px' }} />
             <Line
               type="monotone"
               dataKey="total"
