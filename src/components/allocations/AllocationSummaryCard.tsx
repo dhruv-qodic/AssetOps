@@ -57,7 +57,7 @@ export const AllocationSummaryCard: React.FC = () => {
             cx="90"
             cy="90"
             r={radius}
-            stroke="#4C40F7"
+            stroke="#2563EB"
             strokeWidth="18"
             fill="transparent"
             strokeDasharray={`${allocatedStroke} ${circumference}`}
@@ -108,7 +108,7 @@ export const AllocationSummaryCard: React.FC = () => {
       <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800/80">
         <div className="flex items-center justify-between text-xs sm:text-sm">
           <div className="flex items-center gap-2.5">
-            <span className="size-2.5 rounded-full bg-[#4C40F7]" />
+            <span className="size-2.5 rounded-full bg-blue-600" />
             <span className="font-medium text-slate-700 dark:text-slate-300">Allocated</span>
           </div>
           <span className="font-bold text-slate-900 dark:text-white">{allocatedPercent}%</span>

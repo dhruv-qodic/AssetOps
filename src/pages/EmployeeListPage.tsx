@@ -10,6 +10,7 @@ import EditEmployeeModal from '@/components/employees/EditEmployeeModal';
 import DeleteEmployeeModal from '@/components/employees/DeleteEmployeeModal';
 
 export function EmployeeListPage() {
+  useEmployeeStore((s) => s.employees);
   const filters = useEmployeeStore((s) => s.filters);
   const getFilteredEmployees = useEmployeeStore((s) => s.getFilteredEmployees);
   const isLoading = useEmployeeStore((s) => s.isLoading);

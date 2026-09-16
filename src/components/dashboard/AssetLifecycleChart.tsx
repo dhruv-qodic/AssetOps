@@ -20,9 +20,7 @@ export const AssetLifecycleChart: React.FC = () => {
 
   const filteredAssets = useMemo(() => {
     if (selectedLocation === 'All') return assets;
-    return assets.filter(
-      (a) => a.location.toLowerCase() === selectedLocation.toLowerCase(),
-    );
+    return assets.filter((a) => a.location.toLowerCase() === selectedLocation.toLowerCase());
   }, [assets, selectedLocation]);
 
   // Aggregate status breakdown per major asset category
@@ -126,10 +124,7 @@ export const AssetLifecycleChart: React.FC = () => {
                 return null;
               }}
             />
-            <Legend
-              iconType="circle"
-              wrapperStyle={{ paddingBottom: '12px', fontSize: '11px' }}
-            />
+            <Legend iconType="circle" wrapperStyle={{ paddingBottom: '12px', fontSize: '11px' }} />
             <Bar dataKey="Allocated" fill="#4C40F7" radius={[4, 4, 0, 0]} maxBarSize={28} />
             <Bar dataKey="Available" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={28} />
             <Bar dataKey="Maintenance" fill="#F59E0B" radius={[4, 4, 0, 0]} maxBarSize={28} />

@@ -20,9 +20,7 @@ export const DashboardSummaryCards: React.FC = () => {
   // Filter assets dynamically by location if selected
   const activeAssets = useMemo(() => {
     if (selectedLocation === 'All') return assets;
-    return assets.filter(
-      (a) => a.location.toLowerCase() === selectedLocation.toLowerCase(),
-    );
+    return assets.filter((a) => a.location.toLowerCase() === selectedLocation.toLowerCase());
   }, [assets, selectedLocation]);
 
   const totalAssetsCount = activeAssets.length;
