@@ -105,7 +105,7 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
           <button
             type="button"
             onClick={handleReallocate}
-            className="w-full px-3 py-2 text-xs flex items-center gap-2 text-[#4C40F7] hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors cursor-pointer"
+            className="w-full px-3 py-2 text-xs flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
           >
             <RefreshCw className="size-3.5" />
             <span>Reallocate Asset</span>

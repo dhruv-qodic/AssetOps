@@ -11,6 +11,7 @@ import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 
 export function AssetListPage() {
+  useAssetStore((s) => s.assets);
   const filters = useAssetStore((s) => s.filters);
   const getFilteredAssets = useAssetStore((s) => s.getFilteredAssets);
   const isLoading = useAssetStore((s) => s.isLoading);
