@@ -1,9 +1,4 @@
-import type {
-  AssetCategory,
-  AssetStatus,
-  AssetSortOption,
-  AssetFilters,
-} from '@/types/asset';
+import type { AssetCategory, AssetStatus, AssetSortOption, AssetFilters } from '@/types/asset';
 
 export const ASSET_CATEGORIES: AssetCategory[] = [
   'Laptop',
@@ -97,3 +92,133 @@ export const ASSET_STATUS_CONFIG: Record<AssetStatus, StatusBadgeConfig> = {
     dot: 'bg-rose-500',
   },
 };
+
+export interface ColumnDefinition {
+  id: string;
+  label: string;
+  category: 'Core' | 'Financial & Dates' | 'Assignment' | 'Technical' | 'System';
+  description?: string;
+  defaultVisible: boolean;
+}
+
+export const AVAILABLE_ASSET_COLUMNS: ColumnDefinition[] = [
+  {
+    id: 'assetId',
+    label: 'Asset ID',
+    category: 'Core',
+    description: 'Unique asset identifier tag (e.g., A1001)',
+    defaultVisible: true,
+  },
+  {
+    id: 'name',
+    label: 'Asset Name',
+    category: 'Core',
+    description: 'Hardware name, model title, and device icon',
+    defaultVisible: true,
+  },
+  {
+    id: 'category',
+    label: 'Category',
+    category: 'Core',
+    description: 'Classification (Laptop, Mobile, Monitor, Tablet, etc.)',
+    defaultVisible: true,
+  },
+  {
+    id: 'status',
+    label: 'Status',
+    category: 'Core',
+    description: 'Current lifecycle state (Available, Allocated, Maintenance, etc.)',
+    defaultVisible: true,
+  },
+  {
+    id: 'location',
+    label: 'Location',
+    category: 'Core',
+    description: 'Workplace, office branch, or remote site',
+    defaultVisible: true,
+  },
+  {
+    id: 'purchaseCost',
+    label: 'Cost',
+    category: 'Financial & Dates',
+    description: 'Acquisition expenditure in USD currency',
+    defaultVisible: true,
+  },
+  {
+    id: 'assignedTo',
+    label: 'Assigned To',
+    category: 'Assignment',
+    description: 'Employee name and assignment information',
+    defaultVisible: true,
+  },
+  {
+    id: 'serialNumber',
+    label: 'Serial Number',
+    category: 'Technical',
+    description: 'Manufacturer unique hardware serial key',
+    defaultVisible: false,
+  },
+  {
+    id: 'model',
+    label: 'Model / Variant',
+    category: 'Technical',
+    description: 'Specific manufacturer sub-model or specs',
+    defaultVisible: false,
+  },
+  {
+    id: 'purchaseDate',
+    label: 'Purchase Date',
+    category: 'Financial & Dates',
+    description: 'Acquisition date recorded for depreciation',
+    defaultVisible: false,
+  },
+  {
+    id: 'warrantyExpiry',
+    label: 'Warranty Expiry',
+    category: 'Financial & Dates',
+    description: 'Vendor warranty or service agreement expiry',
+    defaultVisible: false,
+  },
+  {
+    id: 'department',
+    label: 'Department',
+    category: 'Assignment',
+    description: 'Organizational unit of assigned employee',
+    defaultVisible: false,
+  },
+  {
+    id: 'specifications',
+    label: 'Specifications',
+    category: 'Technical',
+    description: 'Technical hardware attributes (RAM, Storage, CPU)',
+    defaultVisible: false,
+  },
+  {
+    id: 'notes',
+    label: 'Notes / Remarks',
+    category: 'Core',
+    description: 'Internal documentation or servicing notes',
+    defaultVisible: false,
+  },
+  {
+    id: 'createdAt',
+    label: 'Created Date',
+    category: 'System',
+    description: 'Timestamp when asset was added to system',
+    defaultVisible: false,
+  },
+  {
+    id: 'updatedAt',
+    label: 'Last Updated',
+    category: 'System',
+    description: 'Timestamp of last modification',
+    defaultVisible: false,
+  },
+  {
+    id: 'actions',
+    label: 'Actions',
+    category: 'System',
+    description: 'Context menu for edit, view, and allocation operations',
+    defaultVisible: true,
+  },
+];

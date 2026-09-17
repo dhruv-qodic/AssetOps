@@ -8,6 +8,9 @@ import {
   Activity,
   MapPin,
   ArrowUpDown,
+  Zap,
+  Table2,
+  Columns3,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useAssetStore } from '@/store/useAssetStore';
@@ -17,8 +20,9 @@ import {
   ASSET_LOCATIONS,
   ASSET_SORT_OPTIONS,
 } from '@/constans/asset.constants';
-import type { AssetCategory, AssetStatus, AssetSortOption } from '@/types/asset';
+import type { AssetCategory, AssetStatus } from '@/types/asset';
 import { cn } from '@/lib/utils';
+import ColumnVisibilityModal from './ColumnVisibilityModal';
 
 // Reusable Filter Select Menu matching the screenshot
 interface FilterDropdownProps<T extends string> {
@@ -65,14 +69,14 @@ function FilterDropdown<T extends string>({
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
             'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
-            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]'
+            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]',
           )}
         >
           <span className="truncate">{currentLabel}</span>
           <ChevronDown
             className={cn(
               'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-              isOpen && 'rotate-180 text-[#4C40F7]'
+              isOpen && 'rotate-180 text-[#4C40F7]',
             )}
           />
         </button>
@@ -93,7 +97,7 @@ function FilterDropdown<T extends string>({
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
                       ? 'font-semibold text-[#4C40F7] bg-indigo-50/50 dark:bg-indigo-950/40'
-                      : 'text-slate-700 dark:text-slate-300'
+                      : 'text-slate-700 dark:text-slate-300',
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
@@ -108,31 +112,33 @@ function FilterDropdown<T extends string>({
   );
 }
 
+const CATEGORY_OPTIONS = [
+  { label: 'All', value: 'All' as AssetCategory | 'All' },
+  ...ASSET_CATEGORIES.map((c) => ({ label: c, value: c })),
+];
+
+const STATUS_OPTIONS = [
+  { label: 'All', value: 'All' as AssetStatus | 'All' },
+  ...ASSET_STATUSES.map((s) => ({ label: s, value: s })),
+];
+
+const LOCATION_OPTIONS = [
+  { label: 'All', value: 'All' },
+  ...ASSET_LOCATIONS.map((l) => ({ label: l, value: l })),
+];
+
 export const AssetFiltersBar: React.FC = () => {
-  const {
-    filters,
-    setSearch,
-    setCategory,
-    setStatus,
-    setLocation,
-    setSortBy,
-    resetFilters,
-  } = useAssetStore();
+  const filters = useAssetStore((s) => s.filters);
+  const setSearch = useAssetStore((s) => s.setSearch);
+  const setCategory = useAssetStore((s) => s.setCategory);
+  const setStatus = useAssetStore((s) => s.setStatus);
+  const setLocation = useAssetStore((s) => s.setLocation);
+  const setSortBy = useAssetStore((s) => s.setSortBy);
+  const resetFilters = useAssetStore((s) => s.resetFilters);
+  const viewMode = useAssetStore((s) => s.viewMode);
+  const setViewMode = useAssetStore((s) => s.setViewMode);
 
-  const categoryOptions = [
-    { label: 'All', value: 'All' as AssetCategory | 'All' },
-    ...ASSET_CATEGORIES.map((c) => ({ label: c, value: c })),
-  ];
-
-  const statusOptions = [
-    { label: 'All', value: 'All' as AssetStatus | 'All' },
-    ...ASSET_STATUSES.map((s) => ({ label: s, value: s })),
-  ];
-
-  const locationOptions = [
-    { label: 'All', value: 'All' },
-    ...ASSET_LOCATIONS.map((l) => ({ label: l, value: l })),
-  ];
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
 
   const hasActiveFilters =
     filters.search !== '' ||
@@ -143,27 +149,75 @@ export const AssetFiltersBar: React.FC = () => {
 
   return (
     <div className="space-y-3.5 select-none">
-      {/* Search Input Bar */}
-      <div className="relative">
-        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
-          <Search className="size-4.5" />
+      {/* Search Input Bar + View Mode Toggle Buttons + Column Visibility */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="relative flex-1">
+          <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+            <Search className="size-4.5" />
+          </div>
+          <Input
+            type="text"
+            value={filters.search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search assets by name, tag, serial..."
+            className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
+          />
+          {filters.search && (
+            <button
+              type="button"
+              onClick={() => setSearch('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors cursor-pointer"
+            >
+              <X className="size-4" />
+            </button>
+          )}
         </div>
-        <Input
-          type="text"
-          value={filters.search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search assets by name, tag, serial..."
-          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
-        />
-        {filters.search && (
+
+        {/* View Mode Toggle Buttons and Column Visibility Action */}
+        <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
+          {/* Visualizer and Paginator Toggle */}
+          <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0">
+            <button
+              type="button"
+              onClick={() => setViewMode('virtualized')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+                viewMode === 'virtualized'
+                  ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+              )}
+              title="Virtualized Grid View"
+            >
+              <Zap className="size-3.5" />
+              <span>Visualizer</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('table')}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+                viewMode === 'table'
+                  ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+              )}
+              title="Paginated Table View"
+            >
+              <Table2 className="size-3.5" />
+              <span>Paginator</span>
+            </button>
+          </div>
+
+          {/* Column Visibility Trigger Button */}
           <button
             type="button"
-            onClick={() => setSearch('')}
-            className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded-md transition-colors"
+            onClick={() => setIsColumnModalOpen(true)}
+            className="h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-xs sm:text-sm font-medium rounded-lg shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] select-none"
+            title="Configure Column Visibility"
           >
-            <X className="size-4" />
+            <Columns3 className="size-4 text-slate-500 dark:text-slate-400" />
+            <span>Column Visibility</span>
           </button>
-        )}
+        </div>
       </div>
 
       {/* 4 Filter Dropdowns in a clean row */}
@@ -173,7 +227,7 @@ export const AssetFiltersBar: React.FC = () => {
           label="Category"
           icon={<Tag className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.category}
-          options={categoryOptions}
+          options={CATEGORY_OPTIONS}
           onChange={(val) => setCategory(val)}
         />
 
@@ -182,7 +236,7 @@ export const AssetFiltersBar: React.FC = () => {
           label="Status"
           icon={<Activity className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.status}
-          options={statusOptions}
+          options={STATUS_OPTIONS}
           onChange={(val) => setStatus(val)}
         />
 
@@ -191,7 +245,7 @@ export const AssetFiltersBar: React.FC = () => {
           label="Location"
           icon={<MapPin className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.location}
-          options={locationOptions}
+          options={LOCATION_OPTIONS}
           onChange={(val) => setLocation(val)}
         />
 
@@ -201,7 +255,7 @@ export const AssetFiltersBar: React.FC = () => {
           icon={<ArrowUpDown className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.sortBy}
           options={ASSET_SORT_OPTIONS}
-          onChange={(val) => setSortBy(val as AssetSortOption)}
+          onChange={(val) => setSortBy(val)}
         />
       </div>
 
@@ -218,9 +272,14 @@ export const AssetFiltersBar: React.FC = () => {
           </button>
         </div>
       )}
+
+      {/* Column Visibility Dialog */}
+      <ColumnVisibilityModal
+        isOpen={isColumnModalOpen}
+        onClose={() => setIsColumnModalOpen(false)}
+      />
     </div>
   );
 };
 
 export default AssetFiltersBar;
-

@@ -8,15 +8,22 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { AlertTriangle } from 'lucide-react';
 
 export const DeleteAssetModal: React.FC = () => {
-  const { isDeleteModalOpen, selectedAsset, closeModals, deleteAsset } =
-    useAssetStore();
+  const isDeleteModalOpen = useAssetStore((s) => s.isDeleteModalOpen);
+  const selectedAsset = useAssetStore((s) => s.selectedAsset);
+  const closeModals = useAssetStore((s) => s.closeModals);
+  const deleteAsset = useAssetStore((s) => s.deleteAsset);
+  const unassignAssetFromEmployee = useEmployeeStore((s) => s.unassignAssetFromEmployee);
 
   if (!selectedAsset) return null;
 
   const handleDelete = () => {
+    if (selectedAsset.assignedTo?.id) {
+      unassignAssetFromEmployee(selectedAsset.assignedTo.id, selectedAsset.id);
+    }
     deleteAsset(selectedAsset.id);
     closeModals();
   };
@@ -48,16 +55,12 @@ export const DeleteAssetModal: React.FC = () => {
         </div>
 
         <p className="text-xs text-slate-500 text-left">
-          This action cannot be undone. All assignment logs and status records for this asset will be permanently removed.
+          This action cannot be undone. All assignment logs and status records for this asset will
+          be permanently removed.
         </p>
 
         <DialogFooter className="mt-4">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={closeModals}
-            className="h-9 text-xs"
-          >
+          <Button type="button" variant="outline" onClick={closeModals} className="h-9 text-xs">
             Cancel
           </Button>
           <Button

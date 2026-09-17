@@ -91,9 +91,7 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
 
 // Helper functions for mock user operations
 export const getMockUserByEmail = (email: string): MockUser | undefined => {
-  return MOCK_USERS.find(
-    (user) => user.email.toLowerCase() === email.trim().toLowerCase()
-  );
+  return MOCK_USERS.find((user) => user.email.toLowerCase() === email.trim().toLowerCase());
 };
 
 export const getMockUserById = (id: string): MockUser | undefined => {

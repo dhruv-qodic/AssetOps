@@ -5,7 +5,8 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { usePermission } from '@/hooks/usePermission';
 
 export const AssetHeader: React.FC = () => {
-  const { openAddModal, openImportModal } = useAssetStore();
+  const openAddModal = useAssetStore((s) => s.openAddModal);
+  const openImportModal = useAssetStore((s) => s.openImportModal);
   const { hasPermission } = usePermission();
   const canCreate = hasPermission('CREATE_ASSET');
 

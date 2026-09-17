@@ -2,22 +2,29 @@ import { useAssetStore } from '@/store/useAssetStore';
 import AssetHeader from '@/components/assets/AssetHeader';
 import AssetFiltersBar from '@/components/assets/AssetFiltersBar';
 import AssetTable from '@/components/assets/AssetTable';
+import AssetVisualizer from '@/components/assets/AssetVisualizer';
 import AssetPagination from '@/components/assets/AssetPagination';
 import AddAssetModal from '@/components/assets/AddAssetModal';
 import AssetDetailsModal from '@/components/assets/AssetDetailsModal';
 import DeleteAssetModal from '@/components/assets/DeleteAssetModal';
 import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
+import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 
 export function AssetListPage() {
-  const { getFilteredAssets, filters } = useAssetStore();
+  useAssetStore((s) => s.assets);
+  const filters = useAssetStore((s) => s.filters);
+  const getFilteredAssets = useAssetStore((s) => s.getFilteredAssets);
+  const isLoading = useAssetStore((s) => s.isLoading);
+  const error = useAssetStore((s) => s.error);
+  const reloadAssets = useAssetStore((s) => s.reloadAssets);
+  const resetFilters = useAssetStore((s) => s.resetFilters);
+  const openAddModal = useAssetStore((s) => s.openAddModal);
+  const viewMode = useAssetStore((s) => s.viewMode);
 
-  const {
-    paginatedAssets,
-    totalFiltered,
-    totalPages,
-    startIndex,
-    endIndex,
-  } = getFilteredAssets();
+  const { allFilteredAssets, paginatedAssets, totalFiltered, totalPages, startIndex, endIndex } =
+    getFilteredAssets();
+
+  const showPagination = viewMode === 'table' && !isLoading && !error && totalFiltered > 0;
 
   return (
     <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-5 max-w-7xl mx-auto w-full">
@@ -27,19 +34,38 @@ export function AssetListPage() {
       {/* 2. Search & Filter Bar */}
       <AssetFiltersBar />
 
-      {/* 3. Assets Data Table Card Container */}
+      {/* 3. Assets Data View Container (Visualizer vs Paginated Table) */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-        {/* Table Content */}
-        <AssetTable assets={paginatedAssets} />
+        {viewMode === 'virtualized' ? (
+          <AssetVisualizer
+            assets={allFilteredAssets}
+            isLoading={isLoading}
+            error={error}
+            onRetry={() => void reloadAssets()}
+            onClearFilters={resetFilters}
+            onAddAsset={openAddModal}
+          />
+        ) : (
+          <AssetTable
+            assets={paginatedAssets}
+            isLoading={isLoading}
+            error={error}
+            onRetry={() => void reloadAssets()}
+            onClearFilters={resetFilters}
+            onAddAsset={openAddModal}
+          />
+        )}
 
-        {/* Pagination Footer */}
-        <AssetPagination
-          totalFiltered={totalFiltered}
-          startIndex={startIndex}
-          endIndex={endIndex}
-          totalPages={totalPages}
-          currentPage={filters.page}
-        />
+        {/* Pagination Footer (Only displayed in Paginated Table Mode) */}
+        {showPagination && (
+          <AssetPagination
+            totalFiltered={totalFiltered}
+            startIndex={startIndex}
+            endIndex={endIndex}
+            totalPages={totalPages}
+            currentPage={filters.page}
+          />
+        )}
       </div>
 
       {/* Modals & Dialogs */}
@@ -47,6 +73,7 @@ export function AssetListPage() {
       <AssetDetailsModal />
       <DeleteAssetModal />
       <ImportAssetsModal />
+      <AllocateAssetModal />
     </div>
   );
 }
