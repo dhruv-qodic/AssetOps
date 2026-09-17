@@ -10,15 +10,14 @@ import EditEmployeeModal from '@/components/employees/EditEmployeeModal';
 import DeleteEmployeeModal from '@/components/employees/DeleteEmployeeModal';
 
 export function EmployeeListPage() {
-  const {
-    getFilteredEmployees,
-    filters,
-    isLoading,
-    error,
-    reloadEmployees,
-    resetFilters,
-    openAddModal,
-  } = useEmployeeStore();
+  useEmployeeStore((s) => s.employees);
+  const filters = useEmployeeStore((s) => s.filters);
+  const getFilteredEmployees = useEmployeeStore((s) => s.getFilteredEmployees);
+  const isLoading = useEmployeeStore((s) => s.isLoading);
+  const error = useEmployeeStore((s) => s.error);
+  const reloadEmployees = useEmployeeStore((s) => s.reloadEmployees);
+  const resetFilters = useEmployeeStore((s) => s.resetFilters);
+  const openAddModal = useEmployeeStore((s) => s.openAddModal);
 
   const { paginatedEmployees, totalFiltered, totalPages, startIndex, endIndex } =
     getFilteredEmployees();

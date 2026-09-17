@@ -16,16 +16,14 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
   const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const {
-    openViewModal,
-    openEditModal,
-    openDeleteModal,
-    openAllocateModal,
-    deallocateAsset,
-    updateAsset,
-  } = useAssetStore();
+  const openViewModal = useAssetStore((s) => s.openViewModal);
+  const openEditModal = useAssetStore((s) => s.openEditModal);
+  const openDeleteModal = useAssetStore((s) => s.openDeleteModal);
+  const openAllocateModal = useAssetStore((s) => s.openAllocateModal);
+  const deallocateAsset = useAssetStore((s) => s.deallocateAsset);
+  const updateAsset = useAssetStore((s) => s.updateAsset);
 
-  const { unassignAssetFromEmployee } = useEmployeeStore();
+  const unassignAssetFromEmployee = useEmployeeStore((s) => s.unassignAssetFromEmployee);
 
   const { hasPermission } = usePermission();
   const canEdit = hasPermission('EDIT_ASSET');

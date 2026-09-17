@@ -13,8 +13,10 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
   const [isOpen, setIsOpen] = useState(false);
   const [openUpward, setOpenUpward] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
-  const { openViewModal, openAllocateModal, deallocateAsset } = useAssetStore();
-  const { unassignAssetFromEmployee } = useEmployeeStore();
+  const openViewModal = useAssetStore((s) => s.openViewModal);
+  const openAllocateModal = useAssetStore((s) => s.openAllocateModal);
+  const deallocateAsset = useAssetStore((s) => s.deallocateAsset);
+  const unassignAssetFromEmployee = useEmployeeStore((s) => s.unassignAssetFromEmployee);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -103,7 +105,7 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
           <button
             type="button"
             onClick={handleReallocate}
-            className="w-full px-3 py-2 text-xs flex items-center gap-2 text-[#4C40F7] hover:bg-indigo-50 dark:hover:bg-indigo-950/40 transition-colors cursor-pointer"
+            className="w-full px-3 py-2 text-xs flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 transition-colors cursor-pointer"
           >
             <RefreshCw className="size-3.5" />
             <span>Reallocate Asset</span>

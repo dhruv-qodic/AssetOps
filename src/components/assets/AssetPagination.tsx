@@ -11,7 +11,7 @@ interface AssetPaginationProps {
 }
 
 export const AssetPagination: React.FC<AssetPaginationProps> = (props) => {
-  const { setPage } = useAssetStore();
+  const setPage = useAssetStore((s) => s.setPage);
 
   return <Pagination {...props} onPageChange={setPage} entityLabel="assets" />;
 };

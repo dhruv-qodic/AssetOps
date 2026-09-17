@@ -22,8 +22,8 @@ export const ReportsKpiCards: React.FC<ReportsKpiCardsProps> = ({
   timeRange = 'Last 30 Days',
   reportType = 'Asset Overview',
 }) => {
-  const { assets } = useAssetStore();
-  const { employees } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const employees = useEmployeeStore((s) => s.employees);
 
   // Dynamically filter assets matching department using the canonical resolution helper
   const departmentFilteredAssets = useMemo(() => {

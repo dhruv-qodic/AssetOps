@@ -32,7 +32,7 @@ export const AllocationTable: React.FC<AllocationTableProps> = ({
   onClearFilters,
   onNewAllocation,
 }) => {
-  const { employees } = useEmployeeStore();
+  const employees = useEmployeeStore((s) => s.employees);
 
   // 1. Loading State (with asset-related icon integrated into loader)
   if (isLoading) {

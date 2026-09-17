@@ -5,7 +5,7 @@ import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { usePermission } from '@/hooks/usePermission';
 
 export const EmployeeHeader: React.FC = () => {
-  const { openAddModal } = useEmployeeStore();
+  const openAddModal = useEmployeeStore((s) => s.openAddModal);
   const { hasPermission } = usePermission();
   const canManage = hasPermission('MANAGE_EMPLOYEES');
 

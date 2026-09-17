@@ -68,7 +68,7 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
                   className={cn(
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
-                      ? 'font-semibold text-[#4C40F7] bg-indigo-50/60 dark:bg-indigo-950/40'
+                      ? 'font-semibold text-[#4C40F7] bg-blue-50/60 dark:bg-blue-950/40'
                       : 'text-slate-700 dark:text-slate-300',
                   )}
                 >

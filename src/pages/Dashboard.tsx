@@ -1,63 +1,80 @@
-import { Button } from '@/components/ui/button';
-import { Layers, ShieldCheck, UserCheck, Eye } from 'lucide-react';
-import { useAuthStore } from '@/store/useAuthStore';
+import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
+import { useDashboardStore } from '@/store/useDashboardStore';
+import { DashboardHeader } from '@/components/dashboard/DashboardHeader';
+import { DashboardSummaryCards } from '@/components/dashboard/DashboardSummaryCards';
+import { DashboardMiddleSection } from '@/components/dashboard/DashboardMiddleSection';
+import { DashboardAnalyticsSection } from '@/components/dashboard/DashboardAnalyticsSection';
+import { DashboardCustomizationModal } from '@/components/dashboard/DashboardCustomizationModal';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
+import { LayoutDashboard } from 'lucide-react';
 
-function Dashboard() {
-  const { user } = useAuthStore();
+export function Dashboard() {
+  const isAssetLoading = useAssetStore((s) => s.isLoading);
+  const assetError = useAssetStore((s) => s.error);
+  const reloadAssets = useAssetStore((s) => s.reloadAssets);
 
-  const getRoleBadge = () => {
-    switch (user?.role) {
-      case 'ADMIN':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-700 dark:bg-purple-950 dark:text-purple-300">
-            <ShieldCheck className="size-3.5" />
-            Administrator (Full Access)
-          </span>
-        );
-      case 'MANAGER':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
-            <UserCheck className="size-3.5" />
-            Manager (Ops & Assets)
-          </span>
-        );
-      case 'VIEWER':
-        return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
-            <Eye className="size-3.5" />
-            Viewer (Read Only)
-          </span>
-        );
-      default:
-        return null;
-    }
+  const isEmpLoading = useEmployeeStore((s) => s.isLoading);
+  const empError = useEmployeeStore((s) => s.error);
+  const reloadEmployees = useEmployeeStore((s) => s.reloadEmployees);
+
+  const { isCustomizationOpen, closeCustomization } = useDashboardStore();
+
+  const isLoading = isAssetLoading || isEmpLoading;
+  const error = assetError || empError;
+
+  const handleRetry = () => {
+    void reloadAssets();
+    void reloadEmployees();
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-6 gap-6">
-      <div className="flex items-center gap-3">
-        <div className="bg-primary text-primary-foreground p-3 rounded-xl shadow-md">
-          <Layers className="size-8" />
-        </div>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">AssetOps Dashboard</h1>
-          <p className="text-xs text-muted-foreground">Smart Asset Management Platform</p>
-        </div>
-      </div>
+    <div className="flex-1 p-4 sm:p-6 lg:p-7 space-y-6 max-w-[1600px] w-full mx-auto animate-in fade-in duration-200 text-left">
+      {/* 1. Dashboard Header */}
+      <DashboardHeader />
 
-      <div className="flex flex-col items-center gap-2">
-        <p className="text-muted-foreground text-center max-w-md text-sm">
-          Welcome back,{' '}
-          <strong className="text-foreground font-semibold">{user?.name || 'User'}</strong>! You are
-          logged in with role:
-        </p>
-        {getRoleBadge()}
-      </div>
+      {/* Loading State */}
+      {isLoading && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
+          <LoadingState
+            icon={LayoutDashboard}
+            title="Loading Dashboard Metrics..."
+            description="Aggregating real-time asset inventory and lifecycle analytics."
+            size="lg"
+          />
+        </div>
+      )}
 
-      <div className="flex gap-3">
-        <Button variant="default">Get Started</Button>
-        <Button variant="outline">Learn More</Button>
-      </div>
+      {/* Error State */}
+      {!isLoading && error && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
+          <ErrorState title="Failed to load dashboard data" message={error} onRetry={handleRetry} />
+        </div>
+      )}
+
+      {/* Main Content (4 Main Sections) */}
+      {!isLoading && !error && (
+        <>
+          {/* 2. Summary Cards */}
+          <section aria-label="Summary Metrics">
+            <DashboardSummaryCards />
+          </section>
+
+          {/* 3. Charts + Recent Activity */}
+          <section aria-label="Lifecycle & Activity Overview">
+            <DashboardMiddleSection />
+          </section>
+
+          {/* 4. Analytics Charts */}
+          <section aria-label="Operational Analytics & Forecasting">
+            <DashboardAnalyticsSection />
+          </section>
+        </>
+      )}
+
+      {/* Customization Modal */}
+      <DashboardCustomizationModal isOpen={isCustomizationOpen} onClose={closeCustomization} />
     </div>
   );
 }
