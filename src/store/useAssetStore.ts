@@ -13,6 +13,7 @@ import type {
 } from '@/types/asset';
 import { DEFAULT_ASSET_FILTERS } from '@/constans/asset.constants';
 import { MOCK_ASSETS } from '@/mocks/seed/assets';
+import { filterAssets, useAssetFilterStore } from './useAssetFilterStore';
 
 interface AssetStoreState {
   assets: Asset[];
@@ -170,10 +171,12 @@ export const useAssetStore = create<AssetStoreState>()(
           filters: { ...state.filters, pageSize, page: 1 },
         })),
 
-      resetFilters: () =>
+      resetFilters: () => {
+        useAssetFilterStore.getState().resetFilters();
         set(() => ({
           filters: DEFAULT_ASSET_FILTERS,
-        })),
+        }));
+      },
 
       // CRUD Actions
       addAsset: (input) => {
@@ -289,40 +292,18 @@ export const useAssetStore = create<AssetStoreState>()(
       // Query Helpers
       getFilteredAssets: () => {
         const { assets, filters } = get();
+        const multiFacetFilters = useAssetFilterStore.getState();
         const { search, category, status, location, sortBy, page, pageSize } = filters;
 
-        let filtered = [...assets];
+        // Apply multi-facet filters combined with legacy filters (pure derivation)
+        const filtered = filterAssets(assets, multiFacetFilters, {
+          search,
+          category,
+          status,
+          location,
+        });
 
-        // 1. Text Search across name, model, assetId, serialNumber, and assignedTo
-        if (search.trim()) {
-          const query = search.trim().toLowerCase();
-          filtered = filtered.filter((asset) => {
-            const matchName = asset.name.toLowerCase().includes(query);
-            const matchId = asset.assetId.toLowerCase().includes(query);
-            const matchModel = asset.model?.toLowerCase().includes(query) || false;
-            const matchSerial = asset.serialNumber.toLowerCase().includes(query);
-            const matchAssigned = asset.assignedTo?.name.toLowerCase().includes(query) || false;
-
-            return matchName || matchId || matchModel || matchSerial || matchAssigned;
-          });
-        }
-
-        // 2. Category Filter
-        if (category !== 'All') {
-          filtered = filtered.filter((a) => a.category === category);
-        }
-
-        // 3. Status Filter
-        if (status !== 'All') {
-          filtered = filtered.filter((a) => a.status === status);
-        }
-
-        // 4. Location Filter
-        if (location !== 'All') {
-          filtered = filtered.filter((a) => a.location === location);
-        }
-
-        // 5. Sorting
+        // Sorting
         filtered.sort((a, b) => {
           switch (sortBy) {
             case 'name_asc':
