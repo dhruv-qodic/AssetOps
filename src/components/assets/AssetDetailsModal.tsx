@@ -14,7 +14,10 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { Calendar, MapPin, Tag, Hash, UserCheck, Shield } from 'lucide-react';
 
 export const AssetDetailsModal: React.FC = () => {
-  const { isViewModalOpen, selectedAsset, closeModals, openEditModal } = useAssetStore();
+  const isViewModalOpen = useAssetStore((s) => s.isViewModalOpen);
+  const selectedAsset = useAssetStore((s) => s.selectedAsset);
+  const closeModals = useAssetStore((s) => s.closeModals);
+  const openEditModal = useAssetStore((s) => s.openEditModal);
 
   if (!selectedAsset) return null;
 

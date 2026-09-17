@@ -19,8 +19,8 @@ interface TopDepartmentsChartProps {
 export const TopDepartmentsChart: React.FC<TopDepartmentsChartProps> = ({
   selectedDepartment = 'All',
 }) => {
-  const { assets } = useAssetStore();
-  const { employees } = useEmployeeStore();
+  const assets = useAssetStore((s) => s.assets);
+  const employees = useEmployeeStore((s) => s.employees);
 
   const allocatedAssets = useMemo(() => {
     return assets.filter((a) => a.status === 'Allocated');

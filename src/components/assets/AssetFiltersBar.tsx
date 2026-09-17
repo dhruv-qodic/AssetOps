@@ -112,35 +112,33 @@ function FilterDropdown<T extends string>({
   );
 }
 
+const CATEGORY_OPTIONS = [
+  { label: 'All', value: 'All' as AssetCategory | 'All' },
+  ...ASSET_CATEGORIES.map((c) => ({ label: c, value: c })),
+];
+
+const STATUS_OPTIONS = [
+  { label: 'All', value: 'All' as AssetStatus | 'All' },
+  ...ASSET_STATUSES.map((s) => ({ label: s, value: s })),
+];
+
+const LOCATION_OPTIONS = [
+  { label: 'All', value: 'All' },
+  ...ASSET_LOCATIONS.map((l) => ({ label: l, value: l })),
+];
+
 export const AssetFiltersBar: React.FC = () => {
-  const {
-    filters,
-    setSearch,
-    setCategory,
-    setStatus,
-    setLocation,
-    setSortBy,
-    resetFilters,
-    viewMode,
-    setViewMode,
-  } = useAssetStore();
+  const filters = useAssetStore((s) => s.filters);
+  const setSearch = useAssetStore((s) => s.setSearch);
+  const setCategory = useAssetStore((s) => s.setCategory);
+  const setStatus = useAssetStore((s) => s.setStatus);
+  const setLocation = useAssetStore((s) => s.setLocation);
+  const setSortBy = useAssetStore((s) => s.setSortBy);
+  const resetFilters = useAssetStore((s) => s.resetFilters);
+  const viewMode = useAssetStore((s) => s.viewMode);
+  const setViewMode = useAssetStore((s) => s.setViewMode);
 
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
-
-  const categoryOptions = [
-    { label: 'All', value: 'All' as AssetCategory | 'All' },
-    ...ASSET_CATEGORIES.map((c) => ({ label: c, value: c })),
-  ];
-
-  const statusOptions = [
-    { label: 'All', value: 'All' as AssetStatus | 'All' },
-    ...ASSET_STATUSES.map((s) => ({ label: s, value: s })),
-  ];
-
-  const locationOptions = [
-    { label: 'All', value: 'All' },
-    ...ASSET_LOCATIONS.map((l) => ({ label: l, value: l })),
-  ];
 
   const hasActiveFilters =
     filters.search !== '' ||
@@ -229,7 +227,7 @@ export const AssetFiltersBar: React.FC = () => {
           label="Category"
           icon={<Tag className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.category}
-          options={categoryOptions}
+          options={CATEGORY_OPTIONS}
           onChange={(val) => setCategory(val)}
         />
 
@@ -238,7 +236,7 @@ export const AssetFiltersBar: React.FC = () => {
           label="Status"
           icon={<Activity className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.status}
-          options={statusOptions}
+          options={STATUS_OPTIONS}
           onChange={(val) => setStatus(val)}
         />
 
@@ -247,7 +245,7 @@ export const AssetFiltersBar: React.FC = () => {
           label="Location"
           icon={<MapPin className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.location}
-          options={locationOptions}
+          options={LOCATION_OPTIONS}
           onChange={(val) => setLocation(val)}
         />
 

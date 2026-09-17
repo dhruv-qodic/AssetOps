@@ -15,7 +15,8 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
 
 export default function UserDropdown() {
-  const { user, logout } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -48,12 +49,6 @@ export default function UserDropdown() {
   if (!user) return null;
 
   const handleLogout = () => {
-    setIsOpen(false);
-    logout();
-    void navigate('/login');
-  };
-
-  const handleLoginAsDifferent = () => {
     setIsOpen(false);
     logout();
     void navigate('/login');
@@ -218,7 +213,7 @@ export default function UserDropdown() {
           <div className="p-2 bg-muted/20 border-t border-border space-y-1">
             <button
               type="button"
-              onClick={handleLoginAsDifferent}
+              onClick={handleLogout}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-muted rounded-lg transition-colors cursor-pointer text-left"
             >
               <LogIn className="size-4 text-primary" />

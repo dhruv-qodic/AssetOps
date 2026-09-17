@@ -94,8 +94,11 @@ function SidebarTooltip({
 function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useAuthStore();
-  const { isCollapsed, isMobileOpen, setMobileOpen } = useSidebarStore();
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const isCollapsed = useSidebarStore((s) => s.isCollapsed);
+  const isMobileOpen = useSidebarStore((s) => s.isMobileOpen);
+  const setMobileOpen = useSidebarStore((s) => s.setMobileOpen);
   const { canAccessRoute } = usePermission();
 
   // Close mobile sheet when location route changes

@@ -11,7 +11,7 @@ interface EmployeePaginationProps {
 }
 
 export const EmployeePagination: React.FC<EmployeePaginationProps> = (props) => {
-  const { setPage } = useEmployeeStore();
+  const setPage = useEmployeeStore((s) => s.setPage);
 
   return <Pagination {...props} onPageChange={setPage} entityLabel="employees" />;
 };

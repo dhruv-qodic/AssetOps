@@ -24,7 +24,7 @@ interface AssetGrowthTrendChartProps {
 export const AssetGrowthTrendChart: React.FC<AssetGrowthTrendChartProps> = ({
   timeRange = 'Last 30 Days',
 }) => {
-  const { assets } = useAssetStore();
+  const assets = useAssetStore((s) => s.assets);
   const liveAllocated = assets.filter((a) => a.status === 'Allocated').length;
   const liveAvailable = assets.filter((a) => a.status === 'Available').length;
 

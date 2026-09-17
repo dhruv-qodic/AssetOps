@@ -27,8 +27,11 @@ import {
 } from 'lucide-react';
 
 export const EmployeeDetailsModal: React.FC = () => {
-  const { isViewModalOpen, selectedEmployee, closeModals, openEditModal } = useEmployeeStore();
-  const { assets } = useAssetStore();
+  const isViewModalOpen = useEmployeeStore((s) => s.isViewModalOpen);
+  const selectedEmployee = useEmployeeStore((s) => s.selectedEmployee);
+  const closeModals = useEmployeeStore((s) => s.closeModals);
+  const openEditModal = useEmployeeStore((s) => s.openEditModal);
+  const assets = useAssetStore((s) => s.assets);
 
   if (!selectedEmployee) return null;
 

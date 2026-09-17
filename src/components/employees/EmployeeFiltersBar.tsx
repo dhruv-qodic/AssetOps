@@ -108,24 +108,29 @@ function FilterDropdown<T extends string>({
   );
 }
 
+const DEPARTMENT_OPTIONS = [
+  { label: 'All', value: 'All' },
+  ...EMPLOYEE_DEPARTMENTS.map((dept) => ({ label: dept, value: dept })),
+];
+
+const STATUS_OPTIONS: { label: string; value: EmployeeStatus | 'All' }[] = [
+  { label: 'All', value: 'All' },
+  ...EMPLOYEE_STATUS_OPTIONS,
+];
+
+const TYPE_OPTIONS: { label: string; value: EmployeeType | 'All' }[] = [
+  { label: 'All', value: 'All' },
+  ...EMPLOYEE_TYPE_OPTIONS,
+];
+
 export const EmployeeFiltersBar: React.FC = () => {
-  const { filters, setSearch, setDepartment, setStatus, setType, setSortBy, resetFilters } =
-    useEmployeeStore();
-
-  const departmentOptions = [
-    { label: 'All', value: 'All' },
-    ...EMPLOYEE_DEPARTMENTS.map((dept) => ({ label: dept, value: dept })),
-  ];
-
-  const statusOptions: { label: string; value: EmployeeStatus | 'All' }[] = [
-    { label: 'All', value: 'All' },
-    ...EMPLOYEE_STATUS_OPTIONS,
-  ];
-
-  const typeOptions: { label: string; value: EmployeeType | 'All' }[] = [
-    { label: 'All', value: 'All' },
-    ...EMPLOYEE_TYPE_OPTIONS,
-  ];
+  const filters = useEmployeeStore((s) => s.filters);
+  const setSearch = useEmployeeStore((s) => s.setSearch);
+  const setDepartment = useEmployeeStore((s) => s.setDepartment);
+  const setStatus = useEmployeeStore((s) => s.setStatus);
+  const setType = useEmployeeStore((s) => s.setType);
+  const setSortBy = useEmployeeStore((s) => s.setSortBy);
+  const resetFilters = useEmployeeStore((s) => s.resetFilters);
 
   const hasActiveFilters =
     filters.search !== '' ||
@@ -166,7 +171,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           label="Department"
           icon={<Building2 className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.department}
-          options={departmentOptions}
+          options={DEPARTMENT_OPTIONS}
           onChange={(val) => setDepartment(val)}
         />
 
@@ -175,7 +180,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           label="Status"
           icon={<Activity className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.status}
-          options={statusOptions}
+          options={STATUS_OPTIONS}
           onChange={(val) => setStatus(val)}
         />
 
@@ -184,7 +189,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           label="Type"
           icon={<UserCheck className="size-3.5 text-slate-400 dark:text-slate-500" />}
           value={filters.type || 'All'}
-          options={typeOptions}
+          options={TYPE_OPTIONS}
           onChange={(val) => setType(val)}
         />
 

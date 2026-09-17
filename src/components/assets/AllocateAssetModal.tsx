@@ -16,8 +16,14 @@ import type { AssignedEmployee } from '@/types/asset';
 import { UserPlus, Search, Check, Building2, MapPin, Laptop, UserCheck } from 'lucide-react';
 
 export const AllocateAssetModal: React.FC = () => {
-  const { isAllocateModalOpen, selectedAsset, closeModals, allocateAsset } = useAssetStore();
-  const { employees, assignAssetToEmployee, unassignAssetFromEmployee } = useEmployeeStore();
+  const isAllocateModalOpen = useAssetStore((s) => s.isAllocateModalOpen);
+  const selectedAsset = useAssetStore((s) => s.selectedAsset);
+  const closeModals = useAssetStore((s) => s.closeModals);
+  const allocateAsset = useAssetStore((s) => s.allocateAsset);
+
+  const employees = useEmployeeStore((s) => s.employees);
+  const assignAssetToEmployee = useEmployeeStore((s) => s.assignAssetToEmployee);
+  const unassignAssetFromEmployee = useEmployeeStore((s) => s.unassignAssetFromEmployee);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedEmp, setSelectedEmp] = useState<Employee | null>(null);

@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 
 export const EmployeeCards: React.FC = () => {
-  const { getStats } = useEmployeeStore();
+  const getStats = useEmployeeStore((s) => s.getStats);
   const stats = getStats();
 
   const totalEmployees = stats.totalEmployees || 0;
