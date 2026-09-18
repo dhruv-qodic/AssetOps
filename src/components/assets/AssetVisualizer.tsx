@@ -95,11 +95,15 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
         </div>
       </div>
 
-      {/* Sticky Table Header */}
-      <div className="overflow-x-auto">
-        <div className="min-w-[1000px]">
+      {/* Unified Table Scroll Container */}
+      <div
+        ref={parentRef}
+        className="h-[600px] overflow-auto relative scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
+      >
+        <div className="w-full min-w-[1200px]">
+          {/* Sticky Table Header */}
           <div
-            className={`grid ${GRID_COLS} items-center border-b border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-slate-900/80 text-xs font-bold text-slate-700 dark:text-slate-300 py-3.5 px-6 select-none`}
+            className={`sticky top-0 z-20 grid ${GRID_COLS} items-center border-b border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC] dark:bg-slate-900 text-xs font-bold text-slate-700 dark:text-slate-300 py-3.5 px-6 select-none shadow-xs`}
           >
             <div>ASSET ID</div>
             <div>NAME</div>
@@ -113,115 +117,109 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
 
           {/* Virtualized List View Container */}
           <div
-            ref={parentRef}
-            className="h-[600px] overflow-auto relative scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
           >
-            <div
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-                width: '100%',
-                position: 'relative',
-              }}
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                const asset = assets[virtualRow.index];
-                const isRowOpen = openRowId === asset.id;
-                const isSelected = selectedRowId === asset.id;
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const asset = assets[virtualRow.index];
+              const isRowOpen = openRowId === asset.id;
+              const isSelected = selectedRowId === asset.id;
 
-                return (
-                  <div
-                    key={asset.id}
-                    data-index={virtualRow.index}
-                    data-selected={isSelected}
-                    aria-selected={isSelected}
-                    onClick={() =>
-                      setSelectedRowId((prev) => (prev === asset.id ? null : asset.id))
-                    }
-                    style={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: '100%',
-                      height: `${virtualRow.size}px`,
-                      transform: `translateY(${virtualRow.start}px)`,
-                      zIndex: isRowOpen ? 50 : 1,
-                    }}
-                    className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 transition-colors group text-xs sm:text-sm cursor-pointer select-none ${
-                      isSelected
-                        ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-blue-600 dark:border-l-blue-400 font-medium'
-                        : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
+              return (
+                <div
+                  key={asset.id}
+                  data-index={virtualRow.index}
+                  data-selected={isSelected}
+                  aria-selected={isSelected}
+                  onClick={() =>
+                    setSelectedRowId((prev) => (prev === asset.id ? null : asset.id))
+                  }
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                    zIndex: isRowOpen ? 50 : 1,
+                  }}
+                  className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 transition-colors group text-xs sm:text-sm cursor-pointer select-none ${isSelected
+                    ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-blue-600 dark:border-l-blue-400 font-medium'
+                    : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
                     }`}
-                  >
-                    {/* Asset ID */}
-                    <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
-                      {asset.assetId}
-                    </div>
+                >
+                  {/* Asset ID */}
+                  <div className="font-medium text-slate-900 dark:text-slate-100 truncate">
+                    {asset.assetId}
+                  </div>
 
-                    {/* Name + Icon + Model */}
-                    <div className="flex items-center gap-3 pr-2 min-w-0">
-                      <AssetDeviceIcon category={asset.category} name={asset.name} />
-                      <div className="flex flex-col text-left min-w-0 truncate">
-                        <span className="font-semibold text-slate-900 dark:text-slate-100 leading-tight truncate">
-                          {asset.name}
+                  {/* Name + Icon + Model */}
+                  <div className="flex items-center gap-3 pr-2 min-w-0">
+                    <AssetDeviceIcon category={asset.category} name={asset.name} />
+                    <div className="flex flex-col text-left min-w-0 truncate">
+                      <span className="font-semibold text-slate-900 dark:text-slate-100 leading-tight truncate">
+                        {asset.name}
+                      </span>
+                      {asset.model && (
+                        <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight truncate">
+                          {asset.model}
                         </span>
-                        {asset.model && (
-                          <span className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5 leading-tight truncate">
-                            {asset.model}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Category */}
-                    <div className="text-slate-600 dark:text-slate-300 truncate">
-                      {asset.category}
-                    </div>
-
-                    {/* Status */}
-                    <div>
-                      <AssetStatusBadge status={asset.status} />
-                    </div>
-
-                    {/* Location */}
-                    <div className="truncate">
-                      {asset.location ? (
-                        <span className="font-medium text-slate-800 dark:text-slate-200 flex gap-1 items-center">
-                          <MapPin className="size-3.5 text-slate-400 shrink-0" />
-                          {asset.location}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 font-normal">-</span>
                       )}
-                    </div>
-
-                    {/* Cost */}
-                    <div className="truncate text-slate-700 dark:text-slate-300 flex gap-1 items-center">
-                      <DollarSign className="size-3.5 text-slate-400 shrink-0" />
-                      {asset.purchaseCost}
-                    </div>
-
-                    {/* Assigned To */}
-                    <div className="text-slate-700 dark:text-slate-300 truncate pr-2">
-                      {asset.assignedTo ? (
-                        <span className="font-medium text-slate-800 dark:text-slate-200">
-                          {asset.assignedTo.name}
-                        </span>
-                      ) : (
-                        <span className="text-slate-400 font-normal">-</span>
-                      )}
-                    </div>
-
-                    {/* Actions */}
-                    <div className="text-right" onClick={(e) => e.stopPropagation()}>
-                      <AssetRowActions
-                        asset={asset}
-                        onOpenChange={(isOpen) => setOpenRowId(isOpen ? asset.id : null)}
-                      />
                     </div>
                   </div>
-                );
-              })}
-            </div>
+
+                  {/* Category */}
+                  <div className="text-slate-600 dark:text-slate-300 truncate">
+                    {asset.category}
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <AssetStatusBadge status={asset.status} />
+                  </div>
+
+                  {/* Location */}
+                  <div className="truncate">
+                    {asset.location ? (
+                      <span className="font-medium text-slate-800 dark:text-slate-200 flex gap-1 items-center">
+                        <MapPin className="size-3.5 text-slate-400 shrink-0" />
+                        {asset.location}
+                      </span>
+                    ) : (
+                      <span className="text-slate-400 font-normal">-</span>
+                    )}
+                  </div>
+
+                  {/* Cost */}
+                  <div className="truncate text-slate-700 dark:text-slate-300 flex gap-1 items-center">
+                    <DollarSign className="size-3.5 text-slate-400 shrink-0" />
+                    {asset.purchaseCost}
+                  </div>
+
+                  {/* Assigned To */}
+                  <div className="text-slate-700 dark:text-slate-300 truncate pr-2">
+                    {asset.assignedTo ? (
+                      <span className="font-medium text-slate-800 dark:text-slate-200">
+                        {asset.assignedTo.name}
+                      </span>
+                    ) : (
+                      <span className="text-slate-400 font-normal">-</span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="text-right" onClick={(e) => e.stopPropagation()}>
+                    <AssetRowActions
+                      asset={asset}
+                      onOpenChange={(isOpen) => setOpenRowId(isOpen ? asset.id : null)}
+                    />
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
