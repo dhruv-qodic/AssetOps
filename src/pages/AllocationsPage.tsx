@@ -31,12 +31,7 @@ export function AllocationsPage() {
   };
 
   const handleOpenNewAllocation = () => {
-    const availableAsset = assets.find((a) => a.status === 'Available');
-    if (availableAsset) {
-      openAllocateModal(availableAsset);
-    } else if (assets.length > 0) {
-      openAllocateModal(assets[0]);
-    }
+    openAllocateModal();
   };
 
   // Filter and Pagination States

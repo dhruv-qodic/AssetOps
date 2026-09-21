@@ -1,6 +1,5 @@
 import { useAssetStore } from '@/store/useAssetStore';
 import { useAssetFilterStore } from '@/store/useAssetFilterStore';
-import { useDebounce } from '@/hooks/useDebounce';
 import AssetHeader from '@/components/assets/AssetHeader';
 import AssetFilterPanel from '@/components/assets/AssetFilterPanel';
 import AssetToolbar from '@/components/assets/AssetToolbar';
@@ -25,15 +24,12 @@ export function AssetListPage() {
   const viewMode = useAssetStore((s) => s.viewMode);
 
   // Subscribe to multi-facet filter store
-  const searchKeyword = useAssetFilterStore((s) => s.searchKeyword);
+  useAssetFilterStore((s) => s.searchKeyword);
   useAssetFilterStore((s) => s.selectedCategories);
   useAssetFilterStore((s) => s.selectedStatuses);
   useAssetFilterStore((s) => s.selectedDepartments);
   useAssetFilterStore((s) => s.costRange);
   const resetFilterStore = useAssetFilterStore((s) => s.resetFilters);
-
-  // Debounce searchKeyword (300ms default)
-  const debouncedSearchKeyword = useDebounce(searchKeyword, 300);
 
   const handleClearFilters = () => {
     resetFilterStore();
@@ -41,7 +37,7 @@ export function AssetListPage() {
   };
 
   const { allFilteredAssets, paginatedAssets, totalFiltered, totalPages, startIndex, endIndex } =
-    getFilteredAssets(debouncedSearchKeyword);
+    getFilteredAssets();
 
   const showPagination = viewMode === 'table' && !isLoading && !error && totalFiltered > 0;
 

@@ -54,7 +54,7 @@ interface AssetStoreState {
   bulkAddAssets: (assets: CreateAssetInput[]) => number;
 
   // Query helpers
-  getFilteredAssets: (searchOverride?: string) => {
+  getFilteredAssets: () => {
     allFilteredAssets: Asset[];
     paginatedAssets: Asset[];
     totalFiltered: number;
@@ -71,7 +71,7 @@ interface AssetStoreState {
   openDeleteModal: (asset: Asset) => void;
   openViewModal: (asset: Asset) => void;
   openImportModal: () => void;
-  openAllocateModal: (asset: Asset) => void;
+  openAllocateModal: (asset?: Asset | null) => void;
   closeModals: () => void;
 
   viewMode: 'virtualized' | 'table';
@@ -290,18 +290,13 @@ export const useAssetStore = create<AssetStoreState>()(
       },
 
       // Query Helpers
-      getFilteredAssets: (searchOverride?: string) => {
+      getFilteredAssets: () => {
         const { assets, filters } = get();
         const multiFacetFilters = useAssetFilterStore.getState();
         const { search, category, status, location, sortBy, page, pageSize } = filters;
 
-        const effectiveMultiFacetFilters =
-          searchOverride !== undefined
-            ? { ...multiFacetFilters, searchKeyword: searchOverride }
-            : multiFacetFilters;
-
         // Apply multi-facet filters combined with legacy filters (pure derivation)
-        const filtered = filterAssets(assets, effectiveMultiFacetFilters, {
+        const filtered = filterAssets(assets, multiFacetFilters, {
           search,
           category,
           status,
@@ -369,7 +364,8 @@ export const useAssetStore = create<AssetStoreState>()(
       openDeleteModal: (asset) => set({ isDeleteModalOpen: true, selectedAsset: asset }),
       openViewModal: (asset) => set({ isViewModalOpen: true, selectedAsset: asset }),
       openImportModal: () => set({ isImportModalOpen: true }),
-      openAllocateModal: (asset) => set({ isAllocateModalOpen: true, selectedAsset: asset }),
+      openAllocateModal: (asset) =>
+        set({ isAllocateModalOpen: true, selectedAsset: asset || null }),
       closeModals: () =>
         set({
           isAddModalOpen: false,

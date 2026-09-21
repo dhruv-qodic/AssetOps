@@ -17,9 +17,9 @@ export interface AssetFilterStateValues {
 export interface AssetFilterActions {
   setSearchKeyword: (keyword: string) => void;
   setSelectedCategories: (categories: AssetCategory[]) => void;
-  toggleCategory: (category: AssetCategory | string) => void;
+  toggleCategory: (category: AssetCategory) => void;
   setSelectedStatuses: (statuses: AssetStatus[]) => void;
-  toggleStatus: (status: AssetStatus | string) => void;
+  toggleStatus: (status: AssetStatus) => void;
   setSelectedDepartments: (departments: string[]) => void;
   toggleDepartment: (department: string) => void;
   setCostRange: (range: Partial<CostRange>) => void;
@@ -43,8 +43,8 @@ export const INITIAL_ASSET_FILTER_STATE: AssetFilterStateValues = {
 };
 
 const parseCostValue = (value: number | string | null): number | null => {
-  if (value === null || value === undefined || value === '') return null;
-  const num = typeof value === 'number' ? value : parseFloat(String(value));
+  if (value === null || value === '') return null;
+  const num = typeof value === 'number' ? value : parseFloat(value);
   return isNaN(num) ? null : num;
 };
 
@@ -52,7 +52,10 @@ const parseCostValue = (value: number | string | null): number | null => {
  * Pure helper function to match department names accounting for common variations
  * (e.g., 'HR' <-> 'Human Resources', 'IT' <-> 'IT Administration').
  */
-export const matchDepartment = (assetDept: string | undefined, selectedDepartments: string[]): boolean => {
+export const matchDepartment = (
+  assetDept: string | undefined,
+  selectedDepartments: string[],
+): boolean => {
   if (!assetDept || selectedDepartments.length === 0) return false;
   const lowerAssetDept = assetDept.toLowerCase().trim();
 
@@ -60,13 +63,24 @@ export const matchDepartment = (assetDept: string | undefined, selectedDepartmen
     const lowerSelected = selected.toLowerCase().trim();
     if (lowerAssetDept === lowerSelected) return true;
 
-    if (lowerSelected === 'hr' && (lowerAssetDept === 'human resources' || lowerAssetDept.includes('hr'))) {
+    if (
+      lowerSelected === 'hr' &&
+      (lowerAssetDept === 'human resources' || lowerAssetDept.includes('hr'))
+    ) {
       return true;
     }
-    if (lowerSelected === 'human resources' && (lowerAssetDept === 'hr' || lowerAssetDept.includes('human resources'))) {
+    if (
+      lowerSelected === 'human resources' &&
+      (lowerAssetDept === 'hr' || lowerAssetDept.includes('human resources'))
+    ) {
       return true;
     }
-    if (lowerSelected === 'it' && (lowerAssetDept.startsWith('it') || lowerAssetDept.includes('it administration') || lowerAssetDept.includes('it support'))) {
+    if (
+      lowerSelected === 'it' &&
+      (lowerAssetDept.startsWith('it') ||
+        lowerAssetDept.includes('it administration') ||
+        lowerAssetDept.includes('it support'))
+    ) {
       return true;
     }
 
@@ -88,7 +102,8 @@ export function filterAssets(
     location?: string;
   },
 ): Asset[] {
-  const { searchKeyword, selectedCategories, selectedStatuses, selectedDepartments, costRange } = filters;
+  const { searchKeyword, selectedCategories, selectedStatuses, selectedDepartments, costRange } =
+    filters;
 
   const keyword = (searchKeyword || additionalFilters?.search || '').trim().toLowerCase();
   const minCost = costRange.min;
@@ -97,15 +112,16 @@ export function filterAssets(
   return assets.filter((asset) => {
     // 1. Keyword search across name, ID, model, serialNumber, location, assignedTo name/email/department, specifications, notes
     if (keyword) {
-      const matchName = asset.name?.toLowerCase().includes(keyword) || false;
-      const matchId = asset.assetId?.toLowerCase().includes(keyword) || false;
-      const matchModel = asset.model?.toLowerCase().includes(keyword) || false;
-      const matchSerial = asset.serialNumber?.toLowerCase().includes(keyword) || false;
-      const matchLocation = asset.location?.toLowerCase().includes(keyword) || false;
-      const matchAssignedName = asset.assignedTo?.name?.toLowerCase().includes(keyword) || false;
-      const matchAssignedEmail = asset.assignedTo?.email?.toLowerCase().includes(keyword) || false;
-      const matchAssignedDept = asset.assignedTo?.department?.toLowerCase().includes(keyword) || false;
-      const matchNotes = asset.notes?.toLowerCase().includes(keyword) || false;
+      const matchName = asset.name.toLowerCase().includes(keyword);
+      const matchId = asset.assetId.toLowerCase().includes(keyword);
+      const matchModel = asset.model?.toLowerCase().includes(keyword) ?? false;
+      const matchSerial = asset.serialNumber.toLowerCase().includes(keyword);
+      const matchLocation = asset.location.toLowerCase().includes(keyword);
+      const matchAssignedName = asset.assignedTo?.name.toLowerCase().includes(keyword) ?? false;
+      const matchAssignedEmail = asset.assignedTo?.email?.toLowerCase().includes(keyword) ?? false;
+      const matchAssignedDept =
+        asset.assignedTo?.department?.toLowerCase().includes(keyword) ?? false;
+      const matchNotes = asset.notes?.toLowerCase().includes(keyword) ?? false;
 
       let matchSpecs = false;
       if (asset.specifications) {
@@ -192,14 +208,13 @@ export const useAssetFilterStore = create<AssetFilterStore>((set) => ({
     set({ selectedCategories: categories });
   },
 
-  toggleCategory: (category: AssetCategory | string) => {
+  toggleCategory: (category: AssetCategory) => {
     set((state) => {
-      const cat = category as AssetCategory;
-      const exists = state.selectedCategories.includes(cat);
+      const exists = state.selectedCategories.includes(category);
       return {
         selectedCategories: exists
-          ? state.selectedCategories.filter((c) => c !== cat)
-          : [...state.selectedCategories, cat],
+          ? state.selectedCategories.filter((c) => c !== category)
+          : [...state.selectedCategories, category],
       };
     });
   },
@@ -208,14 +223,13 @@ export const useAssetFilterStore = create<AssetFilterStore>((set) => ({
     set({ selectedStatuses: statuses });
   },
 
-  toggleStatus: (status: AssetStatus | string) => {
+  toggleStatus: (status: AssetStatus) => {
     set((state) => {
-      const st = status as AssetStatus;
-      const exists = state.selectedStatuses.includes(st);
+      const exists = state.selectedStatuses.includes(status);
       return {
         selectedStatuses: exists
-          ? state.selectedStatuses.filter((s) => s !== st)
-          : [...state.selectedStatuses, st],
+          ? state.selectedStatuses.filter((s) => s !== status)
+          : [...state.selectedStatuses, status],
       };
     });
   },

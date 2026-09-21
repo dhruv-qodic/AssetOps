@@ -125,7 +125,7 @@ export const AssetLifecycleChart: React.FC = () => {
               }}
             />
             <Legend iconType="circle" wrapperStyle={{ paddingBottom: '12px', fontSize: '11px' }} />
-            <Bar dataKey="Allocated" fill="#4C40F7" radius={[4, 4, 0, 0]} maxBarSize={28} />
+            <Bar dataKey="Allocated" fill="#160dba" radius={[4, 4, 0, 0]} maxBarSize={28} />
             <Bar dataKey="Available" fill="#10B981" radius={[4, 4, 0, 0]} maxBarSize={28} />
             <Bar dataKey="Maintenance" fill="#F59E0B" radius={[4, 4, 0, 0]} maxBarSize={28} />
           </BarChart>
