@@ -1,3 +1,5 @@
+import { useDeferredValue } from 'react';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useAssetFilterStore } from '@/store/useAssetFilterStore';
 import AssetHeader from '@/components/assets/AssetHeader';
@@ -11,6 +13,7 @@ import AssetDetailsModal from '@/components/assets/AssetDetailsModal';
 import DeleteAssetModal from '@/components/assets/DeleteAssetModal';
 import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
+import AssetKpiCards from '@/components/assets/AssetKpiCards';
 
 export function AssetListPage() {
   useAssetStore((s) => s.assets);
@@ -24,12 +27,21 @@ export function AssetListPage() {
   const viewMode = useAssetStore((s) => s.viewMode);
 
   // Subscribe to multi-facet filter store
-  useAssetFilterStore((s) => s.searchKeyword);
+  const searchKeyword = useAssetFilterStore((s) => s.searchKeyword);
   useAssetFilterStore((s) => s.selectedCategories);
   useAssetFilterStore((s) => s.selectedStatuses);
   useAssetFilterStore((s) => s.selectedDepartments);
   useAssetFilterStore((s) => s.costRange);
   const resetFilterStore = useAssetFilterStore((s) => s.resetFilters);
+
+  // Debounce search typing to reduce unnecessary recomputations
+  const debouncedSearchKeyword = useDebounce(searchKeyword, 300);
+
+  // Defer the filtered calculation to keep input responsive during heavy visualizer/table recalculations
+  const deferredSearchKeyword = useDeferredValue(debouncedSearchKeyword);
+
+  // Pending indicator when deferred value is lagging behind input value
+  const isFilteringPending = searchKeyword !== deferredSearchKeyword;
 
   const handleClearFilters = () => {
     resetFilterStore();
@@ -37,7 +49,7 @@ export function AssetListPage() {
   };
 
   const { allFilteredAssets, paginatedAssets, totalFiltered, totalPages, startIndex, endIndex } =
-    getFilteredAssets();
+    getFilteredAssets({ searchKeyword: deferredSearchKeyword });
 
   const showPagination = viewMode === 'table' && !isLoading && !error && totalFiltered > 0;
 
@@ -53,13 +65,16 @@ export function AssetListPage() {
 
         {/* Right Side: Data Toolbar, Table / Visualizer, and Pagination */}
         <div className="flex-1 min-w-0 w-full space-y-4">
-          <AssetToolbar totalCount={totalFiltered} />
+          <AssetKpiCards />
+
+          <AssetToolbar totalCount={totalFiltered} isPending={isFilteringPending} />
 
           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
             {viewMode === 'virtualized' ? (
               <AssetVisualizer
                 assets={allFilteredAssets}
                 isLoading={isLoading}
+                isPending={isFilteringPending}
                 error={error}
                 onRetry={() => void reloadAssets()}
                 onClearFilters={handleClearFilters}
@@ -69,6 +84,7 @@ export function AssetListPage() {
               <AssetTable
                 assets={paginatedAssets}
                 isLoading={isLoading}
+                isPending={isFilteringPending}
                 error={error}
                 onRetry={() => void reloadAssets()}
                 onClearFilters={handleClearFilters}

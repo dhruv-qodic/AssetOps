@@ -13,7 +13,11 @@ import type {
 } from '@/types/asset';
 import { DEFAULT_ASSET_FILTERS } from '@/constans/asset.constants';
 import { MOCK_ASSETS } from '@/mocks/seed/assets';
-import { filterAssets, useAssetFilterStore } from './useAssetFilterStore';
+import {
+  filterAssets,
+  useAssetFilterStore,
+  type AssetFilterStateValues,
+} from './useAssetFilterStore';
 
 interface AssetStoreState {
   assets: Asset[];
@@ -54,7 +58,7 @@ interface AssetStoreState {
   bulkAddAssets: (assets: CreateAssetInput[]) => number;
 
   // Query helpers
-  getFilteredAssets: () => {
+  getFilteredAssets: (overrideFilters?: Partial<AssetFilterStateValues>) => {
     allFilteredAssets: Asset[];
     paginatedAssets: Asset[];
     totalFiltered: number;
@@ -290,9 +294,12 @@ export const useAssetStore = create<AssetStoreState>()(
       },
 
       // Query Helpers
-      getFilteredAssets: () => {
+      getFilteredAssets: (overrideFilters?: Partial<AssetFilterStateValues>) => {
         const { assets, filters } = get();
-        const multiFacetFilters = useAssetFilterStore.getState();
+        const multiFacetFilters = {
+          ...useAssetFilterStore.getState(),
+          ...overrideFilters,
+        };
         const { search, category, status, location, sortBy, page, pageSize } = filters;
 
         // Apply multi-facet filters combined with legacy filters (pure derivation)
