@@ -54,7 +54,7 @@ interface AssetStoreState {
   bulkAddAssets: (assets: CreateAssetInput[]) => number;
 
   // Query helpers
-  getFilteredAssets: () => {
+  getFilteredAssets: (searchOverride?: string) => {
     allFilteredAssets: Asset[];
     paginatedAssets: Asset[];
     totalFiltered: number;
@@ -290,13 +290,18 @@ export const useAssetStore = create<AssetStoreState>()(
       },
 
       // Query Helpers
-      getFilteredAssets: () => {
+      getFilteredAssets: (searchOverride?: string) => {
         const { assets, filters } = get();
         const multiFacetFilters = useAssetFilterStore.getState();
         const { search, category, status, location, sortBy, page, pageSize } = filters;
 
+        const effectiveMultiFacetFilters =
+          searchOverride !== undefined
+            ? { ...multiFacetFilters, searchKeyword: searchOverride }
+            : multiFacetFilters;
+
         // Apply multi-facet filters combined with legacy filters (pure derivation)
-        const filtered = filterAssets(assets, multiFacetFilters, {
+        const filtered = filterAssets(assets, effectiveMultiFacetFilters, {
           search,
           category,
           status,
