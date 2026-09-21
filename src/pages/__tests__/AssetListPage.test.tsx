@@ -1,9 +1,26 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import AssetListPage from '../AssetListPage';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useAssetFilterStore, INITIAL_ASSET_FILTER_STATE } from '@/store/useAssetFilterStore';
 import { MOCK_ASSETS } from '@/mocks/seed/assets';
+
+vi.mock('@tanstack/react-virtual', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-virtual')>();
+  return {
+    ...actual,
+    useVirtualizer: ({ count }: { count: number }) => ({
+      getTotalSize: () => count * 56,
+      getVirtualItems: () =>
+        Array.from({ length: Math.min(count, 15) }, (_, index) => ({
+          index,
+          start: index * 56,
+          size: 56,
+          key: index,
+        })),
+    }),
+  };
+});
 
 describe('AssetListPage Component with Multi-Facet Filtering', () => {
   beforeEach(() => {
@@ -38,14 +55,23 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
     expect(screen.getByText('Cost Range')).toBeInTheDocument();
   });
 
-  it('should filter asset records when typing in search keyword', () => {
+  it('should filter asset records when typing in search keyword', async () => {
     render(<AssetListPage />);
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
     fireEvent.change(searchInput, { target: { value: 'iPhone 15' } });
 
-    expect(screen.getByText('iPhone 15')).toBeInTheDocument();
-    expect(screen.queryByText('Dell Laptop')).not.toBeInTheDocument();
+    // Pending indicator appears while debouncing/deferred
+    expect(screen.getByTestId('asset-filtering-indicator')).toBeInTheDocument();
+
+    await waitFor(
+      () => {
+        expect(screen.queryByText('Dell Laptop')).not.toBeInTheDocument();
+        expect(screen.getByText('iPhone 15')).toBeInTheDocument();
+        expect(screen.queryByTestId('asset-filtering-indicator')).not.toBeInTheDocument();
+      },
+      { timeout: 1500 },
+    );
   });
 
   it('should filter assets when selecting category checkbox', () => {
@@ -61,20 +87,28 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
     expect(allFilteredAssets.every((a) => a.category === 'Laptop')).toBe(true);
   });
 
-  it('should show empty state when filters yield no matches and allow clearing', () => {
+  it('should show empty state when filters yield no matches and allow clearing', async () => {
     render(<AssetListPage />);
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
     fireEvent.change(searchInput, { target: { value: 'non_existing_random_xyz_asset_query_123' } });
 
-    expect(screen.getByText('No assets found')).toBeInTheDocument();
+    await waitFor(
+      () => {
+        expect(screen.getByText('No assets found')).toBeInTheDocument();
+      },
+      { timeout: 1000 },
+    );
+
     const clearButton = screen.getByRole('button', { name: /clear filters/i });
     expect(clearButton).toBeInTheDocument();
 
     fireEvent.click(clearButton);
 
     expect(useAssetFilterStore.getState().searchKeyword).toBe('');
-    expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
+    });
   });
 
   it('should clear all filters when reset button is clicked in Filter Panel', () => {
@@ -89,5 +123,22 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
     fireEvent.click(resetButton);
 
     expect(useAssetFilterStore.getState().searchKeyword).toBe('');
+  });
+
+  it('should render pending indicator in visualizer mode when filtering is deferred', async () => {
+    useAssetStore.setState({ viewMode: 'virtualized' });
+    render(<AssetListPage />);
+
+    const searchInput = screen.getByPlaceholderText('Search keyword...');
+    fireEvent.change(searchInput, { target: { value: 'MacBook' } });
+
+    expect(screen.getByTestId('visualizer-pending-indicator')).toBeInTheDocument();
+
+    await waitFor(
+      () => {
+        expect(screen.queryByTestId('visualizer-pending-indicator')).not.toBeInTheDocument();
+      },
+      { timeout: 2500 },
+    );
   });
 });

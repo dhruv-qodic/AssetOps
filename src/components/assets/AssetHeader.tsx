@@ -33,7 +33,7 @@ export const AssetHeader: React.FC = () => {
           <Button
             type="button"
             onClick={openAddModal}
-            className="h-9.5 px-4 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs sm:text-sm font-medium rounded-md shadow-xs shadow-[#4C40F7]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
+            className="h-9.5 px-4 bg-blue-600 hover:bg-blue-800 text-white text-xs sm:text-sm font-medium rounded-md shadow-xs shadow-[#4C40F7]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
           >
             <Plus className="size-4 stroke-[2.5]" />
             <span>Add Asset</span>

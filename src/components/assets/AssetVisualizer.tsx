@@ -4,14 +4,16 @@ import { AssetStatusBadge } from './AssetStatusBadge';
 import { AssetDeviceIcon } from './AssetDeviceIcon';
 import { AssetRowActions } from './AssetRowActions';
 import type { Asset } from '@/types/asset';
-import { DollarSign, MapPin, Package, PackageSearch, Zap } from 'lucide-react';
+import { DollarSign, Loader2, MapPin, Package, PackageSearch, Zap } from 'lucide-react';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
+import { cn } from '@/lib/utils';
 
 interface AssetVisualizerProps {
   assets: Asset[];
   isLoading?: boolean;
+  isPending?: boolean;
   error?: string | null;
   onRetry?: () => void;
   onClearFilters?: () => void;
@@ -24,6 +26,7 @@ const GRID_COLS =
 export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
   assets,
   isLoading = false,
+  isPending = false,
   error = null,
   onRetry,
   onClearFilters,
@@ -84,6 +87,15 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
           <span>High-performance windowed virtual grid</span>
         </div>
         <div className="flex items-center gap-2">
+          {isPending && (
+            <div
+              data-testid="visualizer-pending-indicator"
+              className="flex items-center gap-1.5 font-mono text-[11px] bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded font-medium"
+            >
+              <Loader2 className="size-3 animate-spin text-[#4C40F7]" />
+              <span>Filtering...</span>
+            </div>
+          )}
           <div className="font-mono text-[11px] bg-slate-200/70 dark:bg-slate-700/60 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300">
             {assets.length.toLocaleString()} items virtualized
           </div>
@@ -98,7 +110,10 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
       {/* Unified Table Scroll Container */}
       <div
         ref={parentRef}
-        className="h-[600px] overflow-auto relative scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
+        className={cn(
+          'h-[600px] overflow-auto relative scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700 transition-opacity duration-150',
+          isPending && 'opacity-65',
+        )}
       >
         <div className="w-full min-w-[1200px]">
           {/* Sticky Table Header */}

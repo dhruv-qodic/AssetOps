@@ -22,6 +22,7 @@ import { useColumnVisibilityStore } from '@/store/useColumnVisibilityStore';
 interface AssetTableProps {
   assets: Asset[];
   isLoading?: boolean;
+  isPending?: boolean;
   error?: string | null;
   onRetry?: () => void;
   onClearFilters?: () => void;
@@ -84,6 +85,7 @@ const getCellClasses = (id: string, index: number, total: number) => {
 export const AssetTable: React.FC<AssetTableProps> = ({
   assets,
   isLoading = false,
+  isPending = false,
   error = null,
   onRetry,
   onClearFilters,
@@ -282,7 +284,9 @@ export const AssetTable: React.FC<AssetTableProps> = ({
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div
+      className={cn('overflow-x-auto transition-opacity duration-150', isPending && 'opacity-65')}
+    >
       <Table>
         <TableHeader>
           <TableRow className="border-b border-slate-200/80 dark:border-slate-800 bg-[#F8FAFC]/90 dark:bg-slate-900/80">
