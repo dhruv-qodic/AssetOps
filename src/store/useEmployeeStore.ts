@@ -278,11 +278,12 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         set((state) => {
           const newEmployees = state.employees.map((emp) => {
             if (emp.id === employeeId || emp.employeeId === employeeId) {
-              if (!emp.assignedAssets.includes(assetId)) {
+              const currentAssets = emp.assignedAssets || [];
+              if (!currentAssets.includes(assetId)) {
                 success = true;
                 return {
                   ...emp,
-                  assignedAssets: [...emp.assignedAssets, assetId],
+                  assignedAssets: [...currentAssets, assetId],
                   updatedAt: new Date().toISOString(),
                 };
               }

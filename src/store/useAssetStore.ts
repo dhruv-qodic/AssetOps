@@ -71,7 +71,7 @@ interface AssetStoreState {
   openDeleteModal: (asset: Asset) => void;
   openViewModal: (asset: Asset) => void;
   openImportModal: () => void;
-  openAllocateModal: (asset: Asset) => void;
+  openAllocateModal: (asset?: Asset | null) => void;
   closeModals: () => void;
 
   viewMode: 'virtualized' | 'table';
@@ -369,7 +369,7 @@ export const useAssetStore = create<AssetStoreState>()(
       openDeleteModal: (asset) => set({ isDeleteModalOpen: true, selectedAsset: asset }),
       openViewModal: (asset) => set({ isViewModalOpen: true, selectedAsset: asset }),
       openImportModal: () => set({ isImportModalOpen: true }),
-      openAllocateModal: (asset) => set({ isAllocateModalOpen: true, selectedAsset: asset }),
+      openAllocateModal: (asset) => set({ isAllocateModalOpen: true, selectedAsset: asset || null }),
       closeModals: () =>
         set({
           isAddModalOpen: false,
