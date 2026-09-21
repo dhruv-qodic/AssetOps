@@ -147,7 +147,8 @@ export const AllocateAssetModal: React.FC = () => {
                 Allocate Asset to Employee
               </DialogTitle>
               <DialogDescription className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                Select an available organization asset on the left and assign it to an employee on the right.
+                Select an available organization asset on the left and assign it to an employee on
+                the right.
               </DialogDescription>
             </div>
           </div>
@@ -348,7 +349,9 @@ export const AllocateAssetModal: React.FC = () => {
                 <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
                   {targetAsset.name}
                 </span>
-                <span className="font-mono text-[10px] text-slate-500">({targetAsset.assetId})</span>
+                <span className="font-mono text-[10px] text-slate-500">
+                  ({targetAsset.assetId})
+                </span>
                 <ArrowRight className="size-3 text-indigo-500 shrink-0" />
                 <span className="font-semibold text-[#4C40F7] dark:text-indigo-300 truncate">
                   {selectedEmp.firstName} {selectedEmp.lastName}

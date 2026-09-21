@@ -71,11 +71,17 @@ const getDepartmentIcon = (dept: string) => {
   }
 };
 
-const COST_RANGE_PRESETS = [
+interface CostPreset {
+  label: string;
+  min: number | null;
+  max: number | null;
+}
+
+const COST_RANGE_PRESETS: CostPreset[] = [
   { label: 'Under $500', min: 0, max: 500 },
   { label: '$500 - $1,000', min: 500, max: 1000 },
   { label: '$1,000 - $2,500', min: 1000, max: 2500 },
-  { label: '$2,500+', min: 2500, max: '' },
+  { label: '$2,500+', min: 2500, max: null },
 ];
 
 import { useAssetFilterStore } from '@/store/useAssetFilterStore';
@@ -111,12 +117,12 @@ export const AssetFilterPanel: React.FC = () => {
     }));
   };
 
-  const handleCategoryToggle = (category: string) => {
+  const handleCategoryToggle = (category: AssetCategory) => {
     toggleCategory(category);
     setPage(1);
   };
 
-  const handleStatusToggle = (status: string) => {
+  const handleStatusToggle = (status: AssetStatus) => {
     toggleStatus(status);
     setPage(1);
   };
@@ -126,9 +132,9 @@ export const AssetFilterPanel: React.FC = () => {
     setPage(1);
   };
 
-  const handlePresetClick = (preset: (typeof COST_RANGE_PRESETS)[0]) => {
-    const minVal = preset.min !== '' ? Number(preset.min) : null;
-    const maxVal = preset.max !== '' ? Number(preset.max) : null;
+  const handlePresetClick = (preset: CostPreset) => {
+    const minVal = preset.min;
+    const maxVal = preset.max;
 
     const isCurrentlyActive = costRange.min === minVal && costRange.max === maxVal;
 
@@ -140,10 +146,8 @@ export const AssetFilterPanel: React.FC = () => {
     setPage(1);
   };
 
-  const isPresetActive = (preset: (typeof COST_RANGE_PRESETS)[0]) => {
-    const minVal = preset.min !== '' ? Number(preset.min) : null;
-    const maxVal = preset.max !== '' ? Number(preset.max) : null;
-    return costRange.min === minVal && costRange.max === maxVal;
+  const isPresetActive = (preset: CostPreset) => {
+    return costRange.min === preset.min && costRange.max === preset.max;
   };
 
   const handleClearAll = () => {
@@ -151,8 +155,8 @@ export const AssetFilterPanel: React.FC = () => {
     resetAssetStoreFilters();
   };
 
-  const minCostDisplay = costRange.min !== null && costRange.min !== undefined ? costRange.min.toString() : '';
-  const maxCostDisplay = costRange.max !== null && costRange.max !== undefined ? costRange.max.toString() : '';
+  const minCostDisplay = costRange.min !== null ? costRange.min.toString() : '';
+  const maxCostDisplay = costRange.max !== null ? costRange.max.toString() : '';
 
   const totalActiveFiltersCount =
     (searchKeyword.trim() ? 1 : 0) +

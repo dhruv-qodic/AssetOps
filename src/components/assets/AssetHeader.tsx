@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, ArrowUpToLine, Layers, Layers2 } from 'lucide-react';
+import { Plus, ArrowUpToLine, Layers2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAssetStore } from '@/store/useAssetStore';
 import { usePermission } from '@/hooks/usePermission';
@@ -13,15 +13,17 @@ export const AssetHeader: React.FC = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
       {/* Title */}
-      <div className='flex items-center justify-center gap-2'>
-        <div className='p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-md'>
-          <Layers2 className='size-6 text-blue-500 ' />
+      <div className="flex items-center justify-center gap-2">
+        <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
+          <Layers2 className="size-6 text-blue-500 " />
         </div>
         <div>
           <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-900 dark:text-white">
             Assets Management
           </h1>
-          <p className='text-slate-500 dark:text-slate-400 text-sm'>Manage your company's assets with ease</p>
+          <p className="text-slate-500 dark:text-slate-400 text-sm">
+            Manage your company's assets with ease
+          </p>
         </div>
       </div>
 

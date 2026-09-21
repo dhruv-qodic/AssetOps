@@ -278,7 +278,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         set((state) => {
           const newEmployees = state.employees.map((emp) => {
             if (emp.id === employeeId || emp.employeeId === employeeId) {
-              const currentAssets = emp.assignedAssets || [];
+              const currentAssets = emp.assignedAssets;
               if (!currentAssets.includes(assetId)) {
                 success = true;
                 return {
