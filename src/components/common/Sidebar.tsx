@@ -28,19 +28,6 @@ import { useEmployeeStore } from '@/store/useEmployeeStore';
 import AddEmployeeModal from '../employees/AddEmployeeModal';
 import AllocateAssetModal from '../assets/AllocateAssetModal';
 
-/**
- * ============================================================================
- * SIDEBAR NAVIGATION CONFIGURATION
- * ============================================================================
- *
- * Phase 1:
- * - Groups are only for UI organization.
- * - Submenu items are UI-only.
- * - Submenu items do NOT navigate anywhere yet.
- *
- * Existing main navigation paths are preserved.
- */
-
 type SidebarAction = 'add-asset' | 'edit-asset' | 'allocate-asset' | 'add-employee';
 
 interface SidebarChild {
@@ -193,10 +180,6 @@ function Sidebar() {
   const setMobileOpen = useSidebarStore((s) => s.setMobileOpen);
   const { canAccessRoute } = usePermission();
 
-  /**
-   * Phase 1:
-   * Stores only which parent menu items are expanded.
-   */
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
     Assets: false,
     Employees: false,
@@ -318,9 +301,7 @@ function Sidebar() {
 
           <Separator className="mb-3 bg-sidebar-border" />
 
-          {/* ===================================================================== */}
-          {/* DESKTOP NAVIGATION                                                    */}
-          {/* ===================================================================== */}
+          {/* DESKTOP NAVIGATION */}
 
           <nav className="space-y-4 flex-1 overflow-y-auto pr-0.5 scrollbar-none">
             {sidebarGroups.map((group) => {
@@ -351,13 +332,6 @@ function Sidebar() {
 
                     const isExpanded = expandedItems[item.name] ?? false;
 
-                    /**
-                     * Parent navigation item.
-                     *
-                     * IMPORTANT:
-                     * Existing main navigation still uses NavLink.
-                     * Submenu items are only UI at this stage.
-                     */
                     const navLinkElement = (
                       <NavLink
                         to={item.path}
@@ -408,9 +382,7 @@ function Sidebar() {
                           {navLinkElement}
                         </SidebarTooltip>
 
-                        {/* ===================================================== */}
-                        {/* SUBMENU - UI ONLY                                      */}
-                        {/* ===================================================== */}
+                        {/* SUBMENU - UI ONLY */}
 
                         {!isCollapsed && hasChildren && isExpanded && (
                           <div className="ml-8 mt-1 space-y-1 border-l border-sidebar-border pl-2">
@@ -499,9 +471,7 @@ function Sidebar() {
                 </button>
               </div>
 
-              {/* =============================================================== */}
-              {/* MOBILE NAVIGATION                                               */}
-              {/* =============================================================== */}
+              {/* MOBILE NAVIGATION */}
 
               <nav className="space-y-4 flex-1 overflow-y-auto pr-1">
                 {sidebarGroups.map((group) => {
@@ -570,9 +540,7 @@ function Sidebar() {
                               )}
                             </div>
 
-                            {/* ================================================= */}
-                            {/* MOBILE SUBMENU - UI ONLY                         */}
-                            {/* ================================================= */}
+                            {/* MOBILE SUBMENU - UI ONLY */}
 
                             {hasChildren && isExpanded && (
                               <div className="ml-8 mt-1 space-y-1 border-l border-sidebar-border pl-2">
