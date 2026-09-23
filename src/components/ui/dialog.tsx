@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -29,7 +30,10 @@ const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) => {
 
   if (!open) return null;
 
-  return (
+  // Use a portal so the overlay renders at document.body level,
+  // escaping any sticky/transform/filter ancestors that would otherwise
+  // trap `position: fixed` children inside their stacking context.
+  return ReactDOM.createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
       {/* Backdrop */}
       <div
@@ -37,7 +41,8 @@ const Dialog: React.FC<DialogProps> = ({ open, onOpenChange, children }) => {
         onClick={() => onOpenChange(false)}
       />
       {children}
-    </div>
+    </div>,
+    document.body,
   );
 };
 

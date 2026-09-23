@@ -22,12 +22,14 @@ import {
   Wallet,
   DollarSign,
   Check,
+  Trash2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_STATUS_CONFIG } from '@/constans/asset.constants';
 import { EMPLOYEE_DEPARTMENTS } from '@/constans/employee.constants';
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 import { cn } from '@/lib/utils';
+import { useAssetFilterPresetStore } from '@/store/useAssetFilterPresetStore';
 
 // Helper icon mapping for category facet
 const getCategoryIcon = (cat: AssetCategory) => {
@@ -86,10 +88,14 @@ const COST_RANGE_PRESETS: CostPreset[] = [
 
 import { useAssetFilterStore } from '@/store/useAssetFilterStore';
 import { useAssetStore } from '@/store/useAssetStore';
+import AssetFilterPresetModel from './AssetFilterPresetModel';
 
 export const AssetFilterPanel: React.FC = () => {
   // Zustand Filter Store State & Selectors
   const searchKeyword = useAssetFilterStore((s) => s.searchKeyword);
+  const savePreset = useAssetFilterPresetStore((s) => s.savePreset);
+  const presets = useAssetFilterPresetStore((s) => s.presets);
+  const deletePreset = useAssetFilterPresetStore((s) => s.deletePreset);
   const selectedCategories = useAssetFilterStore((s) => s.selectedCategories);
   const selectedStatuses = useAssetFilterStore((s) => s.selectedStatuses);
   const selectedDepartments = useAssetFilterStore((s) => s.selectedDepartments);
@@ -105,16 +111,64 @@ export const AssetFilterPanel: React.FC = () => {
   const resetFilters = useAssetFilterStore((s) => s.resetFilters);
   const resetAssetStoreFilters = useAssetStore((s) => s.resetFilters);
   const setPage = useAssetStore((s) => s.setPage);
+  const setSelectedCategories = useAssetFilterStore((s) => s.setSelectedCategories);
+  const setSelectedStatuses = useAssetFilterStore((s) => s.setSelectedStatuses);
+  const setSelectedDepartments = useAssetFilterStore((s) => s.setSelectedDepartments);
 
   // Section collapse states for compact view (Local UI state)
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isSavePresetOpen, setIsSavePresetOpen] = useState(false);
+  const [presetName, setPresetName] = useState('');
 
   const toggleSection = (section: string) => {
     setCollapsedSections((prev) => ({
       ...prev,
       [section]: !prev[section],
     }));
+  };
+
+  // Save Preset Modal Logic
+  const handleSavePreset = () => {
+    const trimmedName = presetName.trim();
+
+    if (!trimmedName) {
+      return;
+    }
+
+    savePreset(trimmedName, {
+      searchKeyword,
+      selectedCategories,
+      selectedStatuses,
+      selectedDepartments,
+      costRange,
+    });
+
+    setPresetName('');
+    setIsSavePresetOpen(false);
+  };
+
+  // Apply Preset Logic
+  const handleApplyPreset = (presetId: string) => {
+    const preset = presets.find((item) => item.id === presetId);
+
+    if (!preset) {
+      return;
+    }
+
+    const { filters } = preset;
+
+    setSearchKeyword(filters.searchKeyword);
+    setSelectedCategories(filters.selectedCategories);
+    setSelectedStatuses(filters.selectedStatuses);
+    setSelectedDepartments(filters.selectedDepartments);
+    setCostRange(filters.costRange);
+
+    setPage(1);
+  };
+
+  const handleDeletePreset = (presetId: string) => {
+    deletePreset(presetId);
   };
 
   const handleCategoryToggle = (category: AssetCategory) => {
@@ -166,7 +220,7 @@ export const AssetFilterPanel: React.FC = () => {
     (costRange.min !== null || costRange.max !== null ? 1 : 0);
 
   return (
-    <div className="w-full lg:w-72 xl:w-80 shrink-0">
+    <div className="w-full shrink-0 lg:w-72 xl:w-80">
       {/* Mobile Toggle Button */}
       <div className="lg:hidden mb-3">
         <button
@@ -212,16 +266,31 @@ export const AssetFilterPanel: React.FC = () => {
             )}
           </div>
 
-          {totalActiveFiltersCount > 0 && (
-            <button
-              type="button"
-              onClick={handleClearAll}
-              className="text-xs font-medium text-[#4C40F7] hover:text-[#3D31E5] dark:text-indigo-400 flex items-center gap-1 cursor-pointer transition-colors"
-            >
-              <RotateCcw className="size-3" />
-              <span>Reset</span>
-            </button>
-          )}
+          <div className="flex items-center gap-3">
+            {totalActiveFiltersCount > 0 && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setPresetName('');
+                    setIsSavePresetOpen(true);
+                  }}
+                  className="text-xs font-medium text-[#4C40F7] hover:text-[#3D31E5] dark:text-indigo-400 cursor-pointer transition-colors"
+                >
+                  Save Preset
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="text-xs font-medium text-[#4C40F7] hover:text-[#3D31E5] dark:text-indigo-400 flex items-center gap-1 cursor-pointer transition-colors"
+                >
+                  <RotateCcw className="size-3" />
+                  <span>Reset</span>
+                </button>
+              </>
+            )}
+          </div>
         </div>
 
         {/* 1. Search Keyword Facet */}
@@ -261,6 +330,74 @@ export const AssetFilterPanel: React.FC = () => {
               </button>
             )}
           </div>
+        </div>
+
+        {/* 2. Saved Presets */}
+        <div className="space-y-2.5 pt-1 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                Saved Presets
+              </span>
+
+              {presets.length > 0 && (
+                <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+                  {presets.length}
+                </span>
+              )}
+            </div>
+          </div>
+
+          {presets.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-slate-200 dark:border-slate-700 px-3 py-4 text-center">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                No saved presets yet.
+              </p>
+
+              <p className="mt-1 text-[10px] text-slate-400 dark:text-slate-500">
+                Configure filters and save them for quick access.
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-1.5">
+              {presets.map((preset) => (
+                <div
+                  key={preset.id}
+                  className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-indigo-200 dark:hover:border-indigo-900 transition-colors"
+                >
+                  {/* Apply preset */}
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset(preset.id)}
+                    className="flex-1 min-w-0 flex items-center justify-between gap-2 px-3 py-2 text-left cursor-pointer"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium text-slate-700 dark:text-slate-200 truncate">
+                        {preset.name}
+                      </p>
+
+                      <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                        {new Date(preset.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+
+                    <SlidersHorizontal className="size-3.5 shrink-0 text-slate-400" />
+                  </button>
+
+                  {/* Delete preset */}
+                  <button
+                    type="button"
+                    aria-label={`Delete ${preset.name} preset`}
+                    title="Delete preset"
+                    onClick={() => handleDeletePreset(preset.id)}
+                    className="shrink-0 mr-2 p-1.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 cursor-pointer transition-colors"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* 2. Category Facet */}
@@ -556,6 +693,66 @@ export const AssetFilterPanel: React.FC = () => {
           )}
         </div>
       </aside>
+
+      {/** Save Preset Dialog */}
+      {/* <Dialog open={isSavePresetOpen} onOpenChange={setIsSavePresetOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save Filter Preset</DialogTitle>
+
+            <DialogDescription>
+              Give this filter combination a name so you can reuse it later.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-2 py-2">
+            <label
+              htmlFor="preset-name"
+              className="text-sm font-medium text-slate-700 dark:text-slate-300"
+            >
+              Preset Name
+            </label>
+
+            <Input
+              id="preset-name"
+              value={presetName}
+              onChange={(e) => setPresetName(e.target.value)}
+              placeholder="e.g. Available IT Laptops"
+              maxLength={100}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && presetName.trim()) {
+                  handleSavePreset();
+                }
+              }}
+            />
+          </div>
+
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setPresetName('');
+                setIsSavePresetOpen(false);
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button type="button" onClick={handleSavePreset} disabled={!presetName.trim()}>
+              Save Preset
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog> */}
+
+      <AssetFilterPresetModel
+        isSavePresetOpen={isSavePresetOpen}
+        setPresetName={setPresetName}
+        setIsSavePresetOpen={setIsSavePresetOpen}
+        presetName={presetName}
+        handleSavePreset={handleSavePreset}
+      />
     </div>
   );
 };
