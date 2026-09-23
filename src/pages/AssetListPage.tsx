@@ -15,7 +15,7 @@ import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 import AssetKpiCards from '@/components/assets/AssetKpiCards';
 import { useSearchParams } from 'react-router-dom';
-import { filtersToSearchParams, searchParamsToFilters } from '@/utils/assetFilterUrl';
+import { filtersToSearchParams } from '@/utils/assetFilterUrl';
 
 export function AssetListPage() {
   const [searchParams, setSearchParams] = useSearchParams();
