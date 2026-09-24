@@ -3,16 +3,16 @@ import { Sparkles } from 'lucide-react';
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { AssetTrendsLineChart } from './AssetTrendsLineChart';
 import { AssetValuationAreaChart } from './AssetValuationAreaChart';
-import { AssetDistributionPieChart } from './AssetDistributionPieChart';
+import AssetLifecycleChart from './AssetLifecycleChart';
 
 export const DashboardAnalyticsSection: React.FC = () => {
   const { visibleWidgetIds } = useDashboardStore();
 
   const isLineVisible = visibleWidgetIds.includes('growth_line_chart');
   const isAreaVisible = visibleWidgetIds.includes('valuation_area_chart');
-  const isPieVisible = visibleWidgetIds.includes('distribution_pie_chart');
+  const isLifecycleVisible = visibleWidgetIds.includes('lifecycle_chart');
 
-  const visibleCount = [isLineVisible, isAreaVisible, isPieVisible].filter(Boolean).length;
+  const visibleCount = [isLineVisible, isAreaVisible, isLifecycleVisible].filter(Boolean).length;
 
   if (visibleCount === 0) {
     return null;
@@ -39,7 +39,22 @@ export const DashboardAnalyticsSection: React.FC = () => {
       </div>
 
       {/* Analytics Grid: 3 Visualizations (Line, Area, Pie) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+      <div className="flex flex-col w-full gap-5">
+        {/* Pie / Donut Chart */}
+        {isLifecycleVisible && (
+          <div
+            className={`flex flex-col ${
+              visibleCount === 3
+                ? 'lg:col-span-4'
+                : visibleCount === 2
+                  ? 'lg:col-span-6'
+                  : 'lg:col-span-12'
+            }`}
+          >
+            <AssetLifecycleChart />
+          </div>
+        )}
+
         {/* Line Chart */}
         {isLineVisible && (
           <div
@@ -67,21 +82,6 @@ export const DashboardAnalyticsSection: React.FC = () => {
             }`}
           >
             <AssetValuationAreaChart />
-          </div>
-        )}
-
-        {/* Pie / Donut Chart */}
-        {isPieVisible && (
-          <div
-            className={`flex flex-col ${
-              visibleCount === 3
-                ? 'lg:col-span-4'
-                : visibleCount === 2
-                  ? 'lg:col-span-6'
-                  : 'lg:col-span-12'
-            }`}
-          >
-            <AssetDistributionPieChart />
           </div>
         )}
       </div>
