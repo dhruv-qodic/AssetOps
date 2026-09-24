@@ -1,4 +1,4 @@
-import { useDeferredValue } from 'react';
+import { useDeferredValue, useEffect } from 'react';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useAssetFilterStore } from '@/store/useAssetFilterStore';
@@ -14,8 +14,12 @@ import DeleteAssetModal from '@/components/assets/DeleteAssetModal';
 import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
 import AssetKpiCards from '@/components/assets/AssetKpiCards';
+import { useSearchParams } from 'react-router-dom';
+import { filtersToSearchParams } from '@/utils/assetFilterUrl';
 
 export function AssetListPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useAssetStore((s) => s.assets);
   const filters = useAssetStore((s) => s.filters);
   const getFilteredAssets = useAssetStore((s) => s.getFilteredAssets);
@@ -28,10 +32,10 @@ export function AssetListPage() {
 
   // Subscribe to multi-facet filter store
   const searchKeyword = useAssetFilterStore((s) => s.searchKeyword);
-  useAssetFilterStore((s) => s.selectedCategories);
-  useAssetFilterStore((s) => s.selectedStatuses);
-  useAssetFilterStore((s) => s.selectedDepartments);
-  useAssetFilterStore((s) => s.costRange);
+  const selectedCategories = useAssetFilterStore((s) => s.selectedCategories);
+  const selectedStatuses = useAssetFilterStore((s) => s.selectedStatuses);
+  const selectedDepartments = useAssetFilterStore((s) => s.selectedDepartments);
+  const costRange = useAssetFilterStore((s) => s.costRange);
   const resetFilterStore = useAssetFilterStore((s) => s.resetFilters);
 
   // Debounce search typing to reduce unnecessary recomputations
@@ -48,6 +52,35 @@ export function AssetListPage() {
     resetAssetStoreFilters();
   };
 
+  useEffect(() => {
+    const filterValues = {
+      searchKeyword,
+      selectedCategories,
+      selectedStatuses,
+      selectedDepartments,
+      costRange,
+    };
+
+    const nextParams = filtersToSearchParams(filterValues);
+
+    if (searchParams.toString() === nextParams.toString()) {
+      return;
+    }
+
+    setSearchParams(nextParams, {
+      replace: true,
+      preventScrollReset: true,
+    });
+  }, [
+    searchKeyword,
+    selectedCategories,
+    selectedStatuses,
+    selectedDepartments,
+    costRange,
+    searchParams,
+    setSearchParams,
+  ]);
+
   const { allFilteredAssets, paginatedAssets, totalFiltered, totalPages, startIndex, endIndex } =
     getFilteredAssets({ searchKeyword: deferredSearchKeyword });
 
@@ -61,7 +94,9 @@ export function AssetListPage() {
       {/* 2. Main Layout: Multi-Facet Filter Panel (Left) + Asset Content (Right) */}
       <div className="flex flex-col lg:flex-row items-start gap-5">
         {/* Left Side: Multi-Facet Filter Panel */}
-        <AssetFilterPanel />
+        <div className="sticky top-4">
+          <AssetFilterPanel />
+        </div>
 
         {/* Right Side: Data Toolbar, Table / Visualizer, and Pagination */}
         <div className="flex-1 min-w-0 w-full space-y-4">

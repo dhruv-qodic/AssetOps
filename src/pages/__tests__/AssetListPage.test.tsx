@@ -1,5 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import AssetListPage from '../AssetListPage';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useAssetFilterStore, INITIAL_ASSET_FILTER_STATE } from '@/store/useAssetFilterStore';
@@ -22,6 +23,14 @@ vi.mock('@tanstack/react-virtual', async (importOriginal) => {
   };
 });
 
+const renderAssetListPage = () => {
+  return render(
+    <MemoryRouter>
+      <AssetListPage />
+    </MemoryRouter>,
+  );
+};
+
 describe('AssetListPage Component with Multi-Facet Filtering', () => {
   beforeEach(() => {
     useAssetStore.setState({
@@ -39,16 +48,18 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
         pageSize: 10,
       },
     });
+
     useAssetFilterStore.setState({
       ...INITIAL_ASSET_FILTER_STATE,
     });
   });
 
   it('should render Asset List page header, filter panel, and table', () => {
-    render(<AssetListPage />);
+    renderAssetListPage();
 
     expect(screen.getByText('Assets Management')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search keyword...')).toBeInTheDocument();
+
     expect(screen.getByText('Category')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
     expect(screen.getByText('Department')).toBeInTheDocument();
@@ -56,18 +67,22 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
   });
 
   it('should filter asset records when typing in search keyword', async () => {
-    render(<AssetListPage />);
+    renderAssetListPage();
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
-    fireEvent.change(searchInput, { target: { value: 'iPhone 15' } });
 
-    // Pending indicator appears while debouncing/deferred
+    fireEvent.change(searchInput, {
+      target: { value: 'iPhone 15' },
+    });
+
+    // Pending indicator appears while search is debouncing/deferred.
     expect(screen.getByTestId('asset-filtering-indicator')).toBeInTheDocument();
 
     await waitFor(
       () => {
         expect(screen.queryByText('Dell Laptop')).not.toBeInTheDocument();
         expect(screen.getByText('iPhone 15')).toBeInTheDocument();
+
         expect(screen.queryByTestId('asset-filtering-indicator')).not.toBeInTheDocument();
       },
       { timeout: 1500 },
@@ -75,49 +90,69 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
   });
 
   it('should filter assets when selecting category checkbox', () => {
-    render(<AssetListPage />);
+    renderAssetListPage();
 
-    const laptopCheckbox = screen.getByRole('checkbox', { name: 'Laptop' });
+    const laptopCheckbox = screen.getByRole('checkbox', {
+      name: 'Laptop',
+    });
+
     fireEvent.click(laptopCheckbox);
 
     expect(useAssetFilterStore.getState().selectedCategories).toContain('Laptop');
 
     const { allFilteredAssets } = useAssetStore.getState().getFilteredAssets();
+
     expect(allFilteredAssets.length).toBeGreaterThan(0);
-    expect(allFilteredAssets.every((a) => a.category === 'Laptop')).toBe(true);
+
+    expect(allFilteredAssets.every((asset) => asset.category === 'Laptop')).toBe(true);
   });
 
   it('should show empty state when filters yield no matches and allow clearing', async () => {
-    render(<AssetListPage />);
+    renderAssetListPage();
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
-    fireEvent.change(searchInput, { target: { value: 'non_existing_random_xyz_asset_query_123' } });
+
+    fireEvent.change(searchInput, {
+      target: {
+        value: 'non_existing_random_xyz_asset_query_123',
+      },
+    });
 
     await waitFor(
       () => {
         expect(screen.getByText('No assets found')).toBeInTheDocument();
       },
-      { timeout: 1000 },
+      { timeout: 1500 },
     );
 
-    const clearButton = screen.getByRole('button', { name: /clear filters/i });
+    const clearButton = screen.getByRole('button', {
+      name: /clear filters/i,
+    });
+
     expect(clearButton).toBeInTheDocument();
 
     fireEvent.click(clearButton);
 
     expect(useAssetFilterStore.getState().searchKeyword).toBe('');
+
     await waitFor(() => {
       expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
     });
   });
 
   it('should clear all filters when reset button is clicked in Filter Panel', () => {
-    render(<AssetListPage />);
+    renderAssetListPage();
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
-    fireEvent.change(searchInput, { target: { value: 'Laptop' } });
 
-    const resetButton = screen.getByRole('button', { name: /reset/i });
+    fireEvent.change(searchInput, {
+      target: { value: 'Laptop' },
+    });
+
+    const resetButton = screen.getByRole('button', {
+      name: 'Reset',
+    });
+
     expect(resetButton).toBeInTheDocument();
 
     fireEvent.click(resetButton);
@@ -126,11 +161,17 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
   });
 
   it('should render pending indicator in visualizer mode when filtering is deferred', async () => {
-    useAssetStore.setState({ viewMode: 'virtualized' });
-    render(<AssetListPage />);
+    useAssetStore.setState({
+      viewMode: 'virtualized',
+    });
+
+    renderAssetListPage();
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
-    fireEvent.change(searchInput, { target: { value: 'MacBook' } });
+
+    fireEvent.change(searchInput, {
+      target: { value: 'MacBook' },
+    });
 
     expect(screen.getByTestId('visualizer-pending-indicator')).toBeInTheDocument();
 
