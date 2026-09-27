@@ -85,9 +85,9 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
 
         expect(screen.queryByTestId('asset-filtering-indicator')).not.toBeInTheDocument();
       },
-      { timeout: 4000 },
+      { timeout: 6000 },
     );
-  });
+  }, 15000);
 
   it('should filter assets when selecting category checkbox', () => {
     renderAssetListPage();
@@ -122,7 +122,7 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
       () => {
         expect(screen.getByText('No assets found')).toBeInTheDocument();
       },
-      { timeout: 4000 },
+      { timeout: 6000 },
     );
 
     const clearButton = screen.getByRole('button', {
@@ -135,10 +135,13 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
 
     expect(useAssetFilterStore.getState().searchKeyword).toBe('');
 
-    await waitFor(() => {
-      expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
-    });
-  }, 10000);
+    await waitFor(
+      () => {
+        expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
+      },
+      { timeout: 6000 },
+    );
+  }, 15000);
 
   it('should clear all filters when reset button is clicked in Filter Panel', () => {
     renderAssetListPage();

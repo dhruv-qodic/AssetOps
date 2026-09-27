@@ -94,6 +94,7 @@ describe('Route Protection Components', () => {
             <Route path="/" element={<div>Home Dashboard</div>} />
             <Route element={<PublicOnlyRoute />}>
               <Route path="/login" element={<div>Login Page</div>} />
+              <Route path="/register" element={<div>Register Page</div>} />
             </Route>
           </Routes>
         </MemoryRouter>,
@@ -101,6 +102,22 @@ describe('Route Protection Components', () => {
 
       expect(screen.getByText('Home Dashboard')).toBeInTheDocument();
       expect(screen.queryByText('Login Page')).not.toBeInTheDocument();
+    });
+
+    it('should render register page for unauthenticated user', () => {
+      render(
+        <MemoryRouter initialEntries={['/register']}>
+          <Routes>
+            <Route path="/" element={<div>Home Dashboard</div>} />
+            <Route element={<PublicOnlyRoute />}>
+              <Route path="/login" element={<div>Login Page</div>} />
+              <Route path="/register" element={<div>Register Page</div>} />
+            </Route>
+          </Routes>
+        </MemoryRouter>,
+      );
+
+      expect(screen.getByText('Register Page')).toBeInTheDocument();
     });
   });
 

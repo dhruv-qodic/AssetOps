@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { loginSchema } from '../auth.schema';
+import { loginSchema, registerSchema } from '../auth.schema';
 
 describe('auth.schema - loginSchema', () => {
   it('should pass validation with valid email and password', () => {
@@ -92,5 +92,50 @@ describe('auth.schema - loginSchema', () => {
     if (result.success) {
       expect(result.data.rememberMe).toBe(false);
     }
+  });
+});
+
+describe('auth.schema - registerSchema', () => {
+  it('should pass validation with valid registration data', () => {
+    const validData = {
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: 'securePassword123',
+      role: 'MANAGER' as const,
+    };
+
+    const result = registerSchema.safeParse(validData);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data).toEqual(validData);
+    }
+  });
+
+  it('should fail validation when name is empty or too short', () => {
+    const data = {
+      name: 'J',
+      email: 'john@example.com',
+      password: 'password123',
+      role: 'ADMIN' as const,
+    };
+
+    const result = registerSchema.safeParse(data);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const nameError = result.error.issues.find((i) => i.path.includes('name'))?.message;
+      expect(nameError).toBe('Name must be at least 2 characters long');
+    }
+  });
+
+  it('should fail validation with invalid role', () => {
+    const data = {
+      name: 'John Doe',
+      email: 'john@example.com',
+      password: 'password123',
+      role: 'SUPERADMIN' as unknown as 'ADMIN',
+    };
+
+    const result = registerSchema.safeParse(data);
+    expect(result.success).toBe(false);
   });
 });

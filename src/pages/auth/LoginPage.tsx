@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   CheckCircle2,
   Eye,
@@ -18,7 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuthStore } from '@/store/useAuthStore';
 import { loginSchema, type LoginFormData } from '@/schemas/auth.schema';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { DEMO_ACCOUNTS } from '@/mocks/seed/users';
 import { toast } from 'sonner';
 
@@ -53,6 +53,13 @@ function LoginPage() {
       rememberMe: false,
     },
   });
+
+  useEffect(() => {
+    const state = location.state as { registeredEmail?: string } | null;
+    if (state?.registeredEmail) {
+      setValue('email', state.registeredEmail, { shouldValidate: true });
+    }
+  }, [location.state, setValue]);
 
   const onSubmit = async (data: LoginFormData) => {
     clearError();
@@ -302,6 +309,17 @@ function LoginPage() {
                 </>
               )}
             </Button>
+
+            {/* Link to Register */}
+            <div className="text-center text-xs text-gray-600 pt-1">
+              <span>Don't have an account? </span>
+              <Link
+                to="/register"
+                className="font-semibold text-[#155DFC] hover:text-[#1047C7] hover:underline"
+              >
+                Sign up
+              </Link>
+            </div>
           </form>
 
           {/* Demo Accounts Box from Seed Data */}

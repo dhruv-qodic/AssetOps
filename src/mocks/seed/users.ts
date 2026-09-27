@@ -89,15 +89,67 @@ export const DEMO_ACCOUNTS: DemoAccount[] = [
   },
 ];
 
-// Helper functions for mock user operations
+export const REGISTERED_USERS_STORAGE_KEY = 'assetops_registered_users';
+
+/**
+ * Safely retrieve user records registered through the application stored in localStorage.
+ */
+export const getRegisteredUsers = (): MockUser[] => {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return [];
+  }
+  try {
+    const raw = window.localStorage.getItem(REGISTERED_USERS_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+
+/**
+ * Persist a newly registered user to localStorage without overwriting existing seed or registered users.
+ */
+export const saveRegisteredUser = (user: MockUser): void => {
+  if (typeof window === 'undefined' || !window.localStorage) {
+    return;
+  }
+  try {
+    const existing = getRegisteredUsers();
+    // Prevent duplicate entries by id or email
+    const filtered = existing.filter(
+      (u) =>
+        u.id !== user.id &&
+        u.email.toLowerCase() !== user.email.toLowerCase(),
+    );
+    const updated = [...filtered, user];
+    window.localStorage.setItem(REGISTERED_USERS_STORAGE_KEY, JSON.stringify(updated));
+  } catch (error) {
+    console.error('Failed to save registered user to localStorage:', error);
+  }
+};
+
+/**
+ * Return all available users (both default seeded users and previously registered users from localStorage).
+ */
+export const getAllUsers = (): MockUser[] => {
+  const registered = getRegisteredUsers();
+  // Ensure seed users take precedence, then append registered users with unique emails
+  const seedEmails = new Set(MOCK_USERS.map((u) => u.email.toLowerCase()));
+  const uniqueRegistered = registered.filter((u) => !seedEmails.has(u.email.toLowerCase()));
+  return [...MOCK_USERS, ...uniqueRegistered];
+};
+
+// Helper functions for mock user operations across seed and registered users
 export const getMockUserByEmail = (email: string): MockUser | undefined => {
-  return MOCK_USERS.find((user) => user.email.toLowerCase() === email.trim().toLowerCase());
+  return getAllUsers().find((user) => user.email.toLowerCase() === email.trim().toLowerCase());
 };
 
 export const getMockUserById = (id: string): MockUser | undefined => {
-  return MOCK_USERS.find((user) => user.id === id);
+  return getAllUsers().find((user) => user.id === id);
 };
 
 export const getMockUsersByRole = (role: Role): MockUser[] => {
-  return MOCK_USERS.filter((user) => user.role === role);
+  return getAllUsers().filter((user) => user.role === role);
 };

@@ -10,6 +10,7 @@ import HistoryPage from '@/pages/HistoryPage';
 import ReportsPage from '@/pages/ReportsPage';
 import SettingsPage from '@/pages/SettingsPage';
 import LoginPage from '@/pages/auth/LoginPage';
+import RegisterPage from '@/pages/auth/RegisterPage';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import PermissionRoute from '@/routes/PermissionRoute';
 import PublicOnlyRoute from '@/routes/PublicOnlyRoute';
@@ -17,9 +18,10 @@ import PublicOnlyRoute from '@/routes/PublicOnlyRoute';
 function AppRoutes() {
   return (
     <Routes>
-      {/* Public Only Route: /login */}
+      {/* Public Only Routes: /login and /register */}
       <Route element={<PublicOnlyRoute />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
       </Route>
 
       {/* Protected Routes inside Dashboard Layout */}
