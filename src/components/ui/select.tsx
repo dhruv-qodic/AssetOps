@@ -51,6 +51,9 @@ export const Select: React.FC<SelectProps> = ({
     <div className="relative w-full text-left" ref={selectRef}>
       <button
         type="button"
+        role="combobox"
+        aria-expanded={isOpen}
+        aria-haspopup="listbox"
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
