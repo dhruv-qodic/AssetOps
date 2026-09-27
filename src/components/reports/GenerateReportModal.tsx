@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { getAssetDepartment } from '@/utils/assetDepartment';
+import { toast } from 'sonner';
 
 interface GenerateReportModalProps {
   isOpen: boolean;
@@ -30,9 +31,11 @@ export const GenerateReportModal: React.FC<GenerateReportModalProps> = ({
 
   const handleGenerate = () => {
     setIsGenerating(true);
+    toast.info(`Generating ${reportType}...`);
     setTimeout(() => {
       setIsGenerating(false);
       setIsCompleted(true);
+      toast.success(`${reportType} compiled successfully`);
     }, 1000);
   };
 
@@ -97,6 +100,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    toast.success(`Report downloaded (${filename})`);
     onClose();
     setIsCompleted(false);
   };
@@ -113,7 +117,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400">
+            <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/50 text-[#155DFC] dark:text-blue-400">
               <FileText className="size-5" />
             </div>
             <div>
@@ -178,7 +182,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
                   onClick={() => setFormat('pdf')}
                   className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
                     format === 'pdf'
-                      ? 'border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
+                      ? 'border-[#155DFC] bg-blue-50/70 dark:bg-blue-950/40 text-[#155DFC] dark:text-blue-400'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -191,7 +195,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
                   onClick={() => setFormat('csv')}
                   className={`p-3 rounded-xl border text-xs font-semibold flex items-center justify-center gap-2 cursor-pointer transition-all ${
                     format === 'csv'
-                      ? 'border-blue-600 bg-blue-50/70 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400'
+                      ? 'border-[#155DFC] bg-blue-50/70 dark:bg-blue-950/40 text-[#155DFC] dark:text-blue-400'
                       : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'
                   }`}
                 >
@@ -208,6 +212,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
                 variant="outline"
                 onClick={handleModalClose}
                 disabled={isGenerating}
+                className="cursor-pointer"
               >
                 Cancel
               </Button>
@@ -215,7 +220,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
                 type="button"
                 onClick={handleGenerate}
                 disabled={isGenerating}
-                className="h-10 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm shadow-md shadow-blue-600/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
+                className="h-10 px-5 rounded-xl bg-[#155DFC] hover:bg-[#1047C7] text-white font-medium text-xs sm:text-sm shadow-md shadow-[#155DFC]/25 flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-60"
               >
                 {isGenerating ? (
                   <>
@@ -246,13 +251,13 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
             </div>
 
             <div className="flex items-center justify-center gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={handleModalClose}>
+              <Button type="button" variant="outline" onClick={handleModalClose} className="cursor-pointer">
                 Close
               </Button>
               <button
                 type="button"
                 onClick={handleDownload}
-                className="h-10 px-5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs sm:text-sm shadow-md shadow-blue-600/25 flex items-center justify-center gap-2 cursor-pointer"
+                className="h-10 px-5 rounded-xl bg-[#155DFC] hover:bg-[#1047C7] text-white font-medium text-xs sm:text-sm shadow-md shadow-[#155DFC]/25 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Download className="size-4" />
                 <span>Download File</span>

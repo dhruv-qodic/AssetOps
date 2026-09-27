@@ -10,6 +10,7 @@ import AddAssetModal from '@/components/assets/AddAssetModal';
 import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
+import { PageHeader } from '@/components/common/PageHeader';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 
@@ -40,14 +41,11 @@ export function ReportsPage() {
   return (
     <div className="flex-1 p-5 sm:p-7 space-y-6 max-w-[1600px] w-full mx-auto animate-in fade-in duration-200 text-left">
       {/* Page Header */}
-      <div className="space-y-1">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-          Reports & Analytics
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-          Insights and analytics for better decision making
-        </p>
-      </div>
+      <PageHeader
+        icon={BarChart3}
+        title="Reports & Analytics"
+        description="Insights and analytics for better decision making."
+      />
 
       {/* Interactive Filter Bar */}
       <ReportsFilterBar

@@ -26,6 +26,7 @@ import {
   type DashboardWidgetDefinition,
 } from '@/constans/dashboard.constants';
 import { useDashboardStore } from '@/store/useDashboardStore';
+import { toast } from 'sonner';
 
 interface DashboardCustomizationModalProps {
   isOpen: boolean;
@@ -69,17 +70,29 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
   const totalSelected = visibleCardIds.length + visibleWidgetIds.length;
   const totalAvailable = DASHBOARD_CARDS.length + DASHBOARD_WIDGETS.length;
 
+  const handleApply = () => {
+    onClose();
+    toast.success('Dashboard preferences saved', {
+      description: 'Your layout customized view has been applied.',
+    });
+  };
+
+  const handleReset = () => {
+    resetLayoutToDefault();
+    toast.info('Dashboard layout reset to default settings');
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-0 overflow-hidden bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl">
         {/* Header */}
         <div className="p-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
           <DialogHeader className="text-left space-y-1">
-            <div className="flex items-center gap-2 text-[#4C40F7]">
-              <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/50">
-                <SlidersHorizontal className="size-4 text-[#4C40F7]" />
+            <div className="flex items-center gap-2 text-[#155DFC]">
+              <div className="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/50">
+                <SlidersHorizontal className="size-4 text-[#155DFC]" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-wider text-[#4C40F7]">
+              <span className="text-xs font-bold uppercase tracking-wider text-[#155DFC]">
                 Dashboard Customizer
               </span>
             </div>
@@ -182,7 +195,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
                       className={cn(
                         'flex items-start gap-3 p-3 rounded-xl border transition-all cursor-pointer text-left',
                         isChecked
-                          ? 'bg-indigo-50/40 dark:bg-indigo-950/20 border-indigo-200 dark:border-indigo-800/60 shadow-2xs'
+                          ? 'bg-blue-50/40 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800/60 shadow-2xs'
                           : 'bg-slate-50/50 dark:bg-slate-800/30 border-slate-200/80 dark:border-slate-800 opacity-60 hover:opacity-100',
                       )}
                     >
@@ -190,7 +203,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
                         className={cn(
                           'size-4.5 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-colors',
                           isChecked
-                            ? 'bg-[#4C40F7] text-white'
+                            ? 'bg-[#155DFC] text-white'
                             : 'border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900',
                         )}
                       >
@@ -283,8 +296,8 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
               type="button"
               variant="outline"
               size="sm"
-              onClick={resetLayoutToDefault}
-              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300"
+              onClick={handleReset}
+              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300 cursor-pointer"
             >
               <RotateCcw className="size-3.5 mr-1" />
               Reset Defaults
@@ -294,7 +307,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
               variant="outline"
               size="sm"
               onClick={selectAllCardsAndWidgets}
-              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300"
+              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300 cursor-pointer"
             >
               <Sparkles className="size-3.5 mr-1" />
               Show All ({totalSelected}/{totalAvailable})
@@ -305,8 +318,8 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
             type="button"
             variant="default"
             size="sm"
-            onClick={onClose}
-            className="w-full sm:w-auto bg-[#4C40F7] hover:bg-[#3D32DB] text-white text-xs h-8 px-5 font-semibold shadow-xs"
+            onClick={handleApply}
+            className="w-full sm:w-auto bg-[#155DFC] hover:bg-[#1047C7] text-white text-xs h-8 px-5 font-semibold shadow-xs cursor-pointer"
           >
             Apply & Done
           </Button>

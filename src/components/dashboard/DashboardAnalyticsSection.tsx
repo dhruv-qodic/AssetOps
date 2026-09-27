@@ -27,7 +27,7 @@ export const DashboardAnalyticsSection: React.FC = () => {
             <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">
               Operational Analytics & Forecasting
             </h2>
-            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-indigo-50 text-[#4C40F7] dark:bg-indigo-950/60 dark:text-indigo-300">
+            <span className="hidden sm:inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-[#155DFC] dark:bg-blue-950/60 dark:text-blue-300">
               <Sparkles className="size-3" />
               Dynamic Insights
             </span>

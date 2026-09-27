@@ -29,9 +29,9 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
         {isPending && (
           <span
             data-testid="asset-filtering-indicator"
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[#4C40F7] dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 animate-pulse"
+            className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950/60 text-[#155DFC] dark:text-blue-400 border border-blue-200/60 dark:border-blue-800/60 animate-pulse"
           >
-            <span className="size-1.5 rounded-full bg-[#4C40F7] animate-ping" />
+            <span className="size-1.5 rounded-full bg-[#155DFC] animate-ping" />
             <span>Filtering...</span>
           </span>
         )}
@@ -60,7 +60,7 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'table'
-                ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                ? 'bg-[#155DFC] dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
             )}
             title="Virtualized Grid View"
@@ -74,7 +74,7 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'virtualized'
-                ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                ? 'bg-[#155DFC] dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
             )}
             title="Paginated Table View"

@@ -3,6 +3,7 @@ import { Plus, ArrowUpToLine, Layers2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAssetStore } from '@/store/useAssetStore';
 import { usePermission } from '@/hooks/usePermission';
+import { PageHeader } from '@/components/common/PageHeader';
 
 export const AssetHeader: React.FC = () => {
   const openAddModal = useAssetStore((s) => s.openAddModal);
@@ -11,29 +12,18 @@ export const AssetHeader: React.FC = () => {
   const canCreate = hasPermission('CREATE_ASSET');
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-1">
-      {/* Title */}
-      <div className="flex items-center justify-center gap-2">
-        <div className="p-2.5 bg-blue-100 dark:bg-blue-900/30 rounded-md">
-          <Layers2 className="size-6 text-blue-500 " />
-        </div>
-        <div>
-          <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-900 dark:text-white">
-            Assets Management
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            Manage your company's assets with ease
-          </p>
-        </div>
-      </div>
-
+    <PageHeader
+      icon={Layers2}
+      title="Assets Management"
+      description="Manage, track, and monitor your company's physical and digital assets."
+    >
       {/* Action Buttons */}
       <div className="flex items-center gap-2.5 self-start sm:self-auto">
         {canCreate && (
           <Button
             type="button"
             onClick={openAddModal}
-            className="h-9.5 px-4 bg-blue-600 hover:bg-blue-800 text-white text-xs sm:text-sm font-medium rounded-md shadow-xs shadow-[#4C40F7]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
+            className="h-9.5 px-4 bg-[#155DFC] hover:bg-[#1047C7] text-white text-xs sm:text-sm font-medium rounded-lg shadow-xs shadow-[#155DFC]/25 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
           >
             <Plus className="size-4 stroke-[2.5]" />
             <span>Add Asset</span>
@@ -45,15 +35,16 @@ export const AssetHeader: React.FC = () => {
             type="button"
             variant="outline"
             onClick={openImportModal}
-            className="h-9.5 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium rounded-md shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
+            className="h-9.5 px-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs sm:text-sm font-medium rounded-lg shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
           >
             <ArrowUpToLine className="size-4 text-slate-500" />
             <span>Import</span>
           </Button>
         )}
       </div>
-    </div>
+    </PageHeader>
   );
 };
 
 export default AssetHeader;
+

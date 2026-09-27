@@ -5,6 +5,7 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { usePermission } from '@/hooks/usePermission';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface AssetRowActionsProps {
   asset: Asset;
@@ -70,6 +71,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
     closeDropdown();
     const newStatus = asset.status === 'Maintenance' ? 'Available' : 'Maintenance';
     updateAsset(asset.id, { status: newStatus });
+    toast.success(`Asset "${asset.name}" marked as ${newStatus}`);
   };
 
   const handleDeallocate = (e: React.MouseEvent) => {
@@ -79,6 +81,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
       unassignAssetFromEmployee(asset.assignedTo.id, asset.id);
     }
     deallocateAsset(asset.id);
+    toast.success(`Asset "${asset.name}" deallocated successfully`);
   };
 
   return (

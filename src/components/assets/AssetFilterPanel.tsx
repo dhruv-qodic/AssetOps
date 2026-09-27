@@ -229,10 +229,10 @@ export const AssetFilterPanel: React.FC = () => {
           className="w-full flex items-center justify-between px-4 py-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl shadow-2xs font-medium text-slate-800 dark:text-slate-200 text-sm cursor-pointer"
         >
           <div className="flex items-center gap-2">
-            <SlidersHorizontal className="size-4 text-[#4C40F7]" />
+            <SlidersHorizontal className="size-4 text-[#155DFC]" />
             <span>Filter Assets</span>
             {totalActiveFiltersCount > 0 && (
-              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-[#4C40F7]/10 text-[#4C40F7] dark:bg-[#4C40F7]/20">
+              <span className="px-2 py-0.5 text-xs font-semibold rounded-full bg-[#155DFC]/10 text-[#155DFC] dark:bg-[#155DFC]/20">
                 {totalActiveFiltersCount}
               </span>
             )}
@@ -253,14 +253,14 @@ export const AssetFilterPanel: React.FC = () => {
         {/* Panel Header */}
         <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-slate-800/80">
           <div className="flex items-center gap-2">
-            <div className="flex size-7 items-center justify-center rounded-lg bg-[#4C40F7]/10 text-[#4C40F7] dark:bg-[#4C40F7]/20">
+            <div className="flex size-7 items-center justify-center rounded-lg bg-[#155DFC]/10 text-[#155DFC] dark:bg-[#155DFC]/20">
               <SlidersHorizontal className="size-3.5" />
             </div>
             <h2 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
               Filters
             </h2>
             {totalActiveFiltersCount > 0 && (
-              <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-[#4C40F7] text-white">
+              <span className="px-2.5 py-1 text-[11px] font-semibold rounded-full bg-[#155DFC] text-white">
                 {totalActiveFiltersCount}
               </span>
             )}
@@ -275,7 +275,7 @@ export const AssetFilterPanel: React.FC = () => {
                     setPresetName('');
                     setIsSavePresetOpen(true);
                   }}
-                  className="text-xs font-medium text-[#4C40F7] hover:text-[#3D31E5] dark:text-indigo-400 cursor-pointer transition-colors"
+                  className="text-xs font-medium text-[#155DFC] hover:text-[#1047C7] dark:text-blue-400 cursor-pointer transition-colors"
                 >
                   Save Preset
                 </button>
@@ -283,7 +283,7 @@ export const AssetFilterPanel: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleClearAll}
-                  className="text-xs font-medium text-[#4C40F7] hover:text-[#3D31E5] dark:text-indigo-400 flex items-center gap-1 cursor-pointer transition-colors"
+                  className="text-xs font-medium text-[#155DFC] hover:text-[#1047C7] dark:text-blue-400 flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <RotateCcw className="size-3" />
                   <span>Reset</span>
@@ -314,7 +314,7 @@ export const AssetFilterPanel: React.FC = () => {
                 setPage(1);
               }}
               placeholder="Search keyword..."
-              className="h-9 pl-9 pr-8 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-lg focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
+              className="h-9 pl-9 pr-8 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-lg focus-visible:ring-2 focus-visible:ring-[#155DFC]/20 focus-visible:border-[#155DFC]"
             />
             {searchKeyword && (
               <button
@@ -363,7 +363,7 @@ export const AssetFilterPanel: React.FC = () => {
               {presets.map((preset) => (
                 <div
                   key={preset.id}
-                  className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-indigo-200 dark:hover:border-indigo-900 transition-colors"
+                  className="flex items-center gap-1 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50 hover:border-blue-200 dark:hover:border-blue-900 transition-colors"
                 >
                   {/* Apply preset */}
                   <button
@@ -407,7 +407,7 @@ export const AssetFilterPanel: React.FC = () => {
             onClick={() => toggleSection('category')}
             className="w-full flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer select-none group"
           >
-            <span className="group-hover:text-[#4C40F7] transition-colors">Category</span>
+            <span className="group-hover:text-[#155DFC] transition-colors">Category</span>
             <div className="flex items-center gap-1.5">
               {selectedCategories.length > 0 && (
                 <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
@@ -432,7 +432,7 @@ export const AssetFilterPanel: React.FC = () => {
                     className={cn(
                       'flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors',
                       isChecked
-                        ? 'bg-indigo-50/70 text-[#4C40F7] font-medium dark:bg-indigo-950/40 dark:text-indigo-300'
+                        ? 'bg-blue-50/70 text-[#155DFC] font-medium dark:bg-blue-950/40 dark:text-blue-300'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50',
                     )}
                   >
@@ -441,7 +441,7 @@ export const AssetFilterPanel: React.FC = () => {
                         className={cn(
                           'size-4 rounded flex items-center justify-center shrink-0 border transition-all',
                           isChecked
-                            ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
+                            ? 'bg-[#155DFC] border-[#155DFC] text-white'
                             : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600',
                         )}
                       >
@@ -471,7 +471,7 @@ export const AssetFilterPanel: React.FC = () => {
             onClick={() => toggleSection('status')}
             className="w-full flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer select-none group"
           >
-            <span className="group-hover:text-[#4C40F7] transition-colors">Status</span>
+            <span className="group-hover:text-[#155DFC] transition-colors">Status</span>
             <div className="flex items-center gap-1.5">
               {selectedStatuses.length > 0 && (
                 <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
@@ -497,7 +497,7 @@ export const AssetFilterPanel: React.FC = () => {
                     className={cn(
                       'flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors',
                       isChecked
-                        ? 'bg-indigo-50/70 text-[#4C40F7] font-medium dark:bg-indigo-950/40 dark:text-indigo-300'
+                        ? 'bg-blue-50/70 text-[#155DFC] font-medium dark:bg-blue-950/40 dark:text-blue-300'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50',
                     )}
                   >
@@ -506,7 +506,7 @@ export const AssetFilterPanel: React.FC = () => {
                         className={cn(
                           'size-4 rounded flex items-center justify-center shrink-0 border transition-all',
                           isChecked
-                            ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
+                            ? 'bg-[#155DFC] border-[#155DFC] text-white'
                             : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600',
                         )}
                       >
@@ -539,7 +539,7 @@ export const AssetFilterPanel: React.FC = () => {
             onClick={() => toggleSection('department')}
             className="w-full flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer select-none group"
           >
-            <span className="group-hover:text-[#4C40F7] transition-colors">Department</span>
+            <span className="group-hover:text-[#155DFC] transition-colors">Department</span>
             <div className="flex items-center gap-1.5">
               {selectedDepartments.length > 0 && (
                 <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
@@ -564,7 +564,7 @@ export const AssetFilterPanel: React.FC = () => {
                     className={cn(
                       'flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs cursor-pointer select-none transition-colors',
                       isChecked
-                        ? 'bg-indigo-50/70 text-[#4C40F7] font-medium dark:bg-indigo-950/40 dark:text-indigo-300'
+                        ? 'bg-blue-50/70 text-[#155DFC] font-medium dark:bg-blue-950/40 dark:text-blue-300'
                         : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50',
                     )}
                   >
@@ -573,7 +573,7 @@ export const AssetFilterPanel: React.FC = () => {
                         className={cn(
                           'size-4 rounded flex items-center justify-center shrink-0 border transition-all',
                           isChecked
-                            ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
+                            ? 'bg-[#155DFC] border-[#155DFC] text-white'
                             : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600',
                         )}
                       >
@@ -603,7 +603,7 @@ export const AssetFilterPanel: React.FC = () => {
             onClick={() => toggleSection('cost')}
             className="w-full flex items-center justify-between text-xs font-semibold text-slate-800 dark:text-slate-200 cursor-pointer select-none group"
           >
-            <span className="group-hover:text-[#4C40F7] transition-colors">Cost Range</span>
+            <span className="group-hover:text-[#155DFC] transition-colors">Cost Range</span>
             <div className="flex items-center gap-1.5">
               {(costRange.min !== null || costRange.max !== null) && (
                 <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
@@ -637,7 +637,7 @@ export const AssetFilterPanel: React.FC = () => {
                         setPage(1);
                       }}
                       placeholder="0"
-                      className="h-8 pl-6 pr-2 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 rounded-md focus-visible:ring-1 focus-visible:ring-[#4C40F7]"
+                      className="h-8 pl-6 pr-2 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 rounded-md focus-visible:ring-1 focus-visible:ring-[#155DFC]"
                     />
                   </div>
                 </div>
@@ -657,7 +657,7 @@ export const AssetFilterPanel: React.FC = () => {
                         setPage(1);
                       }}
                       placeholder="5000"
-                      className="h-8 pl-6 pr-2 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 rounded-md focus-visible:ring-1 focus-visible:ring-[#4C40F7]"
+                      className="h-8 pl-6 pr-2 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 rounded-md focus-visible:ring-1 focus-visible:ring-[#155DFC]"
                     />
                   </div>
                 </div>
@@ -679,7 +679,7 @@ export const AssetFilterPanel: React.FC = () => {
                         className={cn(
                           'px-2 py-1 text-[11px] rounded-md font-medium border text-center transition-all cursor-pointer truncate',
                           isSelected
-                            ? 'bg-[#4C40F7] border-[#4C40F7] text-white shadow-2xs'
+                            ? 'bg-[#155DFC] border-[#155DFC] text-white shadow-2xs'
                             : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/60 text-slate-600 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600 hover:text-slate-900 dark:hover:text-slate-200',
                         )}
                       >

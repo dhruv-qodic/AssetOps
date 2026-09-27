@@ -62,7 +62,7 @@ export const EmployeeDetailsModal: React.FC = () => {
         {/* Header */}
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-[#4C40F7] border border-indigo-100 dark:border-indigo-900/50 shadow-2xs">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#155DFC] border border-blue-100 dark:border-blue-900/50 shadow-2xs">
               <User className="size-5" />
             </div>
             <div>
@@ -78,9 +78,9 @@ export const EmployeeDetailsModal: React.FC = () => {
 
         <div className="space-y-4 pt-1 text-left">
           {/* Profile Hero Header Card */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-slate-50 to-indigo-50/30 dark:from-slate-800/80 dark:to-indigo-950/30 border border-slate-200/80 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-gradient-to-r from-slate-50 to-blue-50/30 dark:from-slate-800/80 dark:to-blue-950/30 border border-slate-200/80 dark:border-slate-800">
             <div className="flex items-center gap-3.5">
-              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#4C40F7] to-purple-600 text-white font-bold text-lg shadow-md select-none">
+              <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#155DFC] to-blue-600 text-white font-bold text-lg shadow-md select-none">
                 {selectedEmployee.firstName.trim().charAt(0).toUpperCase() ||
                   fullName.trim().charAt(0).toUpperCase() ||
                   'U'}
@@ -112,7 +112,7 @@ export const EmployeeDetailsModal: React.FC = () => {
           {/* Complete Employee Details Grid */}
           <div className="space-y-2">
             <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-              <UserCog className="size-3.5 text-[#4C40F7]" />
+              <UserCog className="size-3.5 text-[#155DFC]" />
               <span>Personal & Work Details</span>
             </h4>
 
@@ -211,7 +211,7 @@ export const EmployeeDetailsModal: React.FC = () => {
           <div className="space-y-2 pt-1">
             <h4 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider flex items-center justify-between">
               <span className="flex items-center gap-1.5">
-                <Box className="size-3.5 text-[#4C40F7]" />
+                <Box className="size-3.5 text-[#155DFC]" />
                 <span>Assigned Equipment ({assignedAssetsList.length})</span>
               </span>
             </h4>
@@ -224,7 +224,7 @@ export const EmployeeDetailsModal: React.FC = () => {
                     className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="p-2 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-[#4C40F7] shrink-0">
+                      <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-[#155DFC] shrink-0">
                         <Laptop className="size-4" />
                       </div>
                       <div className="min-w-0">
@@ -270,7 +270,7 @@ export const EmployeeDetailsModal: React.FC = () => {
           <Button
             type="button"
             onClick={closeModals}
-            className="h-9 px-5 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs font-medium rounded-md shadow-xs cursor-pointer"
+            className="h-9 px-5 bg-[#155DFC] hover:bg-[#1047C7] text-white text-xs font-medium rounded-md shadow-xs cursor-pointer"
           >
             Close
           </Button>

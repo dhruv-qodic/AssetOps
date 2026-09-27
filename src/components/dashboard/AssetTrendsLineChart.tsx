@@ -139,7 +139,7 @@ export const AssetTrendsLineChart: React.FC = () => {
                       </p>
                       <div className="flex items-center justify-between gap-4">
                         <div className="flex items-center gap-1.5">
-                          <span className="size-2 rounded-full bg-[#4C40F7]" />
+                          <span className="size-2 rounded-full bg-[#155DFC]" />
                           <span className="text-slate-500 dark:text-slate-400">Total Fleet:</span>
                         </div>
                         <span className="font-bold text-slate-900 dark:text-white">
@@ -166,9 +166,9 @@ export const AssetTrendsLineChart: React.FC = () => {
               type="monotone"
               dataKey="total"
               name="Total Fleet"
-              stroke="#4C40F7"
+              stroke="#155DFC"
               strokeWidth={3}
-              dot={{ r: 3, fill: '#4C40F7' }}
+              dot={{ r: 3, fill: '#155DFC' }}
               activeDot={{ r: 5 }}
             />
             <Line

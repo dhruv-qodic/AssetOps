@@ -90,9 +90,9 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
           {isPending && (
             <div
               data-testid="visualizer-pending-indicator"
-              className="flex items-center gap-1.5 font-mono text-[11px] bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded font-medium"
+              className="flex items-center gap-1.5 font-mono text-[11px] bg-blue-50 dark:bg-blue-950/70 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded font-medium"
             >
-              <Loader2 className="size-3 animate-spin text-[#4C40F7]" />
+              <Loader2 className="size-3 animate-spin text-[#155DFC]" />
               <span>Filtering...</span>
             </div>
           )}
@@ -161,7 +161,7 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
                   }}
                   className={`grid ${GRID_COLS} items-center px-6 border-b border-slate-100 dark:border-slate-800/60 transition-colors group text-xs sm:text-sm cursor-pointer select-none ${
                     isSelected
-                      ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-blue-600 dark:border-l-blue-400 font-medium'
+                      ? 'bg-blue-50/90 dark:bg-blue-950/50 hover:bg-blue-100/90 dark:hover:bg-blue-900/60 border-l-4 border-l-[#155DFC] dark:border-l-[#155DFC] font-medium'
                       : 'bg-white dark:bg-slate-900 hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
                   }`}
                 >

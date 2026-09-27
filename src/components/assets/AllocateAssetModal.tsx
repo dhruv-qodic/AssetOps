@@ -14,6 +14,7 @@ import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { AssetDeviceIcon } from './AssetDeviceIcon';
 import type { Employee } from '@/types/employee';
 import type { AssignedEmployee } from '@/types/asset';
+import { toast } from 'sonner';
 import {
   UserPlus,
   Search,
@@ -128,6 +129,10 @@ export const AllocateAssetModal: React.FC = () => {
     allocateAsset(targetAsset.id, assignedEmployeeData);
     assignAssetToEmployee(selectedEmp.id, targetAsset.id);
 
+    toast.success('Asset allocated successfully', {
+      description: `Asset ${targetAsset.name} (${targetAsset.assetId}) assigned to ${selectedEmp.firstName} ${selectedEmp.lastName}.`,
+    });
+
     closeModals();
   };
 
@@ -161,7 +166,7 @@ export const AllocateAssetModal: React.FC = () => {
             <div className="flex-1 min-w-0 space-y-2.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                  <PackageCheck className="size-3.5 text-[#4C40F7]" />
+                  <PackageCheck className="size-3.5 text-[#155DFC]" />
                   <span>Available Assets</span>
                   <span className="text-red-500">*</span>
                 </label>
@@ -192,7 +197,7 @@ export const AllocateAssetModal: React.FC = () => {
                         onClick={() => setSelectedAssetId(asset.id)}
                         className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                           isSelected
-                            ? 'border-[#4C40F7] bg-indigo-50/70 dark:bg-indigo-950/50 shadow-2xs ring-1 ring-[#4C40F7]'
+                            ? 'border-[#155DFC] bg-blue-50/70 dark:bg-blue-950/50 shadow-2xs ring-1 ring-[#155DFC]'
                             : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                         }`}
                       >
@@ -229,7 +234,7 @@ export const AllocateAssetModal: React.FC = () => {
                           <div
                             className={`size-5 rounded-full border flex items-center justify-center transition-colors ${
                               isSelected
-                                ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
+                                ? 'bg-[#155DFC] border-[#155DFC] text-white'
                                 : 'border-slate-300 dark:border-slate-700 bg-transparent'
                             }`}
                           >
@@ -256,7 +261,7 @@ export const AllocateAssetModal: React.FC = () => {
             <div className="flex-1 min-w-0 space-y-2.5">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                  <UserCheck className="size-3.5 text-[#4C40F7]" />
+                  <UserCheck className="size-3.5 text-[#155DFC]" />
                   <span>Employees</span>
                   <span className="text-red-500">*</span>
                 </label>
@@ -288,12 +293,12 @@ export const AllocateAssetModal: React.FC = () => {
                         onClick={() => setSelectedEmp(emp)}
                         className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
                           isSelected
-                            ? 'border-[#4C40F7] bg-indigo-50/70 dark:bg-indigo-950/50 shadow-2xs ring-1 ring-[#4C40F7]'
+                            ? 'border-[#155DFC] bg-blue-50/70 dark:bg-blue-950/50 shadow-2xs ring-1 ring-[#155DFC]'
                             : 'border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-slate-300 dark:hover:border-slate-700'
                         }`}
                       >
                         <div className="flex items-center gap-3 min-w-0">
-                          <div className="size-9 rounded-full bg-[#4C40F7]/10 text-[#4C40F7] font-bold text-xs flex items-center justify-center shrink-0 select-none">
+                          <div className="size-9 rounded-full bg-[#155DFC]/10 text-[#155DFC] font-bold text-xs flex items-center justify-center shrink-0 select-none">
                             {emp.firstName.trim().charAt(0).toUpperCase() ||
                               fullName.trim().charAt(0).toUpperCase() ||
                               'U'}
@@ -322,7 +327,7 @@ export const AllocateAssetModal: React.FC = () => {
                           <div
                             className={`size-5 rounded-full border flex items-center justify-center transition-colors ${
                               isSelected
-                                ? 'bg-[#4C40F7] border-[#4C40F7] text-white'
+                                ? 'bg-[#155DFC] border-[#155DFC] text-white'
                                 : 'border-slate-300 dark:border-slate-700 bg-transparent'
                             }`}
                           >
@@ -343,7 +348,7 @@ export const AllocateAssetModal: React.FC = () => {
 
           {/* Allocation Preview Banner */}
           {targetAsset && selectedEmp && (
-            <div className="p-3 bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-900/50 rounded-xl flex items-center justify-between text-xs animate-in fade-in duration-200">
+            <div className="p-3 bg-blue-50/80 dark:bg-blue-950/40 border border-blue-200/80 dark:border-blue-900/50 rounded-xl flex items-center justify-between text-xs animate-in fade-in duration-200">
               <div className="flex items-center gap-2 min-w-0">
                 <span className="text-slate-500 dark:text-slate-400">Allocating:</span>
                 <span className="font-semibold text-slate-900 dark:text-slate-100 truncate">
@@ -352,8 +357,8 @@ export const AllocateAssetModal: React.FC = () => {
                 <span className="font-mono text-[10px] text-slate-500">
                   ({targetAsset.assetId})
                 </span>
-                <ArrowRight className="size-3 text-indigo-500 shrink-0" />
-                <span className="font-semibold text-[#4C40F7] dark:text-indigo-300 truncate">
+                <ArrowRight className="size-3 text-blue-500 shrink-0" />
+                <span className="font-semibold text-[#155DFC] dark:text-blue-300 truncate">
                   {selectedEmp.firstName} {selectedEmp.lastName}
                 </span>
                 <span className="text-slate-400">({selectedEmp.department})</span>
@@ -378,7 +383,7 @@ export const AllocateAssetModal: React.FC = () => {
             type="button"
             onClick={handleAllocate}
             disabled={!targetAsset || !selectedEmp}
-            className="h-9 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs font-medium px-5 rounded-md shadow-xs cursor-pointer disabled:opacity-50"
+            className="h-9 bg-[#155DFC] hover:bg-[#1047C7] text-white text-xs font-medium px-5 rounded-md shadow-xs cursor-pointer disabled:opacity-50"
           >
             Allocate Asset
           </Button>

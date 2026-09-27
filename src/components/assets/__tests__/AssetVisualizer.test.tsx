@@ -38,7 +38,7 @@ describe('AssetVisualizer Row Selection', () => {
     // Row should now be selected and highlighted
     expect(firstRow).toHaveAttribute('data-selected', 'true');
     expect(firstRow).toHaveAttribute('aria-selected', 'true');
-    expect(firstRow.className).toContain('border-l-blue-600');
+    expect(firstRow.className).toContain('border-l-[#155DFC]');
     expect(screen.getByText('1 row selected')).toBeInTheDocument();
   });
 

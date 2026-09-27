@@ -108,7 +108,7 @@ export const AssetDetailsModal: React.FC = () => {
           <div className="p-3.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 space-y-2">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300 text-xs">
-                <Shield className="size-3.5 text-[#4C40F7]" />
+                <Shield className="size-3.5 text-[#155DFC]" />
                 <span>Technical Specifications</span>
               </div>
               <button
@@ -117,7 +117,7 @@ export const AssetDetailsModal: React.FC = () => {
                   closeModals();
                   openEditModal(selectedAsset);
                 }}
-                className="text-[11px] text-[#4C40F7] hover:underline font-medium cursor-pointer"
+                className="text-[11px] text-[#155DFC] hover:underline font-medium cursor-pointer"
               >
                 {selectedAsset.specifications &&
                 Object.keys(selectedAsset.specifications).length > 0
@@ -158,7 +158,7 @@ export const AssetDetailsModal: React.FC = () => {
         </div>
 
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={closeModals} className="h-9 text-xs">
+          <Button type="button" variant="outline" onClick={closeModals} className="h-9 text-xs cursor-pointer">
             Close
           </Button>
           <Button
@@ -167,7 +167,7 @@ export const AssetDetailsModal: React.FC = () => {
               closeModals();
               openEditModal(selectedAsset);
             }}
-            className="h-9 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs font-medium"
+            className="h-9 bg-[#155DFC] hover:bg-[#1047C7] text-white text-xs font-medium cursor-pointer"
           >
             Edit Asset
           </Button>

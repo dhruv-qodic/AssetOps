@@ -34,15 +34,15 @@ export const LoadingState: React.FC<LoadingStateProps> = ({
       {/* Asset-related icon integrated into an animated loader */}
       <div className="relative flex items-center justify-center mb-4">
         {/* Outer glowing pulsing aura */}
-        <div className="absolute size-16 rounded-full bg-[#4C40F7]/10 dark:bg-[#4C40F7]/20 animate-ping opacity-75" />
+        <div className="absolute size-16 rounded-full bg-[#155DFC]/10 dark:bg-[#155DFC]/20 animate-ping opacity-75" />
 
         {/* Outer spinning border ring */}
-        <div className="relative flex size-14 items-center justify-center rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 shadow-xs">
-          <Icon className="size-6 text-[#4C40F7] animate-pulse" />
+        <div className="relative flex size-14 items-center justify-center rounded-2xl bg-blue-50/80 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900/60 shadow-xs">
+          <Icon className="size-6 text-[#155DFC] animate-pulse" />
 
           {/* Absolute corner spinner */}
           <div className="absolute -inset-1 pointer-events-none">
-            <Loader2 className="size-16 text-[#4C40F7]/60 animate-spin" />
+            <Loader2 className="size-16 text-[#155DFC]/60 animate-spin" />
           </div>
         </div>
       </div>

@@ -15,6 +15,7 @@ import { Select } from '@/components/ui/select';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { EMPLOYEE_DEPARTMENTS, EMPLOYEE_LOCATIONS } from '@/constans/employee.constants';
 import { employeeSchema, type EmployeeFormData } from '@/schemas/employee.schema';
+import { toast } from 'sonner';
 import {
   UserPlus,
   Hash,
@@ -78,6 +79,9 @@ export const AddEmployeeModal: React.FC = () => {
 
   const onSubmit = (data: EmployeeFormData) => {
     addEmployee(data);
+    toast.success('Employee created successfully', {
+      description: `${data.firstName} ${data.lastName} (${data.employeeId}) has been registered.`,
+    });
     reset();
     closeModals();
   };
@@ -106,7 +110,7 @@ export const AddEmployeeModal: React.FC = () => {
         {/* Modal Header */}
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-[#4C40F7] border border-indigo-100 dark:border-indigo-900/50 shadow-2xs">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#155DFC] border border-blue-100 dark:border-blue-900/50 shadow-2xs">
               <UserPlus className="size-5" />
             </div>
             <div>
@@ -335,7 +339,7 @@ export const AddEmployeeModal: React.FC = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs font-medium px-5 rounded-md shadow-xs cursor-pointer"
+              className="h-9 bg-[#155DFC] hover:bg-[#1047C7] text-white text-xs font-medium px-5 rounded-md shadow-xs cursor-pointer"
             >
               Add Employee
             </Button>

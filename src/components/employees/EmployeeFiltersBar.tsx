@@ -64,15 +64,15 @@ function FilterDropdown<T extends string>({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
-            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]',
+            'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#155DFC]/20 focus:border-[#155DFC]',
+            isOpen && 'ring-2 ring-[#155DFC]/20 border-[#155DFC]',
           )}
         >
           <span className="truncate">{currentLabel}</span>
           <ChevronDown
             className={cn(
               'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-              isOpen && 'rotate-180 text-[#4C40F7]',
+              isOpen && 'rotate-180 text-[#155DFC]',
             )}
           />
         </button>
@@ -92,12 +92,12 @@ function FilterDropdown<T extends string>({
                   className={cn(
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
-                      ? 'font-semibold text-[#4C40F7] bg-indigo-50/50 dark:bg-indigo-950/40'
+                      ? 'font-semibold text-[#155DFC] bg-blue-50/50 dark:bg-blue-950/40'
                       : 'text-slate-700 dark:text-slate-300',
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
-                  {isSelected && <Check className="size-3.5 text-[#4C40F7] shrink-0 ml-2" />}
+                  {isSelected && <Check className="size-3.5 text-[#155DFC] shrink-0 ml-2" />}
                 </button>
               );
             })}
@@ -151,7 +151,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           value={filters.search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search employees by name, email, department..."
-          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]"
+          className="h-11 pl-10.5 pr-10 bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-xs sm:text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 rounded-md shadow-2xs focus-visible:ring-2 focus-visible:ring-[#155DFC]/20 focus-visible:border-[#155DFC]"
         />
         {filters.search && (
           <button
@@ -210,7 +210,7 @@ export const EmployeeFiltersBar: React.FC = () => {
           <button
             type="button"
             onClick={resetFilters}
-            className="text-[11px] text-[#4C40F7] hover:underline font-medium cursor-pointer"
+            className="text-[11px] text-[#155DFC] hover:underline font-medium cursor-pointer"
           >
             Clear all
           </button>

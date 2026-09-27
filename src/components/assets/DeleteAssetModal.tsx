@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const DeleteAssetModal: React.FC = () => {
   const isDeleteModalOpen = useAssetStore((s) => s.isDeleteModalOpen);
@@ -25,6 +26,9 @@ export const DeleteAssetModal: React.FC = () => {
       unassignAssetFromEmployee(selectedAsset.assignedTo.id, selectedAsset.id);
     }
     deleteAsset(selectedAsset.id);
+    toast.success('Asset deleted successfully', {
+      description: `Asset ${selectedAsset.name} (${selectedAsset.assetId}) has been removed.`,
+    });
     closeModals();
   };
 

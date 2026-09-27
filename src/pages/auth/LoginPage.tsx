@@ -20,6 +20,7 @@ import { useAuthStore } from '@/store/useAuthStore';
 import { loginSchema, type LoginFormData } from '@/schemas/auth.schema';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DEMO_ACCOUNTS } from '@/mocks/seed/users';
+import { toast } from 'sonner';
 
 const features = [
   'Track & manage company assets',
@@ -57,12 +58,20 @@ function LoginPage() {
     clearError();
     const success = await login(data);
 
-    if (!success && data.rememberMe) {
-      setValue('password', '', { shouldValidate: false });
+    if (!success) {
+      toast.error('Authentication Failed', {
+        description: 'Invalid credentials. Please check your email and password.',
+      });
+      if (data.rememberMe) {
+        setValue('password', '', { shouldValidate: false });
+      }
       return;
     }
 
     if (success) {
+      toast.success('Welcome back to AssetOps', {
+        description: 'Signed in successfully.',
+      });
       void navigate(redirectPath, { replace: true });
     }
   };
@@ -212,7 +221,7 @@ function LoginPage() {
                   className={`h-9.5 pl-9.5 text-xs sm:text-sm bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus-visible:ring-2 ${
                     errors.email
                       ? 'border-red-400 focus-visible:ring-red-400/20 focus-visible:border-red-500'
-                      : 'border-gray-200 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]'
+                      : 'border-gray-200 focus-visible:ring-[#155DFC]/20 focus-visible:border-[#155DFC]'
                   }`}
                 />
               </div>
@@ -235,7 +244,7 @@ function LoginPage() {
                   className={`h-9.5 pl-9.5 pr-10 text-xs sm:text-sm bg-white text-gray-900 placeholder:text-gray-400 rounded-lg focus-visible:ring-2 ${
                     errors.password
                       ? 'border-red-400 focus-visible:ring-red-400/20 focus-visible:border-red-500'
-                      : 'border-gray-200 focus-visible:ring-[#4C40F7]/20 focus-visible:border-[#4C40F7]'
+                      : 'border-gray-200 focus-visible:ring-[#155DFC]/20 focus-visible:border-[#155DFC]'
                   }`}
                 />
                 <button
@@ -260,7 +269,7 @@ function LoginPage() {
                 <input
                   type="checkbox"
                   {...register('rememberMe')}
-                  className="size-3.5 rounded border-gray-300 text-[#4C40F7] focus:ring-[#4C40F7] accent-[#4C40F7]"
+                  className="size-3.5 rounded border-gray-300 text-[#155DFC] focus:ring-[#155DFC] accent-[#155DFC]"
                 />
                 <span className="text-gray-700 text-xs">Remember me</span>
               </label>
@@ -269,7 +278,7 @@ function LoginPage() {
                 onClick={(e) => {
                   e.preventDefault();
                 }}
-                className="text-[#4C40F7] hover:text-[#3B30E6] font-medium hover:underline text-xs"
+                className="text-[#155DFC] hover:text-[#1047C7] font-medium hover:underline text-xs"
               >
                 Forgot password?
               </a>
@@ -279,7 +288,7 @@ function LoginPage() {
             <Button
               type="submit"
               disabled={isLoading}
-              className="w-full h-10 bg-[#4C40F7] hover:bg-[#3D31E5] text-white font-medium text-xs sm:text-sm rounded-lg shadow-md shadow-[#4C40F7]/25 transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full h-10 bg-[#155DFC] hover:bg-[#1047C7] text-white font-medium text-xs sm:text-sm rounded-lg shadow-md shadow-[#155DFC]/25 transition-all active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
             >
               {isLoading ? (
                 <>

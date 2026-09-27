@@ -60,12 +60,12 @@ export const DashboardSummaryCards: React.FC = () => {
       value: totalAssetsCount.toLocaleString(),
       badge: 'Active Fleet',
       badgeIcon: Sparkles,
-      badgeStyle: 'bg-indigo-50 text-[#4C40F7] dark:bg-indigo-950/60 dark:text-indigo-300',
+      badgeStyle: 'bg-blue-50 text-[#155DFC] dark:bg-blue-950/60 dark:text-blue-300',
       icon: Boxes,
       iconBg:
-        'bg-indigo-50 text-[#4C40F7] dark:bg-indigo-950/80 dark:text-indigo-400 group-hover:bg-[#4C40F7] group-hover:text-white',
-      accentGlow: 'hover:border-indigo-300 dark:hover:border-indigo-800 hover:shadow-indigo-500/10',
-      barColor: 'from-[#4C40F7] to-blue-500',
+        'bg-blue-50 text-[#155DFC] dark:bg-blue-950/80 dark:text-blue-400 group-hover:bg-[#155DFC] group-hover:text-white',
+      accentGlow: 'hover:border-blue-300 dark:hover:border-blue-800 hover:shadow-blue-500/10',
+      barColor: 'from-[#155DFC] to-cyan-500',
       description:
         selectedLocation === 'All'
           ? 'Across all branches & offices'
@@ -172,7 +172,7 @@ export const DashboardSummaryCards: React.FC = () => {
 
               <div className="space-y-1.5">
                 <div className="flex items-baseline justify-between gap-2">
-                  <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-[#4C40F7] dark:group-hover:text-[#4C40F7] transition-colors duration-300">
+                  <div className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white group-hover:text-[#155DFC] dark:group-hover:text-[#155DFC] transition-colors duration-300">
                     {card.value}
                   </div>
                   <span

@@ -4,6 +4,7 @@ import type { Asset } from '@/types/asset';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface AllocationRowActionsProps {
   asset: Asset;
@@ -49,6 +50,7 @@ export const AllocationRowActions: React.FC<AllocationRowActionsProps> = ({ asse
       unassignAssetFromEmployee(asset.assignedTo.id, asset.id);
     }
     deallocateAsset(asset.id);
+    toast.success(`Asset "${asset.name}" returned to available inventory`);
   };
 
   const handleView = () => {
