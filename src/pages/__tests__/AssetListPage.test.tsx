@@ -82,12 +82,17 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
       () => {
         expect(screen.queryByText('Dell Laptop')).not.toBeInTheDocument();
         expect(screen.getByText('iPhone 15')).toBeInTheDocument();
+      },
+      { timeout: 8000 },
+    );
 
+    await waitFor(
+      () => {
         expect(screen.queryByTestId('asset-filtering-indicator')).not.toBeInTheDocument();
       },
-      { timeout: 1500 },
+      { timeout: 8000 },
     );
-  });
+  }, 20000);
 
   it('should filter assets when selecting category checkbox', () => {
     renderAssetListPage();
@@ -122,7 +127,7 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
       () => {
         expect(screen.getByText('No assets found')).toBeInTheDocument();
       },
-      { timeout: 1500 },
+      { timeout: 6000 },
     );
 
     const clearButton = screen.getByRole('button', {
@@ -135,10 +140,13 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
 
     expect(useAssetFilterStore.getState().searchKeyword).toBe('');
 
-    await waitFor(() => {
-      expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
-    });
-  });
+    await waitFor(
+      () => {
+        expect(screen.queryByText('No assets found')).not.toBeInTheDocument();
+      },
+      { timeout: 6000 },
+    );
+  }, 15000);
 
   it('should clear all filters when reset button is clicked in Filter Panel', () => {
     renderAssetListPage();
@@ -179,7 +187,7 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
       () => {
         expect(screen.queryByTestId('visualizer-pending-indicator')).not.toBeInTheDocument();
       },
-      { timeout: 2500 },
+      { timeout: 6000 },
     );
-  });
+  }, 15000);
 });

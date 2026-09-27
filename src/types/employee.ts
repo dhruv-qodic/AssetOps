@@ -34,6 +34,8 @@ export interface Employee {
   assignedAssets: string[];
   avatar?: string;
   createdAt: string;
+  joinDate?: string;
+  allocatedAssetsCount: number;
   updatedAt: string;
 }
 
