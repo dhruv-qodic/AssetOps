@@ -169,7 +169,7 @@ export function AllocationsPage() {
   const showPagination = !isLoading && !error && totalFiltered > 0;
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full text-left">
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto w-full text-left">
       {/* 1. Page Header with Title, Subtitle, and New Allocation Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-start sm:items-center gap-3">

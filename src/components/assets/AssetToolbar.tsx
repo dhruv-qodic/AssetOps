@@ -3,6 +3,7 @@ import { Zap, Table2, Columns3 } from 'lucide-react';
 import { useAssetStore } from '@/store/useAssetStore';
 import { cn } from '@/lib/utils';
 import ColumnVisibilityModal from './ColumnVisibilityModal';
+import AssetFilterDropdown from './AssetFilterDropdown';
 
 interface AssetToolbarProps {
   totalCount?: number;
@@ -37,8 +38,11 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
         )}
       </div>
 
-      {/* Right: Actions (View Mode Switcher + Column Visibility) */}
+      {/* Right: Actions (Filter + Columns + View Mode Switcher) */}
       <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
+        {/* Filter Popup Trigger Button */}
+        <AssetFilterDropdown />
+
         {/* Column Visibility Trigger Button */}
         {viewMode === 'table' && (
           <button
