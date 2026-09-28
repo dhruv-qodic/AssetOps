@@ -25,7 +25,7 @@ export function EmployeeListPage() {
   const showPagination = !isLoading && !error && totalFiltered > 0;
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-5 max-w-7xl mx-auto w-full">
+    <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-5 max-w-[1400px] mx-auto w-full">
       {/* 1. Header with title and action button */}
       <EmployeeHeader />
 

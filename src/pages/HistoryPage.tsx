@@ -2,7 +2,7 @@ import { History } from 'lucide-react';
 
 export function HistoryPage() {
   return (
-    <div className="flex-1 p-5 sm:p-7 space-y-6 max-w-[1600px] w-full mx-auto animate-in fade-in duration-200 text-left">
+    <div className="flex-1 p-5 sm:p-7 space-y-6 max-w-[1400px] w-full mx-auto animate-in fade-in duration-200 text-left">
       {/* Page Header */}
       <div className="flex items-start sm:items-center gap-3">
         <div className="p-2.5 rounded-xl bg-[#155DFC]/10 dark:bg-[#155DFC]/20 text-[#155DFC] shadow-xs shrink-0 mt-0.5 sm:mt-0">

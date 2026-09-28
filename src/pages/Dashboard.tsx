@@ -30,7 +30,7 @@ export function Dashboard() {
   };
 
   return (
-    <div className="flex-1 p-4 sm:p-6 lg:p-7 space-y-6 max-w-[1600px] w-full mx-auto animate-in fade-in duration-200 text-left">
+    <div className="flex-1 p-4 sm:p-6 lg:p-7 space-y-6 max-w-[1400px] w-full mx-auto animate-in fade-in duration-200 text-left">
       {/* 1. Dashboard Header */}
       <DashboardHeader />
 

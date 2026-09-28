@@ -54,12 +54,17 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
     });
   });
 
-  it('should render Asset List page header, filter panel, and table', () => {
+  it('should render Asset List page header, search bar, and filter trigger', () => {
     renderAssetListPage();
 
     expect(screen.getByText('Assets Management')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Search keyword...')).toBeInTheDocument();
 
+    const filterButton = screen.getByRole('button', { name: /filter/i });
+    expect(filterButton).toBeInTheDocument();
+
+    // Open filter dropdown to verify facet categories
+    fireEvent.click(filterButton);
     expect(screen.getByText('Category')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
     expect(screen.getByText('Department')).toBeInTheDocument();
@@ -89,8 +94,11 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
     );
   });
 
-  it('should filter assets when selecting category checkbox', () => {
+  it('should filter assets when selecting category checkbox inside filter popup', () => {
     renderAssetListPage();
+
+    const filterButton = screen.getByRole('button', { name: /filter/i });
+    fireEvent.click(filterButton);
 
     const laptopCheckbox = screen.getByRole('checkbox', {
       name: 'Laptop',
@@ -140,7 +148,7 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
     });
   });
 
-  it('should clear all filters when reset button is clicked in Filter Panel', () => {
+  it('should clear all filters when reset button is clicked in Filter Popup', () => {
     renderAssetListPage();
 
     const searchInput = screen.getByPlaceholderText('Search keyword...');
@@ -149,8 +157,11 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
       target: { value: 'Laptop' },
     });
 
+    const filterButton = screen.getByRole('button', { name: /filter/i });
+    fireEvent.click(filterButton);
+
     const resetButton = screen.getByRole('button', {
-      name: 'Reset',
+      name: 'Reset all filters',
     });
 
     expect(resetButton).toBeInTheDocument();
