@@ -172,14 +172,18 @@ export function AllocationsPage() {
     <div className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-7xl mx-auto w-full text-left">
       {/* 1. Page Header with Title, Subtitle, and New Allocation Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <Layers className="size-6 text-[#155DFC]" />
-            <span>Asset Allocations</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
-            Track and manage asset allocation to employees
-          </p>
+        <div className="flex items-start sm:items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-[#155DFC]/10 dark:bg-[#155DFC]/20 text-[#155DFC] shadow-xs shrink-0 mt-0.5 sm:mt-0">
+            <Layers className="size-6 sm:size-7" />
+          </div>
+          <div className="space-y-0.5 text-left">
+            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+              Asset Allocations
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+              Track and manage asset allocation to employees
+            </p>
+          </div>
         </div>
 
         <Button

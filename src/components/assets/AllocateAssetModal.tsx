@@ -186,7 +186,7 @@ export const AllocateAssetModal: React.FC = () => {
               </div>
 
               {/* Available Assets Scrollable List */}
-              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-72 overflow-y-auto p-2">
                 {filteredAvailableAssets.length > 0 ? (
                   filteredAvailableAssets.map((asset) => {
                     const isSelected = selectedAssetId === asset.id;
@@ -281,7 +281,7 @@ export const AllocateAssetModal: React.FC = () => {
               </div>
 
               {/* Employee Scrollable List */}
-              <div className="space-y-2 max-h-72 overflow-y-auto pr-1">
+              <div className="space-y-2 max-h-72 overflow-y-auto p-2">
                 {filteredEmployees.length > 0 ? (
                   filteredEmployees.map((emp) => {
                     const isSelected = selectedEmp?.id === emp.id;
