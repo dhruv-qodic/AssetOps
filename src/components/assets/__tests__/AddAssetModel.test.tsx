@@ -184,8 +184,8 @@ describe('AddAssetModal Component', () => {
         target: { value: 'M3 Pro' },
       });
 
-      expect(keyInput.value).toBe('Processor');
-      expect(valueInput.value).toBe('M3 Pro');
+      expect(keyInput).toHaveValue('Processor');
+      expect(valueInput).toHaveValue('M3 Pro');
     });
 
     it('should remove a specification row', () => {

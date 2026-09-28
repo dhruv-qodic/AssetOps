@@ -29,9 +29,9 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
         {isPending && (
           <span
             data-testid="asset-filtering-indicator"
-            className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[#4C40F7] dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 animate-pulse"
+            className="inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-[#155DFC] dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 animate-pulse"
           >
-            <span className="size-1.5 rounded-full bg-[#4C40F7] animate-ping" />
+            <span className="size-1.5 rounded-full bg-[#155DFC] animate-ping" />
             <span>Filtering...</span>
           </span>
         )}

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { useAssetStore } from '@/store/useAssetStore';
 import { AlertTriangle } from 'lucide-react';
+import { toast } from 'sonner';
 
 export const DeleteEmployeeModal: React.FC = () => {
   const isDeleteModalOpen = useEmployeeStore((s) => s.isDeleteModalOpen);
@@ -35,6 +36,7 @@ export const DeleteEmployeeModal: React.FC = () => {
     });
 
     deleteEmployee(selectedEmployee.id);
+    toast.success(`Employee "${fullName}" deleted successfully`);
     closeModals();
   };
 

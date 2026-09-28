@@ -8,6 +8,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 import { useAssetStore } from '@/store/useAssetStore';
 import { UploadCloud, FileSpreadsheet, CheckCircle2 } from 'lucide-react';
 import type { CreateAssetInput } from '@/types/asset';
@@ -52,6 +53,7 @@ export const ImportAssetsModal: React.FC = () => {
       const added = bulkAddAssets(sampleDemoImports);
       setIsImporting(false);
       setSuccessCount(added);
+      toast.success(`Successfully imported ${added} assets`);
       setTimeout(() => {
         setSuccessCount(null);
         closeModals();
@@ -72,7 +74,7 @@ export const ImportAssetsModal: React.FC = () => {
         <div className="space-y-4 py-2">
           {/* Upload Area */}
           <div className="border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl p-6 flex flex-col items-center justify-center text-center hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer">
-            <div className="flex size-12 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-[#4C40F7] mb-2.5">
+            <div className="flex size-12 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/40 text-[#155DFC] mb-2.5">
               <UploadCloud className="size-6" />
             </div>
             <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
@@ -89,7 +91,7 @@ export const ImportAssetsModal: React.FC = () => {
             <button
               type="button"
               onClick={handleSimulateImport}
-              className="text-[#4C40F7] font-medium hover:underline cursor-pointer"
+              className="text-[#155DFC] font-medium hover:underline cursor-pointer"
             >
               Load Demo Batch
             </button>
@@ -111,7 +113,7 @@ export const ImportAssetsModal: React.FC = () => {
             type="button"
             onClick={handleSimulateImport}
             disabled={isImporting}
-            className="h-9 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs font-medium"
+            className="h-9 bg-[#155DFC] hover:bg-[#0D4ECC] text-white text-xs font-medium"
           >
             {isImporting ? 'Importing...' : 'Upload & Import'}
           </Button>
