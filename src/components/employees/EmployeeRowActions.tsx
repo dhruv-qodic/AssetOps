@@ -35,13 +35,33 @@ export const EmployeeRowActions: React.FC<EmployeeRowActionsProps> = ({ employee
 
   const handleToggle = () => {
     if (!isOpen && dropdownRef.current) {
-      const rect = dropdownRef.current.getBoundingClientRect();
-      const spaceBelow = window.innerHeight - rect.bottom;
-      if (spaceBelow < 200 && rect.top > 200) {
-        setOpenUpward(true);
-      } else {
-        setOpenUpward(false);
+      const buttonEl = dropdownRef.current;
+      const rect = buttonEl.getBoundingClientRect();
+      const viewportSpaceBelow = window.innerHeight - rect.bottom;
+      const viewportSpaceAbove = rect.top;
+
+      let containerSpaceBelow = Infinity;
+      let containerSpaceAbove = Infinity;
+
+      const scrollParent = buttonEl.closest(
+        '.overflow-auto, .overflow-y-auto, .overflow-x-auto, table, tbody',
+      );
+
+      if (scrollParent) {
+        const parentRect = scrollParent.getBoundingClientRect();
+        containerSpaceBelow = parentRect.bottom - rect.bottom;
+        containerSpaceAbove = rect.top - parentRect.top;
       }
+
+      const DROPDOWN_HEIGHT = 180;
+      const effectiveSpaceBelow = Math.min(viewportSpaceBelow, containerSpaceBelow);
+      const effectiveSpaceAbove = Math.max(viewportSpaceAbove, containerSpaceAbove);
+
+      const shouldOpenUpward =
+        effectiveSpaceBelow < DROPDOWN_HEIGHT &&
+        (effectiveSpaceAbove >= DROPDOWN_HEIGHT || effectiveSpaceAbove > effectiveSpaceBelow);
+
+      setOpenUpward(shouldOpenUpward);
     }
     setIsOpen((prev) => !prev);
   };
