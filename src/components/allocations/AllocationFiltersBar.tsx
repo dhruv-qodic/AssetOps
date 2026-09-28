@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Search, ChevronDown, Check, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { ASSET_CATEGORIES, ASSET_LOCATIONS } from '@/constans/asset.constants';
+import { ASSET_CATEGORIES, ASSET_LOCATIONS } from '@/constant/asset.constants';
 import { cn } from '@/lib/utils';
 import type { Employee } from '@/types/employee';
 

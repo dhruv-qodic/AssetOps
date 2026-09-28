@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
-import { EMPLOYEE_DEPARTMENTS, EMPLOYEE_LOCATIONS } from '@/constans/employee.constants';
+import { EMPLOYEE_DEPARTMENTS, EMPLOYEE_LOCATIONS } from '@/constant/employee.constants';
 import { employeeSchema, type EmployeeFormData } from '@/schemas/employee.schema';
 import {
   UserCog,

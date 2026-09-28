@@ -70,7 +70,7 @@ describe('hooks/usePermission & auth permission helpers', () => {
       expect(result.current.canAccessRoute('/settings')).toBe(true);
     });
 
-    it('should return restricted permissions for MANAGER user', () => {
+    it('should return operational permissions for MANAGER user (including asset allocation/deallocation)', () => {
       useAuthStore.setState({
         user: {
           id: 'usr_manager_01',
@@ -85,10 +85,22 @@ describe('hooks/usePermission & auth permission helpers', () => {
 
       expect(result.current.userRole).toBe('MANAGER');
       expect(result.current.hasPermission('CREATE_ASSET')).toBe(true);
+      expect(result.current.hasPermission('EDIT_ASSET')).toBe(true);
+      expect(result.current.hasPermission('ALLOCATE_ASSET')).toBe(true);
+      expect(result.current.hasPermission('VIEW_EMPLOYEES')).toBe(true);
+      expect(result.current.hasPermission('VIEW_HISTORY')).toBe(true);
+
+      // Restricted actions
+      expect(result.current.hasPermission('DELETE_ASSET')).toBe(false);
+      expect(result.current.hasPermission('MANAGE_EMPLOYEES')).toBe(false);
       expect(result.current.hasPermission('MANAGE_SETTINGS')).toBe(false);
+      expect(result.current.hasPermission('VIEW_REPORTS')).toBe(false);
 
       expect(result.current.canAccessRoute('/assets')).toBe(true);
+      expect(result.current.canAccessRoute('/allocations')).toBe(true);
+      expect(result.current.canAccessRoute('/employees')).toBe(true);
       expect(result.current.canAccessRoute('/settings')).toBe(false);
+      expect(result.current.canAccessRoute('/reports')).toBe(false);
     });
 
     it('should return view-only permissions for VIEWER user', () => {

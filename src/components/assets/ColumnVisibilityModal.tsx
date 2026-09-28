@@ -20,7 +20,7 @@ import {
   Info,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AVAILABLE_ASSET_COLUMNS, type ColumnDefinition } from '@/constans/asset.constants';
+import { AVAILABLE_ASSET_COLUMNS, type ColumnDefinition } from '@/constant/asset.constants';
 import { useColumnVisibilityStore } from '@/store/useColumnVisibilityStore';
 
 const CATEGORIES: Array<'All' | ColumnDefinition['category']> = [

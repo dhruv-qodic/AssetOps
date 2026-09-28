@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useDashboardStore } from '../useDashboardStore';
-import { DASHBOARD_CARDS, DASHBOARD_WIDGETS } from '@/constans/dashboard.constants';
+import { DASHBOARD_CARDS, DASHBOARD_WIDGETS } from '@/constant/dashboard.constants';
 
 describe('useDashboardStore', () => {
   beforeEach(() => {

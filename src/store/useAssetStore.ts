@@ -11,7 +11,7 @@ import type {
   AssetStats,
   AssignedEmployee,
 } from '@/types/asset';
-import { DEFAULT_ASSET_FILTERS } from '@/constans/asset.constants';
+import { DEFAULT_ASSET_FILTERS } from '@/constant/asset.constants';
 import { MOCK_ASSETS } from '@/mocks/seed/assets';
 import {
   filterAssets,
