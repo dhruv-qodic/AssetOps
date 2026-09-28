@@ -12,7 +12,7 @@ import {
 } from 'recharts';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useDashboardStore } from '@/store/useDashboardStore';
-import { ASSET_CATEGORIES } from '@/constans/asset.constants';
+import { ASSET_CATEGORIES } from '@/constant/asset.constants';
 
 export const AssetLifecycleChart: React.FC = () => {
   const assets = useAssetStore((s) => s.assets);

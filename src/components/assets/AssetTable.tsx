@@ -16,7 +16,7 @@ import LoadingState from '@/components/common/LoadingState';
 import ErrorState from '@/components/common/ErrorState';
 import EmptyState from '@/components/common/EmptyState';
 import { cn } from '@/lib/utils';
-import { AVAILABLE_ASSET_COLUMNS, type ColumnDefinition } from '@/constans/asset.constants';
+import { AVAILABLE_ASSET_COLUMNS, type ColumnDefinition } from '@/constant/asset.constants';
 import { useColumnVisibilityStore } from '@/store/useColumnVisibilityStore';
 
 interface AssetTableProps {

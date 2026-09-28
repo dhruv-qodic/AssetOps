@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useAuthStore } from '@/store/useAuthStore';
 import type { Permission } from '@/types/permissions';
-import { ROLE_PERMISSIONS } from '@/constans/auth.constants';
+import { ROLE_PERMISSIONS } from '@/constant/auth.constants';
 import { type Role } from '@/types/auth';
 
 export interface UsePermissionReturn {

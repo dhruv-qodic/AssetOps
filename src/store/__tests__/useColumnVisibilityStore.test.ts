@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useColumnVisibilityStore, DEFAULT_VISIBLE_COLUMN_IDS } from '../useColumnVisibilityStore';
-import { AVAILABLE_ASSET_COLUMNS } from '@/constans/asset.constants';
+import { AVAILABLE_ASSET_COLUMNS } from '@/constant/asset.constants';
 
 describe('useColumnVisibilityStore', () => {
   beforeEach(() => {

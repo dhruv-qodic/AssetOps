@@ -4,7 +4,7 @@ import {
   DASHBOARD_CARDS,
   DASHBOARD_WIDGETS,
   type DashboardTimeRange,
-} from '@/constans/dashboard.constants';
+} from '@/constant/dashboard.constants';
 
 const DEFAULT_VISIBLE_CARD_IDS = DASHBOARD_CARDS.filter((c) => c.defaultVisible).map((c) => c.id);
 const DEFAULT_VISIBLE_WIDGET_IDS = DASHBOARD_WIDGETS.filter((w) => w.defaultVisible).map(

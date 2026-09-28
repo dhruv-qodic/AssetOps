@@ -1,5 +1,5 @@
 import type { Permission } from './permissions';
-import { ROLE_PERMISSIONS } from '@/constans/auth.constants';
+import { ROLE_PERMISSIONS } from '@/constant/auth.constants';
 
 export type Role = 'ADMIN' | 'MANAGER' | 'VIEWER';
 export type UserRole = Role;

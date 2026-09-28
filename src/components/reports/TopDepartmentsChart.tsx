@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Building2, Laptop, Cpu, BarChart3, Wallet, Users, Building } from 'lucide-react';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
-import { EMPLOYEE_DEPARTMENTS } from '@/constans/employee.constants';
+import { EMPLOYEE_DEPARTMENTS } from '@/constant/employee.constants';
 import { getAssetDepartment } from '@/utils/assetDepartment';
 
 interface DepartmentStat {

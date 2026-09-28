@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { ChevronDown, Check, Sparkles, FileSpreadsheet, Calendar, Building2 } from 'lucide-react';
-import { EMPLOYEE_DEPARTMENTS } from '@/constans/employee.constants';
+import { EMPLOYEE_DEPARTMENTS } from '@/constant/employee.constants';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { cn } from '@/lib/utils';
 

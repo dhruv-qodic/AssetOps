@@ -3,8 +3,8 @@ import { LayoutDashboard, SlidersHorizontal, Calendar, MapPin } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Select } from '@/components/ui/select';
 import { useDashboardStore } from '@/store/useDashboardStore';
-import { DASHBOARD_TIME_RANGES, type DashboardTimeRange } from '@/constans/dashboard.constants';
-import { ASSET_LOCATIONS } from '@/constans/asset.constants';
+import { DASHBOARD_TIME_RANGES, type DashboardTimeRange } from '@/constant/dashboard.constants';
+import { ASSET_LOCATIONS } from '@/constant/asset.constants';
 
 export const DashboardHeader: React.FC = () => {
   const { timeRange, setTimeRange, selectedLocation, setSelectedLocation, openCustomization } =

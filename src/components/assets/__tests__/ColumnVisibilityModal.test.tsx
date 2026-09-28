@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ColumnVisibilityModal } from '../ColumnVisibilityModal';
-import { AVAILABLE_ASSET_COLUMNS } from '@/constans/asset.constants';
+import { AVAILABLE_ASSET_COLUMNS } from '@/constant/asset.constants';
 import { useColumnVisibilityStore } from '@/store/useColumnVisibilityStore';
 
 describe('ColumnVisibilityModal Component', () => {
