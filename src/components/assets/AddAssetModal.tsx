@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
+import { toast } from 'sonner';
 import { useAssetStore } from '@/store/useAssetStore';
 import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_LOCATIONS } from '@/constant/asset.constants';
 import { assetSchema, type AssetFormData } from '@/schemas/asset.schema';
@@ -156,8 +157,10 @@ export const AddAssetModal: React.FC = () => {
 
     if (isEditing) {
       updateAsset(selectedAsset.id, payload);
+      toast.success('Asset updated successfully');
     } else {
       addAsset(payload);
+      toast.success('Asset created successfully');
     }
     closeModals();
   };
@@ -172,7 +175,7 @@ export const AddAssetModal: React.FC = () => {
         {/* Header matching Photo */}
         <DialogHeader>
           <div className="flex items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-[#4C40F7] border border-indigo-100 dark:border-indigo-900/50 shadow-2xs">
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-[#155DFC] border border-indigo-100 dark:border-indigo-900/50 shadow-2xs">
               <Briefcase className="size-5" />
             </div>
             <div>
@@ -353,13 +356,13 @@ export const AddAssetModal: React.FC = () => {
           <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-700/60 space-y-2.5 text-left">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
-                <Sliders className="size-3.5 text-[#4C40F7]" />
+                <Sliders className="size-3.5 text-[#155DFC]" />
                 <span>Technical Specifications</span>
               </label>
               <button
                 type="button"
                 onClick={() => handleAddSpecRow('', '')}
-                className="text-[11px] font-semibold text-[#4C40F7] hover:text-[#3B30E6] flex items-center gap-1 hover:underline cursor-pointer"
+                className="text-[11px] font-semibold text-[#155DFC] hover:text-[#3B30E6] flex items-center gap-1 hover:underline cursor-pointer"
               >
                 <Plus className="size-3" />
                 <span>Add Spec Field</span>
@@ -416,7 +419,7 @@ export const AddAssetModal: React.FC = () => {
                       handleAddSpecRow('Property', '');
                     }
                   }}
-                  className="text-[11px] text-[#4C40F7] hover:underline font-medium cursor-pointer"
+                  className="text-[11px] text-[#155DFC] hover:underline font-medium cursor-pointer"
                 >
                   Load Presets
                 </button>
@@ -434,7 +437,7 @@ export const AddAssetModal: React.FC = () => {
               {...register('notes')}
               rows={2}
               placeholder="Additional inventory details or maintenance notes..."
-              className="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20"
+              className="w-full px-3 py-2 rounded-md border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-xs sm:text-sm text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#155DFC]/20"
             />
             <p className="text-[11px] text-slate-400 leading-tight">
               Any additional information that might be useful
@@ -453,7 +456,7 @@ export const AddAssetModal: React.FC = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs font-medium px-5 rounded-md shadow-xs"
+              className="h-9 bg-[#155DFC] hover:bg-[#0D4ECC] text-white text-xs font-medium px-5 rounded-md shadow-xs"
             >
               {isEditing ? 'Save Changes' : 'Create Asset'}
             </Button>

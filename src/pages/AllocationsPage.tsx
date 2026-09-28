@@ -174,7 +174,7 @@ export function AllocationsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-[26px] font-bold tracking-tight text-slate-900 dark:text-white flex items-center gap-2">
-            <Layers className="size-6 text-[#4C40F7]" />
+            <Layers className="size-6 text-[#155DFC]" />
             <span>Asset Allocations</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
@@ -185,7 +185,7 @@ export function AllocationsPage() {
         <Button
           type="button"
           onClick={handleOpenNewAllocation}
-          className="h-10 px-5 bg-[#4C40F7] hover:bg-[#3D31E5] text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm shadow-indigo-600/20 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
+          className="h-10 px-5 bg-[#155DFC] hover:bg-[#0D4ECC] text-white text-xs sm:text-sm font-medium rounded-lg shadow-sm shadow-blue-600/20 transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98]"
         >
           <Plus className="size-4 stroke-[2.5]" />
           <span>New Allocation</span>

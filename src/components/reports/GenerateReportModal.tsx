@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { getAssetDepartment } from '@/utils/assetDepartment';
+import { toast } from 'sonner';
 
 interface GenerateReportModalProps {
   isOpen: boolean;
@@ -97,6 +98,7 @@ ${exportAssets.map((a) => `• [${a.assetId}] ${a.name} (${a.category}) - ${a.st
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 
+    toast.success(`Report downloaded successfully`);
     onClose();
     setIsCompleted(false);
   };

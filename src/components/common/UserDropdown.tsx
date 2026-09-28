@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function UserDropdown() {
   const user = useAuthStore((s) => s.user);
@@ -50,6 +51,7 @@ export default function UserDropdown() {
   const handleLogout = () => {
     setIsOpen(false);
     logout();
+    toast.success('Signed out successfully');
     void navigate('/login');
   };
 
@@ -125,7 +127,7 @@ export default function UserDropdown() {
         </div>
 
         <div className="relative">
-          <div className="size-9 rounded-full bg-[#4C40F7] text-white font-bold text-sm flex items-center justify-center border border-border ring-2 ring-primary/15 group-hover:ring-primary transition-all shadow-xs shrink-0 select-none">
+          <div className="size-9 rounded-full bg-[#155DFC] text-white font-bold text-sm flex items-center justify-center border border-border ring-2 ring-primary/15 group-hover:ring-primary transition-all shadow-xs shrink-0 select-none">
             {user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'}
           </div>
           <span className="absolute bottom-0 right-0 size-2.5 bg-emerald-500 border-2 border-background rounded-full" />
@@ -145,7 +147,7 @@ export default function UserDropdown() {
           <div className="p-4 bg-muted/30 border-b border-border">
             <div className="flex items-start gap-3">
               <div className="relative shrink-0">
-                <div className="size-12 rounded-xl bg-[#4C40F7] text-white font-bold text-lg flex items-center justify-center border border-border shadow-sm select-none">
+                <div className="size-12 rounded-xl bg-[#155DFC] text-white font-bold text-lg flex items-center justify-center border border-border shadow-sm select-none">
                   {user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'}
                 </div>
                 <span className="absolute -bottom-0.5 -right-0.5 size-3 bg-emerald-500 border-2 border-background rounded-full" />

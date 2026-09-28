@@ -48,7 +48,7 @@ export const AssetLifecycleChart: React.FC = () => {
       {/* Chart Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div className="flex items-center gap-2.5">
-          <div className="p-2 rounded-xl bg-indigo-50 text-[#4C40F7] dark:bg-indigo-950/50 dark:text-indigo-400">
+          <div className="p-2 rounded-xl bg-indigo-50 text-[#155DFC] dark:bg-indigo-950/50 dark:text-indigo-400">
             <BarChart3 className="size-4" />
           </div>
           <div>

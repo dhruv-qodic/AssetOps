@@ -80,7 +80,7 @@ export const ColumnVisibilityModal: React.FC<ColumnVisibilityModalProps> = ({
         <div className="px-6 pt-6 pb-4 border-b border-slate-100 dark:border-slate-800/80">
           <DialogHeader className="mb-0">
             <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#4C40F7] border border-blue-100 dark:border-blue-900/50">
+              <div className="p-2 rounded-xl bg-blue-50 dark:bg-blue-950/60 text-[#155DFC] border border-blue-100 dark:border-blue-900/50">
                 <Columns3 className="size-5 stroke-[2.2] text-blue-500 dark:text-blue-400" />
               </div>
               <div>
@@ -104,7 +104,7 @@ export const ColumnVisibilityModal: React.FC<ColumnVisibilityModalProps> = ({
           <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Sparkles className="size-4 text-[#4C40F7]" />
+                <Sparkles className="size-4 text-[#155DFC]" />
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-200">
                   Selected Columns ({selectedColumnIds.length})
                 </span>
@@ -113,7 +113,7 @@ export const ColumnVisibilityModal: React.FC<ColumnVisibilityModalProps> = ({
                 <button
                   type="button"
                   onClick={handleResetToDefault}
-                  className="text-xs text-slate-500 hover:text-[#4C40F7] dark:hover:text-blue-400 font-medium transition-colors flex items-center gap-1 cursor-pointer"
+                  className="text-xs text-slate-500 hover:text-[#155DFC] dark:hover:text-blue-400 font-medium transition-colors flex items-center gap-1 cursor-pointer"
                 >
                   <RotateCcw className="size-3" />
                   <span>Reset Default</span>
@@ -144,7 +144,7 @@ export const ColumnVisibilityModal: React.FC<ColumnVisibilityModalProps> = ({
                   return (
                     <div
                       key={id}
-                      className="group flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-2xs hover:border-[#4C40F7]/40 dark:hover:border-blue-500/40 transition-all text-xs text-slate-800 dark:text-slate-200 font-medium select-none animate-in fade-in zoom-in-95 duration-100"
+                      className="group flex items-center gap-1.5 pl-2.5 pr-1.5 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-700/80 shadow-2xs hover:border-[#155DFC]/40 dark:hover:border-blue-500/40 transition-all text-xs text-slate-800 dark:text-slate-200 font-medium select-none animate-in fade-in zoom-in-95 duration-100"
                     >
                       <span className="text-[10px] font-mono text-slate-400 dark:text-slate-500">
                         {index + 1}.

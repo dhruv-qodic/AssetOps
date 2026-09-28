@@ -22,8 +22,8 @@
     /* #DBEAFE / #DCE7F7 - Soft light blue border */
 
     /* Primary Accent Brand Color (Signature Royal Indigo Blue) */
-    --primary: hsl(243, 87%, 39%);
-    /* #4F46E5 / #4C40F7 - Royal Blue */
+    --primary: hsl(221 98% 54%);
+    /* #155DFC - Primary Blue */
     --primary-foreground: hsl(0 0% 100%);
 
     /* Secondary & Muted UI Tokens */
@@ -52,12 +52,12 @@
     --border: hsl(214.3 31.8% 91.4%);
     /* #E2E8F0 */
     --input: hsl(214.3 31.8% 91.4%);
-    --ring: hsl(243, 87%, 39%);
+    --ring: hsl(221 98% 54%);
     --radius: 0.75rem;
     /* 12px smooth rounded corners */
 
     /* Chart & Graphical Visual Tokens */
-    --chart-1: hsl(243, 87%, 39%);
+    --chart-1: hsl(221 98% 54%);
     /* Royal Indigo */
     --chart-2: hsl(217 91% 60%);
     /* Ocean Blue */
@@ -73,15 +73,15 @@
     /* #080E24 - Deep Dark Navy Background */
     --sidebar-foreground: hsl(215 20% 68%);
     /* #94A3B8 - Soft Slate Gray text */
-    --sidebar-primary: hsl(243, 87%, 39%);
-    /* #4C40F7 - Signature Blue Active Tab */
+    --sidebar-primary: hsl(221 98% 54%);
+    /* #155DFC - Signature Blue Active Tab */
     --sidebar-primary-foreground: hsl(0 0% 100%);
     --sidebar-accent: hsl(226 42% 16%);
     /* #182042 - Dark Navy Hover State */
     --sidebar-accent-foreground: hsl(0 0% 100%);
     --sidebar-border: hsl(226 40% 14%);
     /* #161D3A - Subtle Dark Border */
-    --sidebar-ring: hsl(243, 87%, 39%);
+    --sidebar-ring: hsl(221 98% 54%);
   }
 
   .dark {
@@ -94,7 +94,7 @@
     --navbar: hsl(224 71% 8%);
     --navbar-foreground: hsl(210 40% 98%);
     --navbar-border: hsl(215 27.9% 16.9%);
-    --primary: hsl(243, 87%, 39%);
+    --primary: hsl(221 98% 54%);
     --primary-foreground: hsl(0 0% 100%);
     --secondary: hsl(215 27.9% 16.9%);
     --secondary-foreground: hsl(210 40% 98%);
@@ -106,15 +106,15 @@
     --destructive-foreground: hsl(210 40% 98%);
     --border: hsl(215 27.9% 16.9%);
     --input: hsl(215 27.9% 16.9%);
-    --ring: hsl(243, 87%, 39%);
+    --ring: hsl(221 98% 54%);
     --sidebar: hsl(230 65% 7%);
     --sidebar-foreground: hsl(215 20% 68%);
-    --sidebar-primary: hsl(243, 87%, 39%);
+    --sidebar-primary: hsl(221 98% 54%);
     --sidebar-primary-foreground: hsl(0 0% 100%);
     --sidebar-accent: hsl(226 42% 14%);
     --sidebar-accent-foreground: hsl(0 0% 100%);
     --sidebar-border: hsl(226 40% 12%);
-    --sidebar-ring: hsl(243, 87%, 39%);
+    --sidebar-ring: hsl(221 98% 54%);
   }
 }
 

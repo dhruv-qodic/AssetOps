@@ -31,7 +31,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
         className,
       )}
     >
-      <div className="flex size-14 items-center justify-center rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 text-[#4C40F7] mb-3 border border-indigo-100/80 dark:border-indigo-900/50 shadow-2xs">
+      <div className="flex size-14 items-center justify-center rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 text-[#155DFC] mb-3 border border-indigo-100/80 dark:border-indigo-900/50 shadow-2xs">
         <Icon className="size-7" />
       </div>
 
@@ -62,7 +62,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
             <Button
               type="button"
               onClick={onAction}
-              className="h-9 px-4 text-xs font-medium bg-[#4C40F7] hover:bg-[#3D31E5] text-white cursor-pointer shadow-xs active:scale-[0.98]"
+              className="h-9 px-4 text-xs font-medium bg-[#155DFC] hover:bg-[#0D4ECC] text-white cursor-pointer shadow-xs active:scale-[0.98]"
             >
               {actionLabel}
             </Button>

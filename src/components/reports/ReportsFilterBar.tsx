@@ -55,15 +55,15 @@ function FilterDropdown<T extends string>({
           type="button"
           onClick={() => setIsOpen(!isOpen)}
           className={cn(
-            'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#4C40F7]/20 focus:border-[#4C40F7]',
-            isOpen && 'ring-2 ring-[#4C40F7]/20 border-[#4C40F7]',
+            'w-full h-9.5 px-3.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-md text-xs sm:text-sm font-normal text-slate-800 dark:text-slate-200 flex items-center justify-between shadow-2xs hover:border-slate-300 dark:hover:border-slate-700 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#155DFC]/20 focus:border-[#155DFC]',
+            isOpen && 'ring-2 ring-[#155DFC]/20 border-[#155DFC]',
           )}
         >
           <span className="truncate">{currentLabel}</span>
           <ChevronDown
             className={cn(
               'size-4 text-slate-400 shrink-0 ml-1.5 transition-transform duration-200',
-              isOpen && 'rotate-180 text-[#4C40F7]',
+              isOpen && 'rotate-180 text-[#155DFC]',
             )}
           />
         </button>
@@ -83,12 +83,12 @@ function FilterDropdown<T extends string>({
                   className={cn(
                     'w-full px-3 py-2 text-xs sm:text-sm flex items-center justify-between text-left transition-colors cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800',
                     isSelected
-                      ? 'font-semibold text-[#4C40F7] bg-indigo-50/50 dark:bg-indigo-950/40'
+                      ? 'font-semibold text-[#155DFC] bg-indigo-50/50 dark:bg-indigo-950/40'
                       : 'text-slate-700 dark:text-slate-300',
                   )}
                 >
                   <span className="truncate">{opt.label}</span>
-                  {isSelected && <Check className="size-3.5 text-[#4C40F7] shrink-0 ml-2" />}
+                  {isSelected && <Check className="size-3.5 text-[#155DFC] shrink-0 ml-2" />}
                 </button>
               );
             })}

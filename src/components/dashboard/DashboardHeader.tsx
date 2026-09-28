@@ -27,7 +27,7 @@ export const DashboardHeader: React.FC = () => {
     <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-2 border-b border-slate-200/80 dark:border-slate-800/80">
       {/* Title & Description with React Icon */}
       <div className="flex items-start sm:items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-[#4C40F7]/10 dark:bg-[#4C40F7]/20 text-[#4C40F7] shadow-xs shrink-0 mt-0.5 sm:mt-0">
+        <div className="p-2.5 rounded-xl bg-[#155DFC]/10 dark:bg-[#155DFC]/20 text-[#155DFC] shadow-xs shrink-0 mt-0.5 sm:mt-0">
           <LayoutDashboard className="size-6 sm:size-7" />
         </div>
         <div className="space-y-0.5 text-left">
@@ -73,7 +73,7 @@ export const DashboardHeader: React.FC = () => {
           type="button"
           variant="outline"
           onClick={openCustomization}
-          className="flex items-center gap-2 h-9 px-3.5 text-xs sm:text-sm font-medium border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-2xs hover:text-[#4C40F7] dark:hover:text-[#4C40F7] transition-colors shrink-0"
+          className="flex items-center gap-2 h-9 px-3.5 text-xs sm:text-sm font-medium border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-2xs hover:text-[#155DFC] dark:hover:text-[#155DFC] transition-colors shrink-0"
         >
           <SlidersHorizontal className="size-3.5 text-slate-500" />
           <span>Customize</span>

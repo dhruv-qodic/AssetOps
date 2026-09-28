@@ -92,7 +92,7 @@ export const AssetVisualizer: React.FC<AssetVisualizerProps> = ({
               data-testid="visualizer-pending-indicator"
               className="flex items-center gap-1.5 font-mono text-[11px] bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded font-medium"
             >
-              <Loader2 className="size-3 animate-spin text-[#4C40F7]" />
+              <Loader2 className="size-3 animate-spin text-[#155DFC]" />
               <span>Filtering...</span>
             </div>
           )}
