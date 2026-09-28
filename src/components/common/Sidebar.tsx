@@ -28,11 +28,14 @@ import { useEmployeeStore } from '@/store/useEmployeeStore';
 import AddEmployeeModal from '../employees/AddEmployeeModal';
 import AllocateAssetModal from '../assets/AllocateAssetModal';
 
+import type { Permission } from '@/types/permissions';
+
 type SidebarAction = 'add-asset' | 'edit-asset' | 'allocate-asset' | 'add-employee';
 
 interface SidebarChild {
   name: string;
   action?: SidebarAction;
+  permission?: Permission;
 }
 
 interface SidebarItem {
@@ -69,10 +72,12 @@ const sidebarGroups: SidebarGroup[] = [
           {
             name: 'Add Asset',
             action: 'add-asset',
+            permission: 'CREATE_ASSET',
           },
           {
             name: 'Allocate Asset',
             action: 'allocate-asset',
+            permission: 'ALLOCATE_ASSET',
           },
         ],
       },
@@ -84,6 +89,7 @@ const sidebarGroups: SidebarGroup[] = [
           {
             name: 'Add Employees',
             action: 'add-employee',
+            permission: 'MANAGE_EMPLOYEES',
           },
         ],
       },
@@ -95,10 +101,11 @@ const sidebarGroups: SidebarGroup[] = [
           {
             name: 'New Allocation',
             action: 'allocate-asset',
+            permission: 'ALLOCATE_ASSET',
           },
           {
             name: 'Active Allocations',
-            // to be implemented
+            permission: 'ALLOCATE_ASSET',
           },
         ],
       },
@@ -178,7 +185,7 @@ function Sidebar() {
   const isCollapsed = useSidebarStore((s) => s.isCollapsed);
   const isMobileOpen = useSidebarStore((s) => s.isMobileOpen);
   const setMobileOpen = useSidebarStore((s) => s.setMobileOpen);
-  const { canAccessRoute } = usePermission();
+  const { canAccessRoute, hasPermission } = usePermission();
 
   const [expandedItems, setExpandedItems] = useState<Record<string, boolean>>({
     Assets: false,
@@ -208,8 +215,9 @@ function Sidebar() {
     void navigate('/login');
   };
 
-  const handleSubmenuAction = (action?: SidebarAction) => {
+  const handleSubmenuAction = (action?: SidebarAction, permission?: Permission) => {
     if (!action) return;
+    if (permission && !hasPermission(permission)) return;
 
     switch (action) {
       case 'add-asset':
@@ -382,20 +390,35 @@ function Sidebar() {
                           {navLinkElement}
                         </SidebarTooltip>
 
-                        {/* SUBMENU - UI ONLY */}
+                        {/* SUBMENU - RBAC ENFORCED */}
 
                         {!isCollapsed && hasChildren && isExpanded && (
                           <div className="ml-8 mt-1 space-y-1 border-l border-sidebar-border pl-2">
-                            {item.children?.map((child: SidebarChild) => (
-                              <button
-                                key={child.name}
-                                type="button"
-                                onClick={() => handleSubmenuAction(child.action)}
-                                className="w-full flex items-center px-3 py-2 rounded-lg text-xs font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors text-left cursor-pointer"
-                              >
-                                <span>{child.name}</span>
-                              </button>
-                            ))}
+                            {item.children?.map((child: SidebarChild) => {
+                              const isAllowed = child.permission
+                                ? hasPermission(child.permission)
+                                : true;
+
+                              return (
+                                <button
+                                  key={child.name}
+                                  type="button"
+                                  disabled={!isAllowed}
+                                  aria-disabled={!isAllowed}
+                                  onClick={() => {
+                                    if (!isAllowed) return;
+                                    handleSubmenuAction(child.action, child.permission);
+                                  }}
+                                  className={`w-full flex items-center px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left ${
+                                    isAllowed
+                                      ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent cursor-pointer'
+                                      : 'text-sidebar-foreground/30 opacity-50 cursor-not-allowed select-none'
+                                  }`}
+                                >
+                                  <span>{child.name}</span>
+                                </button>
+                              );
+                            })}
                           </div>
                         )}
                       </div>
@@ -540,23 +563,36 @@ function Sidebar() {
                               )}
                             </div>
 
-                            {/* MOBILE SUBMENU - UI ONLY */}
+                            {/* MOBILE SUBMENU - RBAC ENFORCED */}
 
                             {hasChildren && isExpanded && (
                               <div className="ml-8 mt-1 space-y-1 border-l border-sidebar-border pl-2">
-                                {item.children?.map((child: SidebarChild) => (
-                                  <button
-                                    key={child.name}
-                                    type="button"
-                                    onClick={() => {
-                                      handleSubmenuAction(child.action);
-                                      setMobileOpen(false);
-                                    }}
-                                    className="w-full flex items-center px-3 py-2.5 rounded-lg text-xs font-medium text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors text-left cursor-pointer"
-                                  >
-                                    {child.name}
-                                  </button>
-                                ))}
+                                {item.children?.map((child: SidebarChild) => {
+                                  const isAllowed = child.permission
+                                    ? hasPermission(child.permission)
+                                    : true;
+
+                                  return (
+                                    <button
+                                      key={child.name}
+                                      type="button"
+                                      disabled={!isAllowed}
+                                      aria-disabled={!isAllowed}
+                                      onClick={() => {
+                                        if (!isAllowed) return;
+                                        handleSubmenuAction(child.action, child.permission);
+                                        setMobileOpen(false);
+                                      }}
+                                      className={`w-full flex items-center px-3 py-2.5 rounded-lg text-xs font-medium transition-colors text-left ${
+                                        isAllowed
+                                          ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent cursor-pointer'
+                                          : 'text-sidebar-foreground/30 opacity-50 cursor-not-allowed select-none'
+                                      }`}
+                                    >
+                                      {child.name}
+                                    </button>
+                                  );
+                                })}
                               </div>
                             )}
                           </div>

@@ -159,67 +159,67 @@ The following scripts are configured in `package.json`:
 
 assetops/
 ├── .github/
-│   └── workflows/
-│       └── ci.yml               # GitHub Actions CI pipeline (lint, test, build)
-├── public/                      # Static assets
+│ └── workflows/
+│ └── ci.yml # GitHub Actions CI pipeline (lint, test, build)
+├── public/ # Static assets
 ├── src/
-│   ├── assets/                  # Images and static media
-│   ├── components/              # Modular UI components
-│   │   ├── allocations/         # Allocation modals and assignment tables
-│   │   ├── assets/              # Asset tables, visualizers, modals (Add/Edit/Delete/Import)
-│   │   ├── common/              # Shared feedback UI (EmptyState, ErrorState, LoadingState)
-│   │   ├── dashboard/           # Dashboard summary cards, metric widgets, chart sections
-│   │   ├── employees/           # Employee tables, details, department views
-│   │   ├── reports/             # Analytics charts, report filters, generation modal
-│   │   └── ui/                  # Reusable Base UI and styled primitives (button, dialog, select, etc.)
-│   ├── constans/                # Application constants & permission definitions
-│   │   ├── asset.constants.ts   # Default filter configs, categories, statuses
-│   │   ├── auth.constants.ts    # Role-to-permission mapping matrices
-│   │   ├── dashboard.constants.ts
-│   │   └── employee.constants.ts
-│   ├── hooks/                   # Custom React hooks (usePermission, useDebounce, use-mobile)
-│   ├── layout/                  # Shared layouts (Dashboardlayout with Sidebar & Topbar)
-│   ├── lib/                     # Helper utilities (cn / clsx / tailwind-merge)
-│   ├── mocks/                   # Mock seed data (assets, employees, users)
-│   ├── pages/                   # Application route views
-│   │   ├── auth/                # LoginPage
-│   │   ├── AllocationsPage.tsx  # Asset assignment & tracking view
-│   │   ├── AssetListPage.tsx    # Inventory table & virtualized visualizer
-│   │   ├── Dashboard.tsx        # Central metric overview & activity
-│   │   ├── EmployeeListPage.tsx # Employee directory management
-│   │   ├── HistoryPage.tsx      # Activity audit log view
-│   │   ├── NotFoundPage.tsx     # 404 error page
-│   │   ├── ReportsPage.tsx      # Analytics & export view
-│   │   ├── SettingsPage.tsx     # System & role configuration view
-│   │   └── UnauthorizedPage.tsx # 403 access denied page
-│   ├── routes/                  # React Router configuration & guards
-│   │   ├── AppRoutes.tsx        # Central route tree
-│   │   ├── PermissionRoute.tsx  # Guard checking role and permission requirements
-│   │   ├── ProtectedRoute.tsx   # Guard enforcing authentication
-│   │   └── PublicOnlyRoute.tsx  # Guard restricting login access for authenticated users
-│   ├── schemas/                 # Zod validation schemas (asset, auth, employee, filter preset)
-│   ├── store/                   # Zustand global stores with persistence
-│   │   ├── useAssetFilterPresetStore.ts
-│   │   ├── useAssetFilterStore.ts
-│   │   ├── useAssetStore.ts
-│   │   ├── useAuthStore.ts
-│   │   ├── useColumnVisibilityStore.ts
-│   │   ├── useDashboardStore.ts
-│   │   ├── useEmployeeStore.ts
-│   │   └── useSidebarStore.ts
-│   ├── test/                    # Global test configuration and setup (setup.ts)
-│   ├── types/                   # TypeScript interfaces (asset, auth, employee, permissions)
-│   ├── utils/                   # Business helper functions (department filters, URL params)
-│   ├── App.tsx                  # Root app component
-│   ├── index.css                # Global CSS with Tailwind setup
-│   └── main.tsx                 # Application entry point
-├── eslint.config.js             # ESLint configuration
-├── index.html                   # HTML entry page
-├── package.json                 # Project dependencies & scripts
-├── tsconfig.json                # TypeScript project references
-├── tsconfig.app.json            # TypeScript frontend configuration
-├── tsconfig.node.json           # TypeScript node/tooling configuration
-└── vite.config.ts               # Vite & Vitest configuration
+│ ├── assets/ # Images and static media
+│ ├── components/ # Modular UI components
+│ │ ├── allocations/ # Allocation modals and assignment tables
+│ │ ├── assets/ # Asset tables, visualizers, modals (Add/Edit/Delete/Import)
+│ │ ├── common/ # Shared feedback UI (EmptyState, ErrorState, LoadingState)
+│ │ ├── dashboard/ # Dashboard summary cards, metric widgets, chart sections
+│ │ ├── employees/ # Employee tables, details, department views
+│ │ ├── reports/ # Analytics charts, report filters, generation modal
+│ │ └── ui/ # Reusable Base UI and styled primitives (button, dialog, select, etc.)
+│ ├── constans/ # Application constants & permission definitions
+│ │ ├── asset.constants.ts # Default filter configs, categories, statuses
+│ │ ├── auth.constants.ts # Role-to-permission mapping matrices
+│ │ ├── dashboard.constants.ts
+│ │ └── employee.constants.ts
+│ ├── hooks/ # Custom React hooks (usePermission, useDebounce, use-mobile)
+│ ├── layout/ # Shared layouts (Dashboardlayout with Sidebar & Topbar)
+│ ├── lib/ # Helper utilities (cn / clsx / tailwind-merge)
+│ ├── mocks/ # Mock seed data (assets, employees, users)
+│ ├── pages/ # Application route views
+│ │ ├── auth/ # LoginPage
+│ │ ├── AllocationsPage.tsx # Asset assignment & tracking view
+│ │ ├── AssetListPage.tsx # Inventory table & virtualized visualizer
+│ │ ├── Dashboard.tsx # Central metric overview & activity
+│ │ ├── EmployeeListPage.tsx # Employee directory management
+│ │ ├── HistoryPage.tsx # Activity audit log view
+│ │ ├── NotFoundPage.tsx # 404 error page
+│ │ ├── ReportsPage.tsx # Analytics & export view
+│ │ ├── SettingsPage.tsx # System & role configuration view
+│ │ └── UnauthorizedPage.tsx # 403 access denied page
+│ ├── routes/ # React Router configuration & guards
+│ │ ├── AppRoutes.tsx # Central route tree
+│ │ ├── PermissionRoute.tsx # Guard checking role and permission requirements
+│ │ ├── ProtectedRoute.tsx # Guard enforcing authentication
+│ │ └── PublicOnlyRoute.tsx # Guard restricting login access for authenticated users
+│ ├── schemas/ # Zod validation schemas (asset, auth, employee, filter preset)
+│ ├── store/ # Zustand global stores with persistence
+│ │ ├── useAssetFilterPresetStore.ts
+│ │ ├── useAssetFilterStore.ts
+│ │ ├── useAssetStore.ts
+│ │ ├── useAuthStore.ts
+│ │ ├── useColumnVisibilityStore.ts
+│ │ ├── useDashboardStore.ts
+│ │ ├── useEmployeeStore.ts
+│ │ └── useSidebarStore.ts
+│ ├── test/ # Global test configuration and setup (setup.ts)
+│ ├── types/ # TypeScript interfaces (asset, auth, employee, permissions)
+│ ├── utils/ # Business helper functions (department filters, URL params)
+│ ├── App.tsx # Root app component
+│ ├── index.css # Global CSS with Tailwind setup
+│ └── main.tsx # Application entry point
+├── eslint.config.js # ESLint configuration
+├── index.html # HTML entry page
+├── package.json # Project dependencies & scripts
+├── tsconfig.json # TypeScript project references
+├── tsconfig.app.json # TypeScript frontend configuration
+├── tsconfig.node.json # TypeScript node/tooling configuration
+└── vite.config.ts # Vite & Vitest configuration
 
 ---
 
@@ -256,11 +256,11 @@ When integrating with a live REST or GraphQL backend API:
 
 Pre-configured accounts are provided on the login page for quick testing:
 
-| Role        | Email                  | Password      | Access Level                                                                      |
-| :---------- | :--------------------- | :------------ | :-------------------------------------------------------------------------------- |
-| **Admin**   | `admin@assetops.com`   | `password123` | Full system access (Dashboard, Assets, Employees, Allocations, Reports, Settings) |
-| **Manager** | `manager@assetops.com` | `password123` | Operational access (Dashboard, Assets create/edit, Employees view, History)       |
-| **Viewer**  | `viewer@assetops.com`  | `password123` | Read-only access (Dashboard, Assets view, History)                                |
+| Role        | Email                  | Password      | Access Level                                                                                      |
+| :---------- | :--------------------- | :------------ | :------------------------------------------------------------------------------------------------ |
+| **Admin**   | `admin@assetops.com`   | `password123` | Full system access (Dashboard, Assets, Employees, Allocations, Reports, Settings)                 |
+| **Manager** | `manager@assetops.com` | `password123` | Operational access (Dashboard, Assets create/edit/allocate, Allocations, Employees view, History) |
+| **Viewer**  | `viewer@assetops.com`  | `password123` | Read-only access (Dashboard, Assets view, History)                                                |
 
 ### Role & Permission Matrix
 
@@ -273,7 +273,7 @@ Permissions are defined in `src/types/permissions.ts` and mapped to roles in `sr
 | `CREATE_ASSET`     | Add new assets to inventory              |  Yes  |   Yes   |   No   |
 | `EDIT_ASSET`       | Update existing asset records            |  Yes  |   Yes   |   No   |
 | `DELETE_ASSET`     | Remove assets from inventory             |  Yes  |   No    |   No   |
-| `ALLOCATE_ASSET`   | Allocate/deallocate assets to employees  |  Yes  |   No    |   No   |
+| `ALLOCATE_ASSET`   | Allocate/deallocate assets to employees  |  Yes  |   Yes   |   No   |
 | `VIEW_EMPLOYEES`   | View employee directory                  |  Yes  |   Yes   |   No   |
 | `MANAGE_EMPLOYEES` | Create, edit, and manage employees       |  Yes  |   No    |   No   |
 | `VIEW_HISTORY`     | View asset & allocation audit history    |  Yes  |   Yes   |  Yes   |

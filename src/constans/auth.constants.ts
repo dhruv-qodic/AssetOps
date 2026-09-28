@@ -21,7 +21,7 @@ export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     'VIEW_ASSETS',
     'CREATE_ASSET',
     'EDIT_ASSET',
-    // "ALLOCATE_ASSET",
+    'ALLOCATE_ASSET',
     'VIEW_EMPLOYEES',
     'VIEW_HISTORY',
   ],

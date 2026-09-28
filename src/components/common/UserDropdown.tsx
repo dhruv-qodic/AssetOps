@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import {
   LogOut,
-  LogIn,
   ShieldCheck,
   UserCheck,
   Eye,
@@ -211,15 +210,6 @@ export default function UserDropdown() {
 
           {/* Actions: Login & Logout Buttons */}
           <div className="p-2 bg-muted/20 border-t border-border space-y-1">
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-foreground hover:bg-muted rounded-lg transition-colors cursor-pointer text-left"
-            >
-              <LogIn className="size-4 text-primary" />
-              <span>Login as Different User</span>
-            </button>
-
             <button
               type="button"
               onClick={handleLogout}
