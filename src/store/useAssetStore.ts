@@ -187,7 +187,7 @@ export const useAssetStore = create<AssetStoreState>()(
         const now = new Date().toISOString();
         const newAsset: Asset = {
           ...input,
-          id: `ast_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          id: `ast_${crypto.randomUUID()}`,
           assignedTo: null,
           createdAt: now,
           updatedAt: now,
@@ -278,9 +278,9 @@ export const useAssetStore = create<AssetStoreState>()(
 
       bulkAddAssets: (newItems) => {
         const now = new Date().toISOString();
-        const formatted: Asset[] = newItems.map((item, idx) => ({
+        const formatted: Asset[] = newItems.map((item) => ({
           ...item,
-          id: `ast_${Date.now()}_${idx}`,
+          id: `ast_${crypto.randomUUID()}`,
           assignedTo: null,
           createdAt: now,
           updatedAt: now,

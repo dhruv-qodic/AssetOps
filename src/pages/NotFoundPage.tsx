@@ -37,7 +37,9 @@ function NotFoundPage() {
               type="button"
               variant="outline"
               className="cursor-pointer rounded-md"
-              onClick={() => navigate(-1)}
+              onClick={() => {
+                void navigate(-1);
+              }}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Go Back
