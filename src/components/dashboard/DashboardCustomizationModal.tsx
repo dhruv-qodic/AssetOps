@@ -24,7 +24,7 @@ import {
   DASHBOARD_WIDGETS,
   type DashboardCardDefinition,
   type DashboardWidgetDefinition,
-} from '@/constans/dashboard.constants';
+} from '@/constant/dashboard.constants';
 import { useDashboardStore } from '@/store/useDashboardStore';
 
 interface DashboardCustomizationModalProps {

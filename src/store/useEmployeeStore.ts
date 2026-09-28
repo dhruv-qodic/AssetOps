@@ -10,7 +10,7 @@ import type {
   UpdateEmployeeInput,
   EmployeeStats,
 } from '@/types/employee';
-import { DEFAULT_EMPLOYEE_FILTERS } from '@/constans/employee.constants';
+import { DEFAULT_EMPLOYEE_FILTERS } from '@/constant/employee.constants';
 import { MOCK_EMPLOYEES } from '@/mocks/seed/employees';
 
 interface EmployeeStoreState {

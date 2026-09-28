@@ -25,8 +25,8 @@ import {
   Trash2,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_STATUS_CONFIG } from '@/constans/asset.constants';
-import { EMPLOYEE_DEPARTMENTS } from '@/constans/employee.constants';
+import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_STATUS_CONFIG } from '@/constant/asset.constants';
+import { EMPLOYEE_DEPARTMENTS } from '@/constant/employee.constants';
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 import { cn } from '@/lib/utils';
 import { useAssetFilterPresetStore } from '@/store/useAssetFilterPresetStore';

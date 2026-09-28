@@ -16,7 +16,7 @@ import {
   EMPLOYEE_STATUS_OPTIONS,
   EMPLOYEE_TYPE_OPTIONS,
   EMPLOYEE_SORT_OPTIONS,
-} from '@/constans/employee.constants';
+} from '@/constant/employee.constants';
 import type { EmployeeStatus, EmployeeType } from '@/types/employee';
 import { cn } from '@/lib/utils';
 

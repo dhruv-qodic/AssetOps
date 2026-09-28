@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { ASSET_CATEGORIES, ASSET_STATUSES } from '@/constans/asset.constants';
+import { ASSET_CATEGORIES, ASSET_STATUSES } from '@/constant/asset.constants';
 
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 

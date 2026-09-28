@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { useAssetStore } from '@/store/useAssetStore';
-import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_LOCATIONS } from '@/constans/asset.constants';
+import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_LOCATIONS } from '@/constant/asset.constants';
 import { assetSchema, type AssetFormData } from '@/schemas/asset.schema';
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 import {

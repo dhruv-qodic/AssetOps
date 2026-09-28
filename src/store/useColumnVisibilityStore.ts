@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, type StateStorage } from 'zustand/middleware';
-import { AVAILABLE_ASSET_COLUMNS } from '@/constans/asset.constants';
+import { AVAILABLE_ASSET_COLUMNS } from '@/constant/asset.constants';
 
 export const DEFAULT_VISIBLE_COLUMN_IDS = AVAILABLE_ASSET_COLUMNS.filter(
   (c) => c.defaultVisible,
