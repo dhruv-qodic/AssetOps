@@ -159,7 +159,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         const employeeId = data.employeeId || `EMP-${newEmpIdNum}`;
 
         const newEmployee: Employee = {
-          id: `emp_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
+          id: `emp_${crypto.randomUUID()}`,
           employeeId,
           firstName,
           lastName,
@@ -240,12 +240,12 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
 
       bulkAddEmployees: (newItems) => {
         const now = new Date().toISOString();
-        const formatted: Employee[] = newItems.map((item, idx) => {
+        const formatted: Employee[] = newItems.map((item) => {
           const firstName = item.firstName || item.name?.split(' ')[0] || 'Employee';
           const lastName = item.lastName || item.name?.split(' ').slice(1).join(' ') || '';
           return {
-            id: `emp_${Date.now()}_${idx}`,
-            employeeId: item.employeeId || `EMP-${1000 + idx}`,
+            id: `emp_${crypto.randomUUID()}`,
+            employeeId: item.employeeId || `EMP-${crypto.randomUUID()}`,
             firstName,
             lastName,
             email: item.email,

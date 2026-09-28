@@ -93,9 +93,7 @@ describe('AddAssetModal Component', () => {
     it('should generate the next asset ID based on asset count', () => {
       render(<AddAssetModal />);
 
-      const assetIdInput = screen.getByPlaceholderText('A1010') as HTMLInputElement;
-
-      expect(assetIdInput.value).toBe('A1002');
+      expect(screen.getByPlaceholderText('A1010')).toHaveValue('A1002');
     });
 
     it('should use the default category, status and location values', () => {
@@ -174,13 +172,9 @@ describe('AddAssetModal Component', () => {
 
       fireEvent.click(screen.getByRole('button', { name: 'Add Spec Field' }));
 
-      const keyInput = screen.getByPlaceholderText(
-        'Property (e.g. Processor, RAM)',
-      ) as HTMLInputElement;
+      const keyInput = screen.getByPlaceholderText('Property (e.g. Processor, RAM)');
 
-      const valueInput = screen.getByPlaceholderText(
-        'Value (e.g. 16GB DDR5, M3 Pro)',
-      ) as HTMLInputElement;
+      const valueInput = screen.getByPlaceholderText('Value (e.g. 16GB DDR5, M3 Pro)');
 
       fireEvent.change(keyInput, {
         target: { value: 'Processor' },
@@ -227,11 +221,11 @@ describe('AddAssetModal Component', () => {
     it('should show validation errors when required fields are empty', async () => {
       render(<AddAssetModal />);
 
-      const assetIdInput = screen.getByPlaceholderText('A1010') as HTMLInputElement;
+      const assetIdInput = screen.getByPlaceholderText('A1010');
 
-      const nameInput = screen.getByPlaceholderText('e.g. Dell Laptop') as HTMLInputElement;
+      const nameInput = screen.getByPlaceholderText('e.g. Dell Laptop');
 
-      const serialInput = screen.getByPlaceholderText('SN-078000') as HTMLInputElement;
+      const serialInput = screen.getByPlaceholderText('SN-078000');
 
       fireEvent.change(assetIdInput, { target: { value: '' } });
       fireEvent.change(nameInput, { target: { value: '' } });
@@ -249,7 +243,7 @@ describe('AddAssetModal Component', () => {
     it('should reject an invalid asset ID', async () => {
       render(<AddAssetModal />);
 
-      const assetIdInput = screen.getByPlaceholderText('A1010') as HTMLInputElement;
+      const assetIdInput = screen.getByPlaceholderText('A1010');
 
       fireEvent.change(assetIdInput, {
         target: { value: 'A@#$%' },
@@ -267,7 +261,7 @@ describe('AddAssetModal Component', () => {
     it('should reject an asset name shorter than two characters', async () => {
       render(<AddAssetModal />);
 
-      const nameInput = screen.getByPlaceholderText('e.g. Dell Laptop') as HTMLInputElement;
+      const nameInput = screen.getByPlaceholderText('e.g. Dell Laptop');
 
       fireEvent.change(nameInput, {
         target: { value: 'A' },
@@ -283,7 +277,7 @@ describe('AddAssetModal Component', () => {
     it('should accept a valid asset ID containing hyphens and underscores', async () => {
       render(<AddAssetModal />);
 
-      const assetIdInput = screen.getByPlaceholderText('A1010') as HTMLInputElement;
+      const assetIdInput = screen.getByPlaceholderText('A1010');
 
       fireEvent.change(assetIdInput, {
         target: { value: 'ASSET_001-TEST' },
@@ -474,21 +468,15 @@ describe('AddAssetModal Component', () => {
       render(<AddAssetModal />);
 
       await waitFor(() => {
-        expect((screen.getByPlaceholderText('A1010') as HTMLInputElement).value).toBe(
-          TEST_ASSET.assetId,
+        expect(screen.getByPlaceholderText('A1010')).toHaveValue(TEST_ASSET.assetId);
+
+        expect(screen.getByPlaceholderText('e.g. Dell Laptop')).toHaveValue(TEST_ASSET.name);
+
+        expect(screen.getByPlaceholderText('e.g. Latitude 5440, 27-inch')).toHaveValue(
+          TEST_ASSET.model,
         );
 
-        expect((screen.getByPlaceholderText('e.g. Dell Laptop') as HTMLInputElement).value).toBe(
-          TEST_ASSET.name,
-        );
-
-        expect(
-          (screen.getByPlaceholderText('e.g. Latitude 5440, 27-inch') as HTMLInputElement).value,
-        ).toBe(TEST_ASSET.model);
-
-        expect((screen.getByPlaceholderText('SN-078000') as HTMLInputElement).value).toBe(
-          TEST_ASSET.serialNumber,
-        );
+        expect(screen.getByPlaceholderText('SN-078000')).toHaveValue(TEST_ASSET.serialNumber);
       });
     });
 
@@ -508,7 +496,7 @@ describe('AddAssetModal Component', () => {
     it('should update the selected asset when Save Changes is submitted', async () => {
       render(<AddAssetModal />);
 
-      const nameInput = screen.getByPlaceholderText('e.g. Dell Laptop') as HTMLInputElement;
+      const nameInput = screen.getByPlaceholderText('e.g. Dell Laptop');
 
       fireEvent.change(nameInput, {
         target: { value: 'Updated MacBook Pro' },
@@ -635,9 +623,7 @@ describe('AddAssetModal Component', () => {
     it('should assign the generated ID when creating an asset', async () => {
       render(<AddAssetModal />);
 
-      const assetIdInput = screen.getByPlaceholderText('A1010') as HTMLInputElement;
-
-      const generatedId = assetIdInput.value;
+      const generatedId = screen.getByPlaceholderText('A1010').getAttribute('value') ?? 'A1002';
 
       fireEvent.change(screen.getByPlaceholderText('e.g. Dell Laptop'), {
         target: { value: 'Generated ID Asset' },
