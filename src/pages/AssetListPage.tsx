@@ -8,7 +8,7 @@ import AssetTable from '@/components/assets/AssetTable';
 import AssetVisualizer from '@/components/assets/AssetVisualizer';
 import AssetPagination from '@/components/assets/AssetPagination';
 import AddAssetModal from '@/components/assets/AddAssetModal';
-import AssetDetailsModal from '@/components/assets/AssetDetailsModal';
+import AssetQrModal from '@/components/assets/AssetQrModal';
 import DeleteAssetModal from '@/components/assets/DeleteAssetModal';
 import ImportAssetsModal from '@/components/assets/ImportAssetsModal';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
@@ -134,7 +134,7 @@ export function AssetListPage() {
 
       {/* Modals & Dialogs */}
       <AddAssetModal />
-      <AssetDetailsModal />
+      <AssetQrModal />
       <DeleteAssetModal />
       <ImportAssetsModal />
       <AllocateAssetModal />

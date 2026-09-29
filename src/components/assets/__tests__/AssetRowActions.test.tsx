@@ -81,7 +81,7 @@ describe('AssetRowActions Component RBAC', () => {
       const actionButton = screen.getByTitle('Asset actions');
       fireEvent.click(actionButton);
 
-      expect(screen.getByText('View Details')).toBeInTheDocument();
+      expect(screen.getByText('Asset Details')).toBeInTheDocument();
       expect(screen.getByText('Edit Asset')).toBeInTheDocument();
       expect(screen.getByText('Allocate to Employee')).toBeInTheDocument();
 
@@ -134,7 +134,7 @@ describe('AssetRowActions Component RBAC', () => {
       const actionButton = screen.getByTitle('Asset actions');
       fireEvent.click(actionButton);
 
-      expect(screen.getByText('View Details')).toBeInTheDocument();
+      expect(screen.getByText('Asset Details')).toBeInTheDocument();
       expect(screen.getByText('Edit Asset')).toBeInTheDocument();
       expect(screen.getByText('Allocate to Employee')).toBeInTheDocument();
       expect(screen.getByText('Delete Asset')).toBeInTheDocument();
@@ -160,7 +160,7 @@ describe('AssetRowActions Component RBAC', () => {
       const actionButton = screen.getByTitle('Asset actions');
       fireEvent.click(actionButton);
 
-      expect(screen.getByText('View Details')).toBeInTheDocument();
+      expect(screen.getByText('Asset Details')).toBeInTheDocument();
       expect(screen.queryByText('Edit Asset')).not.toBeInTheDocument();
       expect(screen.queryByText('Allocate to Employee')).not.toBeInTheDocument();
       expect(screen.queryByText('Deallocate Asset')).not.toBeInTheDocument();

@@ -17,7 +17,7 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
   const [openUpward, setOpenUpward] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const openViewModal = useAssetStore((s) => s.openViewModal);
+  const openQrModal = useAssetStore((s) => s.openQrModal);
   const openEditModal = useAssetStore((s) => s.openEditModal);
   const openDeleteModal = useAssetStore((s) => s.openDeleteModal);
   const openAllocateModal = useAssetStore((s) => s.openAllocateModal);
@@ -130,18 +130,18 @@ export const AssetRowActions: React.FC<AssetRowActionsProps> = ({ asset, onOpenC
           )}
           onClick={(e) => e.stopPropagation()}
         >
-          {/* View Details */}
+          {/* Asset Details / QR Modal */}
           <button
             type="button"
             onClick={(e) => {
               e.stopPropagation();
               closeDropdown();
-              openViewModal(asset);
+              openQrModal(asset);
             }}
             className="w-full px-3 py-2 text-xs flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors cursor-pointer text-left font-medium"
           >
             <Eye className="size-3.5 text-slate-400 shrink-0" />
-            <span>View Details</span>
+            <span>Asset Details</span>
           </button>
 
           {/* Edit Asset */}

@@ -4,6 +4,7 @@ import NotFoundPage from '@/pages/NotFoundPage';
 import UnauthorizedPage from '@/pages/UnauthorizedPage';
 import Dashboardlayout from '@/layout/Dashboardlayout';
 import AssetListPage from '@/pages/AssetListPage';
+import AssetDetailPage from '@/pages/AssetDetailPage';
 import EmployeeListPage from '@/pages/EmployeeListPage';
 import AllocationsPage from '@/pages/AllocationsPage';
 import HistoryPage from '@/pages/HistoryPage';
@@ -30,6 +31,7 @@ function AppRoutes() {
           {/* Assets Module: VIEW_ASSETS permission (Admin, Manager, Viewer) */}
           <Route element={<PermissionRoute permission="VIEW_ASSETS" path="/assets" />}>
             <Route path="/assets" element={<AssetListPage />} />
+            <Route path="/assets/:assetId" element={<AssetDetailPage />} />
           </Route>
 
           {/* Employees Module: VIEW_EMPLOYEES permission (Admin, Manager) */}

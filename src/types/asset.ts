@@ -30,6 +30,22 @@ export interface AssignedEmployee {
   position?: string;
 }
 
+export type AllocationAction = 'Allocated' | 'Deallocated';
+
+export interface AllocationHistoryRecord {
+  id: string;
+  assetId: string;
+  employeeId?: string;
+  employeeName: string;
+  employeeEmail?: string;
+  department?: string;
+  avatar?: string;
+  action: AllocationAction;
+  date: string;
+  notes?: string;
+  performedBy?: string;
+}
+
 export interface Asset {
   id: string;
   assetId: string; // e.g., 'A1001'
@@ -46,6 +62,7 @@ export interface Asset {
   image?: string; // thumbnail / illustration URL
   specifications?: Record<string, string>;
   notes?: string;
+  allocationHistory?: AllocationHistoryRecord[];
   createdAt: string;
   updatedAt: string;
 }

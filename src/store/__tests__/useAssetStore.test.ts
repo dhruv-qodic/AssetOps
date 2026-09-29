@@ -22,6 +22,7 @@ describe('store/useAssetStore', () => {
       isDeleteModalOpen: false,
       isViewModalOpen: false,
       isImportModalOpen: false,
+      isQrModalOpen: false,
     });
   });
 
@@ -129,5 +130,25 @@ describe('store/useAssetStore', () => {
     const updated = useAssetStore.getState().getAssetById(asset.id);
     expect(updated?.status).toBe('Available');
     expect(updated?.assignedTo).toBeNull();
+  });
+
+  it('should open and close QR modal correctly without closing view modal', () => {
+    const asset = useAssetStore.getState().assets[0];
+    useAssetStore.getState().openViewModal(asset);
+    expect(useAssetStore.getState().isViewModalOpen).toBe(true);
+
+    useAssetStore.getState().openQrModal(asset);
+    expect(useAssetStore.getState().isQrModalOpen).toBe(true);
+    expect(useAssetStore.getState().isViewModalOpen).toBe(true);
+    expect(useAssetStore.getState().selectedAsset?.id).toBe(asset.id);
+
+    useAssetStore.getState().closeQrModal();
+    expect(useAssetStore.getState().isQrModalOpen).toBe(false);
+    expect(useAssetStore.getState().isViewModalOpen).toBe(true);
+
+    useAssetStore.getState().closeModals();
+    expect(useAssetStore.getState().isViewModalOpen).toBe(false);
+    expect(useAssetStore.getState().isQrModalOpen).toBe(false);
+    expect(useAssetStore.getState().selectedAsset).toBeNull();
   });
 });

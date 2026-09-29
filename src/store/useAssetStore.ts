@@ -10,6 +10,7 @@ import type {
   UpdateAssetInput,
   AssetStats,
   AssignedEmployee,
+  AllocationHistoryRecord,
 } from '@/types/asset';
 import { DEFAULT_ASSET_FILTERS } from '@/constant/asset.constants';
 import { MOCK_ASSETS } from '@/mocks/seed/assets';
@@ -33,6 +34,7 @@ interface AssetStoreState {
   isViewModalOpen: boolean;
   isImportModalOpen: boolean;
   isAllocateModalOpen: boolean;
+  isQrModalOpen: boolean;
 
   // State actions
   setIsLoading: (loading: boolean) => void;
@@ -68,6 +70,7 @@ interface AssetStoreState {
   };
   getStats: () => AssetStats;
   getAssetById: (id: string) => Asset | undefined;
+  getAssetAllocationHistory: (idOrAsset: string | Asset) => AllocationHistoryRecord[];
 
   // Modal actions
   openAddModal: () => void;
@@ -76,6 +79,8 @@ interface AssetStoreState {
   openViewModal: (asset: Asset) => void;
   openImportModal: () => void;
   openAllocateModal: (asset?: Asset | null) => void;
+  openQrModal: (asset?: Asset | null) => void;
+  closeQrModal: () => void;
   closeModals: () => void;
 
   viewMode: 'virtualized' | 'table';
@@ -121,6 +126,7 @@ export const useAssetStore = create<AssetStoreState>()(
       isViewModalOpen: false,
       isImportModalOpen: false,
       isAllocateModalOpen: false,
+      isQrModalOpen: false,
 
       viewMode: 'virtualized',
       setViewMode: (mode) => set({ viewMode: mode }),
@@ -235,18 +241,36 @@ export const useAssetStore = create<AssetStoreState>()(
 
       allocateAsset: (id, employee) => {
         let success = false;
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
         set((state) => {
           const newAssets = state.assets.map((asset) => {
             if (asset.id === id) {
               success = true;
+              const newRecord: AllocationHistoryRecord = {
+                id: `hist_${crypto.randomUUID()}`,
+                assetId: asset.assetId,
+                employeeId: employee.id || employee.employeeId,
+                employeeName: employee.name,
+                employeeEmail: employee.email,
+                department: employee.department,
+                avatar: employee.avatar,
+                action: 'Allocated',
+                date: dateStr,
+                performedBy: 'IT Operations',
+              };
+
+              const existingHistory = asset.allocationHistory || [];
+
               return {
                 ...asset,
                 status: 'Allocated' as const,
                 assignedTo: {
                   ...employee,
-                  assignedDate: new Date().toISOString().split('T')[0],
+                  assignedDate: dateStr,
                 },
-                updatedAt: new Date().toISOString(),
+                allocationHistory: [newRecord, ...existingHistory],
+                updatedAt: now.toISOString(),
               };
             }
             return asset;
@@ -258,15 +282,39 @@ export const useAssetStore = create<AssetStoreState>()(
 
       deallocateAsset: (id) => {
         let success = false;
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
         set((state) => {
           const newAssets = state.assets.map((asset) => {
             if (asset.id === id) {
               success = true;
+              const prevEmp = asset.assignedTo;
+              const deallocRecord: AllocationHistoryRecord | null = prevEmp
+                ? {
+                    id: `hist_${crypto.randomUUID()}`,
+                    assetId: asset.assetId,
+                    employeeId: prevEmp.id || prevEmp.employeeId,
+                    employeeName: prevEmp.name,
+                    employeeEmail: prevEmp.email,
+                    department: prevEmp.department,
+                    avatar: prevEmp.avatar,
+                    action: 'Deallocated',
+                    date: dateStr,
+                    performedBy: 'IT Operations',
+                  }
+                : null;
+
+              const existingHistory = asset.allocationHistory || [];
+              const updatedHistory = deallocRecord
+                ? [deallocRecord, ...existingHistory]
+                : existingHistory;
+
               return {
                 ...asset,
                 status: 'Available' as const,
                 assignedTo: null,
-                updatedAt: new Date().toISOString(),
+                allocationHistory: updatedHistory,
+                updatedAt: now.toISOString(),
               };
             }
             return asset;
@@ -362,7 +410,42 @@ export const useAssetStore = create<AssetStoreState>()(
       },
 
       getAssetById: (id) => {
-        return get().assets.find((a) => a.id === id);
+        if (!id) return undefined;
+        const normalized = id.toLowerCase().trim();
+        return get().assets.find(
+          (a) => a.id.toLowerCase() === normalized || a.assetId.toLowerCase() === normalized,
+        );
+      },
+
+      getAssetAllocationHistory: (idOrAsset) => {
+        const asset = typeof idOrAsset === 'string' ? get().getAssetById(idOrAsset) : idOrAsset;
+        if (!asset) return [];
+
+        if (asset.allocationHistory && asset.allocationHistory.length > 0) {
+          return [...asset.allocationHistory].sort(
+            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+          );
+        }
+
+        // Fallback: If currently assigned, synthesize an allocation event
+        if (asset.assignedTo) {
+          return [
+            {
+              id: `hist_${asset.id}_current`,
+              assetId: asset.assetId,
+              employeeId: asset.assignedTo.id || asset.assignedTo.employeeId,
+              employeeName: asset.assignedTo.name,
+              employeeEmail: asset.assignedTo.email,
+              department: asset.assignedTo.department,
+              avatar: asset.assignedTo.avatar,
+              action: 'Allocated',
+              date: asset.assignedTo.assignedDate || asset.purchaseDate,
+              performedBy: 'IT Operations',
+            },
+          ];
+        }
+
+        return [];
       },
 
       // Modal Actions
@@ -373,6 +456,12 @@ export const useAssetStore = create<AssetStoreState>()(
       openImportModal: () => set({ isImportModalOpen: true }),
       openAllocateModal: (asset) =>
         set({ isAllocateModalOpen: true, selectedAsset: asset || null }),
+      openQrModal: (asset) =>
+        set((state) => ({
+          isQrModalOpen: true,
+          selectedAsset: asset !== undefined ? asset : state.selectedAsset,
+        })),
+      closeQrModal: () => set({ isQrModalOpen: false }),
       closeModals: () =>
         set({
           isAddModalOpen: false,
@@ -381,6 +470,7 @@ export const useAssetStore = create<AssetStoreState>()(
           isViewModalOpen: false,
           isImportModalOpen: false,
           isAllocateModalOpen: false,
+          isQrModalOpen: false,
           selectedAsset: null,
         }),
     }),
