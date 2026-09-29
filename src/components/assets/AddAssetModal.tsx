@@ -449,14 +449,14 @@ export const AddAssetModal: React.FC = () => {
               type="button"
               variant="outline"
               onClick={closeModals}
-              className="h-9 text-xs rounded-md"
+              className="h-9 text-xs rounded-md cursor-pointer"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="h-9 bg-[#155DFC] hover:bg-[#0D4ECC] text-white text-xs font-medium px-5 rounded-md shadow-xs"
+              className="h-9 bg-[#155DFC] hover:bg-[#0D4ECC] text-white text-xs font-medium px-5 rounded-md shadow-xs cursor-pointer"
             >
               {isEditing ? 'Save Changes' : 'Create Asset'}
             </Button>

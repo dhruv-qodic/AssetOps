@@ -3,7 +3,7 @@ import { useAssetStore } from '@/store/useAssetStore';
 import { useEmployeeStore } from '@/store/useEmployeeStore';
 import { Button } from '@/components/ui/button';
 import AllocateAssetModal from '@/components/assets/AllocateAssetModal';
-import AssetDetailsModal from '@/components/assets/AssetDetailsModal';
+import AssetQrModal from '@/components/assets/AssetQrModal';
 import AllocationFiltersBar from '@/components/allocations/AllocationFiltersBar';
 import AllocationTable from '@/components/allocations/AllocationTable';
 import AllocationSummaryCard from '@/components/allocations/AllocationSummaryCard';
@@ -266,7 +266,7 @@ export function AllocationsPage() {
 
       {/* Modals & Dialogs */}
       <AllocateAssetModal />
-      <AssetDetailsModal />
+      <AssetQrModal />
     </div>
   );
 }
