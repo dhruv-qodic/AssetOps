@@ -1,5 +1,6 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import {
   Building2,
   FolderTree,
@@ -37,7 +38,7 @@ interface AssetHierarchyViewProps {
   onAddAsset?: () => void;
 }
 
-interface TreeEmployeeNode {
+export interface TreeEmployeeNode {
   key: string;
   name: string;
   email?: string;
@@ -48,7 +49,7 @@ interface TreeEmployeeNode {
   totalValue: number;
 }
 
-interface TreeDepartmentNode {
+export interface TreeDepartmentNode {
   key: string;
   name: string;
   employees: TreeEmployeeNode[];
@@ -56,7 +57,7 @@ interface TreeDepartmentNode {
   totalValue: number;
 }
 
-interface TreeLocationNode {
+export interface TreeLocationNode {
   key: string;
   name: string;
   departments: TreeDepartmentNode[];
@@ -64,6 +65,41 @@ interface TreeLocationNode {
   totalValue: number;
   totalEmployees: number;
 }
+
+export type FlatTreeNode =
+  | {
+      type: 'location';
+      key: string;
+      data: TreeLocationNode;
+      isExpanded: boolean;
+      depth: 0;
+    }
+  | {
+      type: 'department';
+      key: string;
+      data: TreeDepartmentNode;
+      locationKey: string;
+      isExpanded: boolean;
+      depth: 1;
+    }
+  | {
+      type: 'employee';
+      key: string;
+      data: TreeEmployeeNode;
+      locationKey: string;
+      deptKey: string;
+      isExpanded: boolean;
+      depth: 2;
+    }
+  | {
+      type: 'asset';
+      key: string;
+      data: Asset;
+      locationKey: string;
+      deptKey: string;
+      empKey: string;
+      depth: 3;
+    };
 
 export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
   assets,
@@ -74,17 +110,18 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
   onAddAsset,
 }) => {
   const navigate = useNavigate();
+  const parentRef = useRef<HTMLDivElement>(null);
   const openQrModal = useAssetStore((s) => s.openQrModal);
   const openEditModal = useAssetStore((s) => s.openEditModal);
 
   // Search filter query within tree
   const [localSearch, setLocalSearch] = useState('');
-  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set());
 
   // 1. Build hierarchical tree structure from assets
-  const { treeData, allNodeKeys, stats } = useMemo(() => {
+  const { treeData, allNodeKeys, stats, initialExpandedKeys } = useMemo(() => {
     const locationMap = new Map<string, Map<string, Map<string, TreeEmployeeNode>>>();
     const allKeys: string[] = [];
+    const defaultExpanded: string[] = [];
 
     const query = localSearch.trim().toLowerCase();
     const filteredAssets = query
@@ -119,6 +156,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
         return {
           treeData: [],
           allNodeKeys: [],
+          initialExpandedKeys: [],
           stats: {
             locationsCount: 0,
             departmentsCount: 0,
@@ -137,6 +175,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
         return {
           treeData: [],
           allNodeKeys: [],
+          initialExpandedKeys: [],
           stats: {
             locationsCount: 0,
             departmentsCount: 0,
@@ -174,6 +213,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
     for (const [locName, deptMap] of locationMap.entries()) {
       const locKey = `loc_${locName}`;
       allKeys.push(locKey);
+      defaultExpanded.push(locKey);
 
       const departments: TreeDepartmentNode[] = [];
       let locTotalAssets = 0;
@@ -183,6 +223,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
       for (const [deptName, empMap] of deptMap.entries()) {
         const deptKey = `dept_${locName}_${deptName}`;
         allKeys.push(deptKey);
+        defaultExpanded.push(deptKey);
         grandTotalDepartments++;
 
         const employees: TreeEmployeeNode[] = [];
@@ -191,6 +232,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
 
         for (const empNode of empMap.values()) {
           allKeys.push(empNode.key);
+          defaultExpanded.push(empNode.key);
           if (!empNode.isUnassigned) {
             locTotalEmployees++;
             grandTotalEmployees++;
@@ -238,6 +280,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
     return {
       treeData: locations,
       allNodeKeys: allKeys,
+      initialExpandedKeys: defaultExpanded,
       stats: {
         locationsCount: locations.length,
         departmentsCount: grandTotalDepartments,
@@ -247,25 +290,19 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
     };
   }, [assets, localSearch]);
 
-  const hasInitializedRef = React.useRef(false);
+  // Initial expansion state: initialized on mount without triggering an extra delayed render cascade
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(
+    () => new Set(initialExpandedKeys),
+  );
+  const hasInitializedRef = useRef(false);
 
-  // Initial expansion of top-level locations, departments, and employee groups
+  // Sync initial expansion if assets load asynchronously after initial mount
   useEffect(() => {
-    if (treeData.length > 0 && !hasInitializedRef.current) {
+    if (initialExpandedKeys.length > 0 && !hasInitializedRef.current) {
       hasInitializedRef.current = true;
-      const initialExpanded = new Set<string>();
-      for (const loc of treeData) {
-        initialExpanded.add(loc.key);
-        for (const dept of loc.departments) {
-          initialExpanded.add(dept.key);
-          for (const emp of dept.employees) {
-            initialExpanded.add(emp.key);
-          }
-        }
-      }
-      setExpandedNodes(initialExpanded);
+      setExpandedNodes(new Set(initialExpandedKeys));
     }
-  }, [treeData]);
+  }, [initialExpandedKeys]);
 
   // Auto-expand all matching branches when searching
   useEffect(() => {
@@ -274,7 +311,7 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
     }
   }, [localSearch, allNodeKeys]);
 
-  const toggleNode = (nodeKey: string) => {
+  const toggleNode = useCallback((nodeKey: string) => {
     setExpandedNodes((prev) => {
       const next = new Set(prev);
       if (next.has(nodeKey)) {
@@ -284,19 +321,105 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
       }
       return next;
     });
-  };
+  }, []);
 
-  const expandAll = () => {
+  const expandAll = useCallback(() => {
     setExpandedNodes(new Set(allNodeKeys));
-  };
+  }, [allNodeKeys]);
 
-  const collapseAll = () => {
+  const collapseAll = useCallback(() => {
     setExpandedNodes(new Set());
-  };
+  }, []);
 
-  const handleAssetClick = (asset: Asset) => {
-    void navigate(`/assets/${asset.assetId}`);
-  };
+  const handleAssetClick = useCallback(
+    (asset: Asset) => {
+      void navigate(`/assets/${asset.assetId}`);
+    },
+    [navigate],
+  );
+
+  // 2. Flatten only the visible/expanded tree nodes for virtualization
+  const flatNodes = useMemo<FlatTreeNode[]>(() => {
+    const list: FlatTreeNode[] = [];
+
+    for (const loc of treeData) {
+      const isLocExpanded = expandedNodes.has(loc.key);
+      list.push({
+        type: 'location',
+        key: loc.key,
+        data: loc,
+        isExpanded: isLocExpanded,
+        depth: 0,
+      });
+
+      if (isLocExpanded) {
+        for (const dept of loc.departments) {
+          const isDeptExpanded = expandedNodes.has(dept.key);
+          list.push({
+            type: 'department',
+            key: dept.key,
+            data: dept,
+            locationKey: loc.key,
+            isExpanded: isDeptExpanded,
+            depth: 1,
+          });
+
+          if (isDeptExpanded) {
+            for (const emp of dept.employees) {
+              const isEmpExpanded = expandedNodes.has(emp.key);
+              list.push({
+                type: 'employee',
+                key: emp.key,
+                data: emp,
+                locationKey: loc.key,
+                deptKey: dept.key,
+                isExpanded: isEmpExpanded,
+                depth: 2,
+              });
+
+              if (isEmpExpanded) {
+                for (const asset of emp.assets) {
+                  list.push({
+                    type: 'asset',
+                    key: `asset_${asset.id}`,
+                    data: asset,
+                    locationKey: loc.key,
+                    deptKey: dept.key,
+                    empKey: emp.key,
+                    depth: 3,
+                  });
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return list;
+  }, [treeData, expandedNodes]);
+
+  // 3. Virtualizer instance to render only visible tree nodes
+  const rowVirtualizer = useVirtualizer({
+    count: flatNodes.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: (index) => {
+      const node = flatNodes[index];
+      switch (node.type) {
+        case 'location':
+          return 76;
+        case 'department':
+          return 56;
+        case 'employee':
+          return 58;
+        case 'asset':
+          return 68;
+      }
+    },
+    getItemKey: (index) => flatNodes[index]?.key ?? index,
+    overscan: 10,
+    initialRect: { width: 1000, height: 750 },
+  });
 
   // 1. Loading State
   if (isLoading) {
@@ -396,9 +519,12 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
         </div>
       </div>
 
-      {/* 2. Hierarchical Tree Nodes Body */}
-      <div className="p-4 sm:p-6 space-y-4 overflow-y-auto max-h-[750px]">
-        {treeData.length === 0 ? (
+      {/* 2. Hierarchical Virtualized Tree Container */}
+      <div
+        ref={parentRef}
+        className="p-4 sm:p-6 overflow-y-auto max-h-[750px] relative scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-slate-700"
+      >
+        {flatNodes.length === 0 ? (
           <div className="p-8 text-center text-slate-400 space-y-2">
             <PackageSearch className="size-8 mx-auto text-slate-400" />
             <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">
@@ -417,318 +543,314 @@ export const AssetHierarchyView: React.FC<AssetHierarchyViewProps> = ({
             )}
           </div>
         ) : (
-          treeData.map((locationNode) => {
-            const isLocExpanded = expandedNodes.has(locationNode.key);
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const node = flatNodes[virtualRow.index];
 
-            return (
-              <div
-                key={locationNode.key}
-                className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden transition-all"
-              >
-                {/* Level 1: Location / Office Node Header */}
-                <button
-                  type="button"
-                  onClick={() => toggleNode(locationNode.key)}
-                  className="w-full flex items-center justify-between p-3.5 sm:p-4 bg-slate-50/90 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer text-left"
-                  aria-expanded={isLocExpanded}
+              return (
+                <div
+                  key={virtualRow.key}
+                  data-index={virtualRow.index}
+                  ref={rowVirtualizer.measureElement}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  className="pb-2.5"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-1 text-slate-400 dark:text-slate-500">
-                      {isLocExpanded ? (
-                        <ChevronDown className="size-4.5 text-[#155DFC] dark:text-blue-400" />
-                      ) : (
-                        <ChevronRight className="size-4.5" />
-                      )}
+                  {/* Level 0: Location / Office Node */}
+                  {node.type === 'location' && (
+                    <div className="rounded-2xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xs overflow-hidden transition-all">
+                      <button
+                        type="button"
+                        onClick={() => toggleNode(node.key)}
+                        className="w-full flex items-center justify-between p-3.5 sm:p-4 bg-slate-50/90 dark:bg-slate-800/60 hover:bg-slate-100/80 dark:hover:bg-slate-800 transition-colors cursor-pointer text-left"
+                        aria-expanded={node.isExpanded}
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="p-1 text-slate-400 dark:text-slate-500">
+                            {node.isExpanded ? (
+                              <ChevronDown className="size-4.5 text-[#155DFC] dark:text-blue-400" />
+                            ) : (
+                              <ChevronRight className="size-4.5" />
+                            )}
+                          </div>
+
+                          <div className="p-2 rounded-xl bg-blue-50 text-[#155DFC] dark:bg-blue-950/80 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/60">
+                            <Building2 className="size-5" />
+                          </div>
+
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-slate-100">
+                                {node.data.name}
+                              </span>
+                              <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-[#155DFC] dark:text-blue-300">
+                                Office Location
+                              </span>
+                            </div>
+                            <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                              {node.data.departments.length} Departments •{' '}
+                              {node.data.totalEmployees} Active Assignees
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 shrink-0">
+                          <div className="text-right hidden sm:block">
+                            <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
+                              {node.data.totalAssets} Assets
+                            </span>
+                            <span className="text-[11px] text-slate-400 font-medium">
+                              ${node.data.totalValue.toLocaleString()} Value
+                            </span>
+                          </div>
+                          <Badge variant="secondary" className="font-mono text-xs font-bold">
+                            {node.data.totalAssets}
+                          </Badge>
+                        </div>
+                      </button>
                     </div>
+                  )}
 
-                    <div className="p-2 rounded-xl bg-blue-50 text-[#155DFC] dark:bg-blue-950/80 dark:text-blue-300 border border-blue-200/60 dark:border-blue-900/60">
-                      <Building2 className="size-5" />
-                    </div>
-
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-sm sm:text-base text-slate-900 dark:text-slate-100">
-                          {locationNode.name}
-                        </span>
-                        <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-[#155DFC] dark:text-blue-300">
-                          Office Location
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                        {locationNode.departments.length} Departments •{' '}
-                        {locationNode.totalEmployees} Active Assignees
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3 shrink-0">
-                    <div className="text-right hidden sm:block">
-                      <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block">
-                        {locationNode.totalAssets} Assets
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-medium">
-                        ${locationNode.totalValue.toLocaleString()} Value
-                      </span>
-                    </div>
-                    <Badge variant="secondary" className="font-mono text-xs font-bold">
-                      {locationNode.totalAssets}
-                    </Badge>
-                  </div>
-                </button>
-
-                {/* Location Children: Departments */}
-                {isLocExpanded && (
-                  <div className="p-3 sm:p-5 space-y-3 bg-white dark:bg-slate-900/80 border-t border-slate-100 dark:border-slate-800">
-                    {locationNode.departments.map((deptNode) => {
-                      const isDeptExpanded = expandedNodes.has(deptNode.key);
-
-                      return (
-                        <div
-                          key={deptNode.key}
-                          className="rounded-xl border border-slate-200/70 dark:border-slate-800/80 bg-slate-50/40 dark:bg-slate-800/30 overflow-hidden ml-2 sm:ml-4"
+                  {/* Level 1: Department Node */}
+                  {node.type === 'department' && (
+                    <div className="pl-3 sm:pl-6">
+                      <div className="rounded-xl border border-slate-200/70 dark:border-slate-800/80 bg-slate-50/40 dark:bg-slate-800/30 overflow-hidden shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={() => toggleNode(node.key)}
+                          className="w-full flex items-center justify-between p-3 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-colors cursor-pointer text-left"
+                          aria-expanded={node.isExpanded}
                         >
-                          {/* Level 2: Department Node Header */}
-                          <button
-                            type="button"
-                            onClick={() => toggleNode(deptNode.key)}
-                            className="w-full flex items-center justify-between p-3 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 transition-colors cursor-pointer text-left"
-                            aria-expanded={isDeptExpanded}
-                          >
-                            <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="p-0.5 text-slate-400">
-                                {isDeptExpanded ? (
-                                  <ChevronDown className="size-4 text-indigo-600 dark:text-indigo-400" />
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="p-0.5 text-slate-400">
+                              {node.isExpanded ? (
+                                <ChevronDown className="size-4 text-indigo-600 dark:text-indigo-400" />
+                              ) : (
+                                <ChevronRight className="size-4" />
+                              )}
+                            </div>
+
+                            <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-900/60">
+                              <Layers className="size-4" />
+                            </div>
+
+                            <div>
+                              <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-100">
+                                {node.data.name}
+                              </span>
+                              <span className="text-[11px] text-slate-400 ml-2">
+                                ({node.data.employees.length}{' '}
+                                {node.data.employees.length === 1
+                                  ? 'member/group'
+                                  : 'members/groups'}
+                                )
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[11px] font-medium text-slate-500 hidden sm:inline">
+                              ${node.data.totalValue.toLocaleString()}
+                            </span>
+                            <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
+                              {node.data.totalAssets}{' '}
+                              {node.data.totalAssets === 1 ? 'asset' : 'assets'}
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Level 2: Employee / Assignee Node */}
+                  {node.type === 'employee' && (
+                    <div className="pl-6 sm:pl-12">
+                      <div className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs">
+                        <button
+                          type="button"
+                          onClick={() => toggleNode(node.key)}
+                          className="w-full flex items-center justify-between p-2.5 sm:p-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-left"
+                          aria-expanded={node.isExpanded}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className="p-0.5 text-slate-400">
+                              {node.isExpanded ? (
+                                <ChevronDown className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                              ) : (
+                                <ChevronRight className="size-3.5" />
+                              )}
+                            </div>
+
+                            {node.data.isUnassigned ? (
+                              <div className="size-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center">
+                                <Package className="size-3.5" />
+                              </div>
+                            ) : node.data.avatar ? (
+                              <img
+                                src={node.data.avatar}
+                                alt={node.data.name}
+                                className="size-7 rounded-full bg-slate-100 object-cover ring-1 ring-slate-200 dark:ring-slate-700"
+                              />
+                            ) : (
+                              <div className="size-7 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center">
+                                {node.data.name.charAt(0)}
+                              </div>
+                            )}
+
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 truncate">
+                                  {node.data.name}
+                                </span>
+                                {node.data.isUnassigned ? (
+                                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+                                    Inventory
+                                  </span>
                                 ) : (
-                                  <ChevronRight className="size-4" />
+                                  <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-medium">
+                                    Assignee
+                                  </span>
                                 )}
                               </div>
+                              {node.data.email && (
+                                <p className="text-[10.5px] text-slate-400 truncate">
+                                  {node.data.email}
+                                </p>
+                              )}
+                            </div>
+                          </div>
 
-                              <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-950/80 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-900/60">
-                                <Layers className="size-4" />
+                          <div className="flex items-center gap-2 shrink-0">
+                            <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
+                              {node.data.assets.length}{' '}
+                              {node.data.assets.length === 1 ? 'asset' : 'assets'}
+                            </span>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Level 3: Leaf Node (Hardware Asset) */}
+                  {node.type === 'asset' && (
+                    <div className="pl-9 sm:pl-16">
+                      <div className="rounded-xl border border-slate-200/50 dark:border-slate-800/50 bg-white dark:bg-slate-900/90 overflow-hidden shadow-2xs">
+                        <div className="p-2.5 sm:p-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors group">
+                          {/* Asset Info & Identity */}
+                          <div
+                            onClick={() => handleAssetClick(node.data)}
+                            className="flex items-start sm:items-center gap-3 cursor-pointer min-w-0 flex-1"
+                            role="button"
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                handleAssetClick(node.data);
+                              }
+                            }}
+                          >
+                            <div className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-2xs shrink-0 group-hover:border-[#155DFC]/40 transition-colors">
+                              <AssetDeviceIcon
+                                category={node.data.category}
+                                name={node.data.name}
+                                className="size-7"
+                              />
+                            </div>
+
+                            <div className="space-y-0.5 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-mono font-bold text-xs text-[#155DFC] dark:text-blue-400">
+                                  {node.data.assetId}
+                                </span>
+                                <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 hover:underline">
+                                  {node.data.name}
+                                </span>
+                                {node.data.model && (
+                                  <span className="text-[10px] text-slate-400">
+                                    • {node.data.model}
+                                  </span>
+                                )}
+                                <AssetStatusBadge status={node.data.status} />
                               </div>
 
-                              <div>
-                                <span className="font-semibold text-xs sm:text-sm text-slate-900 dark:text-slate-100">
-                                  {deptNode.name}
+                              <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
+                                <span className="flex items-center gap-1">
+                                  <Layers className="size-3 text-slate-400" />
+                                  <span>{node.data.category}</span>
                                 </span>
-                                <span className="text-[11px] text-slate-400 ml-2">
-                                  ({deptNode.employees.length}{' '}
-                                  {deptNode.employees.length === 1
-                                    ? 'member/group'
-                                    : 'members/groups'}
-                                  )
+                                <span>•</span>
+                                <span className="flex items-center gap-1 font-mono">
+                                  <Hash className="size-3 text-slate-400" />
+                                  <span>{node.data.serialNumber}</span>
                                 </span>
+                                {node.data.purchaseCost !== undefined && (
+                                  <>
+                                    <span>•</span>
+                                    <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
+                                      <BadgeDollarSign className="size-3 text-slate-400" />
+                                      <span>${node.data.purchaseCost.toLocaleString()}</span>
+                                    </span>
+                                  </>
+                                )}
                               </div>
                             </div>
+                          </div>
 
-                            <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-[11px] font-medium text-slate-500 hidden sm:inline">
-                                ${deptNode.totalValue.toLocaleString()}
-                              </span>
-                              <span className="px-2 py-0.5 text-[11px] font-bold rounded-full bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400">
-                                {deptNode.totalAssets}{' '}
-                                {deptNode.totalAssets === 1 ? 'asset' : 'assets'}
-                              </span>
-                            </div>
-                          </button>
+                          {/* Action Buttons */}
+                          <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openQrModal(node.data)}
+                              className="h-7 px-2 text-xs border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1 cursor-pointer"
+                              title="View QR Code"
+                            >
+                              <QrCode className="size-3 text-[#155DFC]" />
+                              <span className="hidden md:inline">QR</span>
+                            </Button>
 
-                          {/* Department Children: Employees */}
-                          {isDeptExpanded && (
-                            <div className="p-3 space-y-2.5 border-t border-slate-200/50 dark:border-slate-800/60 ml-3 sm:ml-5">
-                              {deptNode.employees.map((empNode) => {
-                                const isEmpExpanded = expandedNodes.has(empNode.key);
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => openEditModal(node.data)}
+                              className="h-7 px-2 text-xs border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1 cursor-pointer"
+                              title="Edit Asset"
+                            >
+                              <Edit2 className="size-3" />
+                              <span className="hidden md:inline">Edit</span>
+                            </Button>
 
-                                return (
-                                  <div
-                                    key={empNode.key}
-                                    className="rounded-xl border border-slate-200/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 overflow-hidden shadow-2xs"
-                                  >
-                                    {/* Level 3: Employee / Assignee Node Header */}
-                                    <button
-                                      type="button"
-                                      onClick={() => toggleNode(empNode.key)}
-                                      className="w-full flex items-center justify-between p-2.5 sm:p-3 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-left"
-                                      aria-expanded={isEmpExpanded}
-                                    >
-                                      <div className="flex items-center gap-2.5 min-w-0">
-                                        <div className="p-0.5 text-slate-400">
-                                          {isEmpExpanded ? (
-                                            <ChevronDown className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                                          ) : (
-                                            <ChevronRight className="size-3.5" />
-                                          )}
-                                        </div>
-
-                                        {empNode.isUnassigned ? (
-                                          <div className="size-7 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-500 flex items-center justify-center">
-                                            <Package className="size-3.5" />
-                                          </div>
-                                        ) : empNode.avatar ? (
-                                          <img
-                                            src={empNode.avatar}
-                                            alt={empNode.name}
-                                            className="size-7 rounded-full bg-slate-100 object-cover ring-1 ring-slate-200 dark:ring-slate-700"
-                                          />
-                                        ) : (
-                                          <div className="size-7 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center justify-center">
-                                            {empNode.name.charAt(0)}
-                                          </div>
-                                        )}
-
-                                        <div className="min-w-0">
-                                          <div className="flex items-center gap-2">
-                                            <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 truncate">
-                                              {empNode.name}
-                                            </span>
-                                            {empNode.isUnassigned ? (
-                                              <span className="text-[10px] px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
-                                                Inventory
-                                              </span>
-                                            ) : (
-                                              <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-medium">
-                                                Assignee
-                                              </span>
-                                            )}
-                                          </div>
-                                          {empNode.email && (
-                                            <p className="text-[10.5px] text-slate-400 truncate">
-                                              {empNode.email}
-                                            </p>
-                                          )}
-                                        </div>
-                                      </div>
-
-                                      <div className="flex items-center gap-2 shrink-0">
-                                        <span className="text-[11px] font-semibold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full">
-                                          {empNode.assets.length}{' '}
-                                          {empNode.assets.length === 1 ? 'asset' : 'assets'}
-                                        </span>
-                                      </div>
-                                    </button>
-
-                                    {/* Level 4: Leaf Nodes (Hardware Assets) */}
-                                    {isEmpExpanded && (
-                                      <div className="divide-y divide-slate-100 dark:divide-slate-800 border-t border-slate-100 dark:border-slate-800 bg-slate-50/30 dark:bg-slate-900/50">
-                                        {empNode.assets.map((asset) => (
-                                          <div
-                                            key={asset.id}
-                                            className="p-3 pl-8 sm:pl-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-colors group"
-                                          >
-                                            {/* Asset Info & Identity */}
-                                            <div
-                                              onClick={() => handleAssetClick(asset)}
-                                              className="flex items-start sm:items-center gap-3 cursor-pointer min-w-0 flex-1"
-                                              role="button"
-                                              tabIndex={0}
-                                              onKeyDown={(e) => {
-                                                if (e.key === 'Enter' || e.key === ' ') {
-                                                  handleAssetClick(asset);
-                                                }
-                                              }}
-                                            >
-                                              <div className="p-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shadow-2xs shrink-0 group-hover:border-[#155DFC]/40 transition-colors">
-                                                <AssetDeviceIcon
-                                                  category={asset.category}
-                                                  name={asset.name}
-                                                  className="size-7"
-                                                />
-                                              </div>
-
-                                              <div className="space-y-0.5 min-w-0">
-                                                <div className="flex items-center gap-2 flex-wrap">
-                                                  <span className="font-mono font-bold text-xs text-[#155DFC] dark:text-blue-400">
-                                                    {asset.assetId}
-                                                  </span>
-                                                  <span className="font-semibold text-xs text-slate-900 dark:text-slate-100 hover:underline">
-                                                    {asset.name}
-                                                  </span>
-                                                  {asset.model && (
-                                                    <span className="text-[10px] text-slate-400">
-                                                      • {asset.model}
-                                                    </span>
-                                                  )}
-                                                  <AssetStatusBadge status={asset.status} />
-                                                </div>
-
-                                                <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-slate-500 dark:text-slate-400">
-                                                  <span className="flex items-center gap-1">
-                                                    <Layers className="size-3 text-slate-400" />
-                                                    <span>{asset.category}</span>
-                                                  </span>
-                                                  <span>•</span>
-                                                  <span className="flex items-center gap-1 font-mono">
-                                                    <Hash className="size-3 text-slate-400" />
-                                                    <span>{asset.serialNumber}</span>
-                                                  </span>
-                                                  {asset.purchaseCost !== undefined && (
-                                                    <>
-                                                      <span>•</span>
-                                                      <span className="flex items-center gap-1 font-semibold text-slate-700 dark:text-slate-300">
-                                                        <BadgeDollarSign className="size-3 text-slate-400" />
-                                                        <span>
-                                                          ${asset.purchaseCost.toLocaleString()}
-                                                        </span>
-                                                      </span>
-                                                    </>
-                                                  )}
-                                                </div>
-                                              </div>
-                                            </div>
-
-                                            {/* Action Buttons */}
-                                            <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
-                                              <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => openQrModal(asset)}
-                                                className="h-7 px-2 text-xs border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1 cursor-pointer"
-                                                title="View QR Code"
-                                              >
-                                                <QrCode className="size-3 text-[#155DFC]" />
-                                                <span className="hidden md:inline">QR</span>
-                                              </Button>
-
-                                              <Button
-                                                type="button"
-                                                variant="outline"
-                                                size="sm"
-                                                onClick={() => openEditModal(asset)}
-                                                className="h-7 px-2 text-xs border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center gap-1 cursor-pointer"
-                                                title="Edit Asset"
-                                              >
-                                                <Edit2 className="size-3" />
-                                                <span className="hidden md:inline">Edit</span>
-                                              </Button>
-
-                                              <Button
-                                                type="button"
-                                                size="sm"
-                                                onClick={() => handleAssetClick(asset)}
-                                                className="h-7 px-2.5 text-xs bg-[#155DFC] hover:bg-[#1243b2] text-white flex items-center gap-1 cursor-pointer shadow-2xs"
-                                                title="Open Asset Detail Page"
-                                              >
-                                                <span>Details</span>
-                                                <ExternalLink className="size-3" />
-                                              </Button>
-                                            </div>
-                                          </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
+                            <Button
+                              type="button"
+                              size="sm"
+                              onClick={() => handleAssetClick(node.data)}
+                              className="h-7 px-2.5 text-xs bg-[#155DFC] hover:bg-[#1243b2] text-white flex items-center gap-1 cursor-pointer shadow-2xs"
+                              title="Open Asset Detail Page"
+                            >
+                              <span>Details</span>
+                              <ExternalLink className="size-3" />
+                            </Button>
+                          </div>
                         </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            );
-          })
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

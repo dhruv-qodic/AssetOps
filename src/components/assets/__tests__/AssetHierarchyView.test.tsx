@@ -5,6 +5,45 @@ import { AssetHierarchyView } from '../AssetHierarchyView';
 import { useAssetStore } from '@/store/useAssetStore';
 import type { Asset } from '@/types/asset';
 
+const mockVirtualWindow = { start: 0, count: 50 };
+
+vi.mock('@tanstack/react-virtual', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-virtual')>();
+  return {
+    ...actual,
+    useVirtualizer: ({
+      count,
+      estimateSize,
+    }: {
+      count: number;
+      estimateSize?: (i: number) => number;
+    }) => {
+      const visibleLimit = mockVirtualWindow.count;
+      const startIndex = Math.min(mockVirtualWindow.start, Math.max(0, count - visibleLimit));
+      const endIndex = Math.min(count, startIndex + visibleLimit);
+      const items: Array<{ index: number; start: number; size: number; key: number }> = [];
+      let totalSize = 0;
+      for (let i = 0; i < count; i++) {
+        const size = estimateSize ? estimateSize(i) : 60;
+        if (i >= startIndex && i < endIndex) {
+          items.push({
+            index: i,
+            start: totalSize,
+            size,
+            key: i,
+          });
+        }
+        totalSize += size;
+      }
+      return {
+        getTotalSize: () => totalSize,
+        getVirtualItems: () => items,
+        measureElement: vi.fn(),
+      };
+    },
+  };
+});
+
 const mockAssets: Asset[] = [
   {
     id: 'ast_101',
@@ -70,6 +109,8 @@ const renderWithRouter = (ui: React.ReactElement) => {
 describe('AssetHierarchyView Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockVirtualWindow.start = 0;
+    mockVirtualWindow.count = 50;
     useAssetStore.setState({
       assets: mockAssets,
       isQrModalOpen: false,
@@ -165,5 +206,111 @@ describe('AssetHierarchyView Component', () => {
     renderWithRouter(<AssetHierarchyView assets={[]} onClearFilters={onClearMock} />);
 
     expect(screen.getByText('No assets available for hierarchy view')).toBeInTheDocument();
+  });
+
+  it('should render loading state when isLoading is true', () => {
+    renderWithRouter(<AssetHierarchyView assets={mockAssets} isLoading={true} />);
+
+    expect(screen.getByText('Loading asset hierarchy...')).toBeInTheDocument();
+  });
+
+  it('should render error state when error is provided', () => {
+    const onRetryMock = vi.fn();
+    renderWithRouter(
+      <AssetHierarchyView
+        assets={mockAssets}
+        error="Failed to fetch hierarchy"
+        onRetry={onRetryMock}
+      />,
+    );
+
+    expect(screen.getByText('Failed to load asset hierarchy')).toBeInTheDocument();
+    expect(screen.getByText('Failed to fetch hierarchy')).toBeInTheDocument();
+  });
+
+  it('should handle large asset datasets efficiently with virtualized window rendering', () => {
+    // Generate 500 assets across multiple offices and departments
+    const largeAssetList: Asset[] = Array.from({ length: 500 }, (_, index) => ({
+      id: `ast_large_${index}`,
+      assetId: `AST-L-${index}`,
+      name: `Laptop Pro ${index}`,
+      model: `Model X-${index % 10}`,
+      category: 'Laptop',
+      status: index % 3 === 0 ? 'Allocated' : 'Available',
+      location: `Office Location ${index % 5}`,
+      purchaseDate: '2023-01-01',
+      purchaseCost: 1500 + index,
+      serialNumber: `SN-${index}-${index * 7}`,
+      assignedTo:
+        index % 2 === 0
+          ? {
+              id: `emp_${index % 20}`,
+              name: `Employee ${index % 20}`,
+              email: `emp${index % 20}@company.com`,
+              department: `Dept ${index % 8}`,
+            }
+          : null,
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z',
+    }));
+
+    // Configure virtual window to render only 10 visible items at a time
+    mockVirtualWindow.count = 10;
+    mockVirtualWindow.start = 0;
+
+    renderWithRouter(<AssetHierarchyView assets={largeAssetList} />);
+
+    // Header displays aggregate statistics for all 500 assets
+    expect(screen.getByText(/500 Assets/i)).toBeInTheDocument();
+
+    // Verify only the virtual window slice of DOM nodes is rendered (not 500+ DOM nodes)
+    const officeNode = screen.getByText('Office Location 0');
+    expect(officeNode).toBeInTheDocument();
+
+    // Verify DOM node count for leaf asset names does not exceed the virtual window
+    const renderedLeafButtons = screen.queryAllByTitle(/view qr code/i);
+    expect(renderedLeafButtons.length).toBeLessThanOrEqual(10);
+  });
+
+  it('should support scrolling / virtualized window updates', () => {
+    // Create 60 assets
+    const dataset: Asset[] = Array.from({ length: 60 }, (_, index) => ({
+      id: `scroll_ast_${index}`,
+      assetId: `AST-SCROLL-${index}`,
+      name: `Scroll Device ${index}`,
+      category: 'Laptop',
+      status: 'Allocated',
+      location: 'Main Building',
+      purchaseDate: '2023-01-01',
+      serialNumber: `SN-SCROLL-${index}`,
+      assignedTo: {
+        id: `emp_${index}`,
+        name: `User ${index}`,
+        department: 'Operations',
+      },
+      createdAt: '2023-01-01T00:00:00Z',
+      updatedAt: '2023-01-01T00:00:00Z',
+    }));
+
+    // Initial window: items 0 to 5
+    mockVirtualWindow.start = 0;
+    mockVirtualWindow.count = 5;
+
+    const { rerender } = renderWithRouter(<AssetHierarchyView assets={dataset} />);
+
+    expect(screen.getByText('Main Building')).toBeInTheDocument();
+
+    // Simulate scrolling by shifting the virtual window
+    mockVirtualWindow.start = 10;
+    mockVirtualWindow.count = 5;
+
+    rerender(
+      <MemoryRouter>
+        <AssetHierarchyView assets={dataset} />
+      </MemoryRouter>,
+    );
+
+    // Header count remains correct
+    expect(screen.getByText(/60 Assets/i)).toBeInTheDocument();
   });
 });
