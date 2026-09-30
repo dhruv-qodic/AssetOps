@@ -11,7 +11,6 @@ if (rootElement) {
       <StrictMode>
         <App />
       </StrictMode>
-      ,
     </BrowserRouter>,
   );
 }
