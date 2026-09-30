@@ -82,6 +82,14 @@ export const DASHBOARD_WIDGETS: DashboardWidgetDefinition[] = [
     defaultVisible: true,
   },
   {
+    id: 'depreciation_chart',
+    label: 'Asset Depreciation & Book Value',
+    category: 'Analytics',
+    description:
+      'Line & area chart forecasting annual straight-line asset depreciation and residual book value',
+    defaultVisible: true,
+  },
+  {
     id: 'distribution_pie_chart',
     label: 'Asset Category & Department Distribution',
     category: 'Analytics',

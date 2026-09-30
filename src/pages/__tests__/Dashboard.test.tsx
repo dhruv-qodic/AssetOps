@@ -62,6 +62,7 @@ describe('Dashboard Component', () => {
         'recent_activity',
         'growth_line_chart',
         'valuation_area_chart',
+        'depreciation_chart',
         'distribution_pie_chart',
       ],
     });
@@ -114,7 +115,7 @@ describe('Dashboard Component', () => {
     expect(screen.getByText('Live Feed')).toBeInTheDocument();
   });
 
-  it('should render Section 4: Analytics Charts (Line, Area, and Pie charts)', () => {
+  it('should render Section 4: Analytics Charts (Line, Area, Depreciation, and Pie charts)', () => {
     renderDashboard();
 
     expect(
@@ -126,6 +127,10 @@ describe('Dashboard Component', () => {
 
     // Area Chart
     expect(screen.getByText('Asset Valuation & Capital Spend')).toBeInTheDocument();
+
+    // Depreciation Chart
+    expect(screen.getByText('Asset Depreciation & Book Value')).toBeInTheDocument();
+    expect(screen.getByText('Straight-Line Model')).toBeInTheDocument();
 
     // Pie Chart
     expect(screen.getByText('Asset Status Distribution')).toBeInTheDocument();

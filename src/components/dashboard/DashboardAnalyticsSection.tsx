@@ -3,6 +3,7 @@ import { Sparkles } from 'lucide-react';
 import { useDashboardStore } from '@/store/useDashboardStore';
 import { AssetTrendsLineChart } from './AssetTrendsLineChart';
 import { AssetValuationAreaChart } from './AssetValuationAreaChart';
+import { AssetDepreciationChart } from './AssetDepreciationChart';
 import AssetLifecycleChart from './AssetLifecycleChart';
 
 export const DashboardAnalyticsSection: React.FC = () => {
@@ -11,8 +12,14 @@ export const DashboardAnalyticsSection: React.FC = () => {
   const isLineVisible = visibleWidgetIds.includes('growth_line_chart');
   const isAreaVisible = visibleWidgetIds.includes('valuation_area_chart');
   const isLifecycleVisible = visibleWidgetIds.includes('lifecycle_chart');
+  const isDepreciationVisible = visibleWidgetIds.includes('depreciation_chart');
 
-  const visibleCount = [isLineVisible, isAreaVisible, isLifecycleVisible].filter(Boolean).length;
+  const visibleCount = [
+    isLifecycleVisible,
+    isLineVisible,
+    isAreaVisible,
+    isDepreciationVisible,
+  ].filter(Boolean).length;
 
   if (visibleCount === 0) {
     return null;
@@ -33,55 +40,44 @@ export const DashboardAnalyticsSection: React.FC = () => {
             </span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            Time-series telemetry, financial valuation curves, and category asset distribution.
+            Time-series telemetry, financial valuation curves, depreciation models, and asset
+            distribution.
           </p>
         </div>
       </div>
 
-      {/* Analytics Grid: 3 Visualizations (Line, Area, Pie) */}
+      {/* Analytics Grid: Visualizations */}
       <div className="flex flex-col w-full gap-5">
-        {/* Pie / Donut Chart */}
+        {/* Status Lifecycle Chart */}
         {isLifecycleVisible && (
-          <div
-            className={`flex flex-col ${
-              visibleCount === 3
-                ? 'lg:col-span-4'
-                : visibleCount === 2
-                  ? 'lg:col-span-6'
-                  : 'lg:col-span-12'
-            }`}
-          >
+          <div className="flex flex-col w-full">
             <AssetLifecycleChart />
           </div>
         )}
 
-        {/* Line Chart */}
-        {isLineVisible && (
-          <div
-            className={`flex flex-col ${
-              visibleCount === 3
-                ? 'lg:col-span-4'
-                : visibleCount === 2
-                  ? 'lg:col-span-6'
-                  : 'lg:col-span-12'
-            }`}
-          >
-            <AssetTrendsLineChart />
+        {/* Dual Grid for Fleet Trends & Asset Valuation */}
+        {(isLineVisible || isAreaVisible) && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+            {/* Line Chart */}
+            {isLineVisible && (
+              <div className="flex flex-col">
+                <AssetTrendsLineChart />
+              </div>
+            )}
+
+            {/* Area Chart */}
+            {isAreaVisible && (
+              <div className="flex flex-col">
+                <AssetValuationAreaChart />
+              </div>
+            )}
           </div>
         )}
 
-        {/* Area Chart */}
-        {isAreaVisible && (
-          <div
-            className={`flex flex-col ${
-              visibleCount === 3
-                ? 'lg:col-span-4'
-                : visibleCount === 2
-                  ? 'lg:col-span-6'
-                  : 'lg:col-span-12'
-            }`}
-          >
-            <AssetValuationAreaChart />
+        {/* Depreciation & Book Value Chart */}
+        {isDepreciationVisible && (
+          <div className="flex flex-col w-full">
+            <AssetDepreciationChart />
           </div>
         )}
       </div>
