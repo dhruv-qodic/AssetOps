@@ -83,8 +83,8 @@ interface AssetStoreState {
   closeQrModal: () => void;
   closeModals: () => void;
 
-  viewMode: 'virtualized' | 'table';
-  setViewMode: (mode: 'virtualized' | 'table') => void;
+  viewMode: 'virtualized' | 'table' | 'tree';
+  setViewMode: (mode: 'virtualized' | 'table' | 'tree') => void;
 }
 
 const safeStorage: StateStorage = {
