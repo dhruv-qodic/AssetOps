@@ -317,7 +317,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
             variant="default"
             size="sm"
             onClick={handleApply}
-            className="w-full sm:w-auto bg-[#155DFC] hover:bg-[#3D32DB] text-white text-xs h-8 px-5 font-semibold shadow-xs"
+            className="w-full sm:w-auto bg-[#155DFC] hover:bg-[#1243b2] text-white text-xs h-8 px-5 font-semibold shadow-xs"
           >
             Apply & Done
           </Button>

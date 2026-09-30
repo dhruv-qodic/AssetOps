@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Zap, Table2, Columns3 } from 'lucide-react';
+import { Zap, Table2, Columns3, FolderTree } from 'lucide-react';
 import { useAssetStore } from '@/store/useAssetStore';
 import { cn } from '@/lib/utils';
 import ColumnVisibilityModal from './ColumnVisibilityModal';
@@ -39,7 +39,7 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
       </div>
 
       {/* Right: Actions (Filter + Columns + View Mode Switcher) */}
-      <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0">
+      <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0 flex-wrap">
         {/* Filter Popup Trigger Button */}
         <AssetFilterDropdown />
 
@@ -56,7 +56,7 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
           </button>
         )}
 
-        {/* Visualizer and Paginator Toggle */}
+        {/* View Mode Switcher (Table | Visualizer | Hierarchy) */}
         <div className="flex items-center p-1 bg-slate-100 dark:bg-slate-800/80 rounded-lg border border-slate-200/80 dark:border-slate-700/60 shrink-0">
           <button
             type="button"
@@ -64,12 +64,12 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'table'
-                ? 'bg-blue-600 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                ? 'bg-[#155DFC] dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
             )}
-            title="Virtualized Grid View"
+            title="Standard Table View"
           >
-            <Zap className="size-3.5" />
+            <Table2 className="size-3.5" />
             <span>Table</span>
           </button>
           <button
@@ -78,13 +78,27 @@ export const AssetToolbar: React.FC<AssetToolbarProps> = ({ totalCount, isPendin
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
               viewMode === 'virtualized'
-                ? 'bg-blue-700 dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                ? 'bg-[#155DFC] dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
                 : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
             )}
-            title="Paginated Table View"
+            title="Virtualized Grid Visualizer"
           >
-            <Table2 className="size-3.5" />
+            <Zap className="size-3.5" />
             <span>Visualizer</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('tree')}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-semibold transition-all cursor-pointer select-none',
+              viewMode === 'tree'
+                ? 'bg-[#155DFC] dark:bg-slate-900 text-white dark:text-blue-400 shadow-2xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200',
+            )}
+            title="Office & Department Hierarchy Tree"
+          >
+            <FolderTree className="size-3.5" />
+            <span>Hierarchy</span>
           </button>
         </div>
       </div>

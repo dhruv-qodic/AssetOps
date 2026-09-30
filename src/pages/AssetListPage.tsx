@@ -6,6 +6,7 @@ import AssetHeader from '@/components/assets/AssetHeader';
 import AssetToolbar from '@/components/assets/AssetToolbar';
 import AssetTable from '@/components/assets/AssetTable';
 import AssetVisualizer from '@/components/assets/AssetVisualizer';
+import AssetHierarchyView from '@/components/assets/AssetHierarchyView';
 import AssetPagination from '@/components/assets/AssetPagination';
 import AddAssetModal from '@/components/assets/AddAssetModal';
 import AssetQrModal from '@/components/assets/AssetQrModal';
@@ -90,14 +91,24 @@ export function AssetListPage() {
       {/* 1. Page Header with Title and Action Buttons */}
       <AssetHeader />
 
-      {/* 2. Main Content: KPIs, Data Toolbar, Table / Visualizer, and Pagination */}
+      {/* 2. Main Content: KPIs, Data Toolbar, Table / Visualizer / Hierarchy, and Pagination */}
       <div className="w-full space-y-4">
         <AssetKpiCards />
 
         <AssetToolbar totalCount={totalFiltered} isPending={isFilteringPending} />
 
         <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-          {viewMode === 'virtualized' ? (
+          {viewMode === 'tree' ? (
+            <AssetHierarchyView
+              assets={allFilteredAssets}
+              isLoading={isLoading}
+              isPending={isFilteringPending}
+              error={error}
+              onRetry={() => void reloadAssets()}
+              onClearFilters={handleClearFilters}
+              onAddAsset={openAddModal}
+            />
+          ) : viewMode === 'virtualized' ? (
             <AssetVisualizer
               assets={allFilteredAssets}
               isLoading={isLoading}

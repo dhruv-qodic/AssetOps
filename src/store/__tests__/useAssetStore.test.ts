@@ -65,10 +65,12 @@ describe('store/useAssetStore', () => {
     expect(allFilteredAssets.every((a) => a.status === 'Maintenance')).toBe(true);
   });
 
-  it('should toggle viewMode between virtualized and table', () => {
+  it('should toggle viewMode between virtualized, table, and tree', () => {
     expect(useAssetStore.getState().viewMode).toBe('virtualized');
     useAssetStore.getState().setViewMode('table');
     expect(useAssetStore.getState().viewMode).toBe('table');
+    useAssetStore.getState().setViewMode('tree');
+    expect(useAssetStore.getState().viewMode).toBe('tree');
   });
 
   it('should add a new asset to 10,000 dataset', () => {

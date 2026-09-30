@@ -193,4 +193,23 @@ describe('AssetListPage Component with Multi-Facet Filtering', () => {
       { timeout: 2500 },
     );
   });
+
+  it('should switch between Table, Visualizer, and Hierarchy views correctly', () => {
+    renderAssetListPage();
+
+    // Default is Table
+    expect(screen.getByTitle('Configure Column Visibility')).toBeInTheDocument();
+
+    // Switch to Visualizer
+    const visualizerTab = screen.getByRole('button', { name: /visualizer/i });
+    fireEvent.click(visualizerTab);
+    expect(useAssetStore.getState().viewMode).toBe('virtualized');
+    expect(screen.getByText('Visualizer Engine Active')).toBeInTheDocument();
+
+    // Switch to Hierarchy
+    const hierarchyTab = screen.getByRole('button', { name: /hierarchy/i });
+    fireEvent.click(hierarchyTab);
+    expect(useAssetStore.getState().viewMode).toBe('tree');
+    expect(screen.getByText('Asset Hierarchy Tree')).toBeInTheDocument();
+  });
 });
