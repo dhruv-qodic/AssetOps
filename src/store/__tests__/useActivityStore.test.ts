@@ -139,7 +139,7 @@ describe('useActivityStore', () => {
   });
 
   it('should automatically log activity when addEmployee is called in useEmployeeStore', () => {
-    const emp = useEmployeeStore.getState().addEmployee({
+    useEmployeeStore.getState().addEmployee({
       firstName: 'Samantha',
       lastName: 'Carter',
       email: 'samantha@assetops.com',

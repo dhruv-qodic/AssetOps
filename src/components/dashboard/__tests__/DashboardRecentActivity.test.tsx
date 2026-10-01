@@ -167,7 +167,7 @@ describe('DashboardRecentActivity Component', () => {
     expect(screen.getAllByText('Onboarded').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('should render empty state with "No Activity" when no activities exist', () => {
+  it('should render empty state when no activities exist', () => {
     useActivityStore.setState({ activities: [] });
 
     render(
@@ -176,9 +176,11 @@ describe('DashboardRecentActivity Component', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByText('No Activity')).toBeInTheDocument();
+    expect(screen.getByText('No recent activity recorded')).toBeInTheDocument();
     expect(
-      screen.getByText(/Actions performed across assets and employees will appear here in real time/i),
+      screen.getByText(
+        /Actions performed across assets and employees will appear here in real time/i,
+      ),
     ).toBeInTheDocument();
   });
 });

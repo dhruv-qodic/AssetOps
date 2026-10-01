@@ -200,61 +200,53 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
       },
 
       updateEmployee: (id, updates) => {
-        let updated = false;
-        let updatedEmpItem: Employee | null = null;
-        set((state) => {
-          let updatedSelected = state.selectedEmployee;
-          const newEmployees = state.employees.map((employee) => {
-            if (employee.id === id || employee.employeeId === id) {
-              updated = true;
-              const newItem = {
-                ...employee,
-                ...updates,
-                updatedAt: new Date().toISOString(),
-              };
-              updatedEmpItem = newItem;
-              if (
-                state.selectedEmployee &&
-                (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
-              ) {
-                updatedSelected = newItem;
-              }
-              return newItem;
-            }
-            return employee;
-          });
-          return {
-            employees: newEmployees,
-            selectedEmployee: updatedSelected,
-          };
-        });
+        const currentEmployee = get().employees.find(
+          (employee) => employee.id === id || employee.employeeId === id,
+        );
 
-        if (updated && updatedEmpItem) {
-          const emp = updatedEmpItem as Employee;
-          useActivityStore.getState().logActivity({
-            type: 'employee_updated',
-            title: 'Employee Profile Updated',
-            entityName: `${emp.firstName} ${emp.lastName} (${emp.employeeId})`,
-            entityId: emp.employeeId,
-            actor: 'HR Operations',
-            department: emp.department,
-            badge: 'Updated',
-            badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-          });
+        if (!currentEmployee) {
+          return false;
         }
 
-        return updated;
+        const updatedEmployee: Employee = {
+          ...currentEmployee,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        };
+
+        set((state) => ({
+          employees: state.employees.map((employee) =>
+            employee.id === id || employee.employeeId === id ? updatedEmployee : employee,
+          ),
+          selectedEmployee:
+            state.selectedEmployee &&
+            (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
+              ? updatedEmployee
+              : state.selectedEmployee,
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_updated',
+          title: 'Employee Profile Updated',
+          entityName: `${updatedEmployee.firstName} ${updatedEmployee.lastName} (${updatedEmployee.employeeId})`,
+          entityId: updatedEmployee.employeeId,
+          actor: 'HR Operations',
+          department: updatedEmployee.department,
+          badge: 'Updated',
+          badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+        });
+
+        return true;
       },
 
       deleteEmployee: (id) => {
-        let deleted = false;
-        let deletedEmpItem: Employee | null = null;
+        const currentEmp = get().employees.find((e) => e.id === id || e.employeeId === id);
+        if (!currentEmp) {
+          return false;
+        }
+
         set((state) => {
-          const initialLength = state.employees.length;
-          deletedEmpItem =
-            state.employees.find((e) => e.id === id || e.employeeId === id) || null;
           const filtered = state.employees.filter((e) => e.id !== id && e.employeeId !== id);
-          deleted = filtered.length !== initialLength;
           const newTotalPages = Math.max(1, Math.ceil(filtered.length / state.filters.pageSize));
           const newPage = Math.min(state.filters.page, newTotalPages);
 
@@ -268,21 +260,18 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
           };
         });
 
-        if (deleted && deletedEmpItem) {
-          const emp = deletedEmpItem as Employee;
-          useActivityStore.getState().logActivity({
-            type: 'employee_deleted',
-            title: 'Employee Removed',
-            entityName: `${emp.firstName} ${emp.lastName} (${emp.employeeId})`,
-            entityId: emp.employeeId,
-            actor: 'HR Operations',
-            department: emp.department,
-            badge: 'Removed',
-            badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
-          });
-        }
+        useActivityStore.getState().logActivity({
+          type: 'employee_deleted',
+          title: 'Employee Removed',
+          entityName: `${currentEmp.firstName} ${currentEmp.lastName} (${currentEmp.employeeId})`,
+          entityId: currentEmp.employeeId,
+          actor: 'HR Operations',
+          department: currentEmp.department,
+          badge: 'Removed',
+          badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+        });
 
-        return deleted;
+        return true;
       },
 
       bulkAddEmployees: (newItems) => {

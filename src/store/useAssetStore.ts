@@ -219,196 +219,167 @@ export const useAssetStore = create<AssetStoreState>()(
       },
 
       updateAsset: (id, updates) => {
-        let updated = false;
-        let updatedAssetItem: Asset | null = null;
-        set((state) => {
-          const newAssets = state.assets.map((asset) => {
-            if (asset.id === id) {
-              updated = true;
-              const newItem = {
-                ...asset,
-                ...updates,
-                updatedAt: new Date().toISOString(),
-              };
-              updatedAssetItem = newItem;
-              return newItem;
-            }
-            return asset;
-          });
-          return { assets: newAssets };
-        });
-
-        if (updated && updatedAssetItem) {
-          const item = updatedAssetItem as Asset;
-          const isMaintenance = item.status === 'Maintenance';
-          useActivityStore.getState().logActivity({
-            type: isMaintenance ? 'asset_maintenance' : 'asset_updated',
-            title: isMaintenance ? 'Moved to Maintenance' : 'Asset Updated',
-            entityName: `${item.name} (${item.assetId})`,
-            entityId: item.assetId,
-            actor: isMaintenance ? 'IT Operations Desk' : 'IT Operations',
-            department: item.location,
-            badge: isMaintenance ? 'Maintenance' : 'Updated',
-            badgeClass: isMaintenance
-              ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
-              : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
-          });
+        const currentAsset = get().assets.find((a) => a.id === id);
+        if (!currentAsset) {
+          return false;
         }
 
-        return updated;
+        const updatedAssetItem: Asset = {
+          ...currentAsset,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        };
+
+        set((state) => ({
+          assets: state.assets.map((asset) => (asset.id === id ? updatedAssetItem : asset)),
+        }));
+
+        const isMaintenance = updatedAssetItem.status === 'Maintenance';
+        useActivityStore.getState().logActivity({
+          type: isMaintenance ? 'asset_maintenance' : 'asset_updated',
+          title: isMaintenance ? 'Moved to Maintenance' : 'Asset Updated',
+          entityName: `${updatedAssetItem.name} (${updatedAssetItem.assetId})`,
+          entityId: updatedAssetItem.assetId,
+          actor: isMaintenance ? 'IT Operations Desk' : 'IT Operations',
+          department: updatedAssetItem.location,
+          badge: isMaintenance ? 'Maintenance' : 'Updated',
+          badgeClass: isMaintenance
+            ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
+            : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+        });
+
+        return true;
       },
 
       deleteAsset: (id) => {
-        let deleted = false;
-        let deletedAssetItem: Asset | null = null;
-        set((state) => {
-          const initialLength = state.assets.length;
-          deletedAssetItem = state.assets.find((a) => a.id === id) || null;
-          const filtered = state.assets.filter((a) => a.id !== id);
-          deleted = filtered.length !== initialLength;
-          return {
-            assets: filtered,
-            selectedAsset: state.selectedAsset?.id === id ? null : state.selectedAsset,
-          };
-        });
-
-        if (deleted && deletedAssetItem) {
-          const item = deletedAssetItem as Asset;
-          useActivityStore.getState().logActivity({
-            type: 'asset_deleted',
-            title: 'Asset Deleted',
-            entityName: `${item.name} (${item.assetId})`,
-            entityId: item.assetId,
-            actor: 'Admin System',
-            department: item.location,
-            badge: 'Deleted',
-            badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
-          });
+        const currentAsset = get().assets.find((a) => a.id === id);
+        if (!currentAsset) {
+          return false;
         }
 
-        return deleted;
+        set((state) => ({
+          assets: state.assets.filter((a) => a.id !== id),
+          selectedAsset: state.selectedAsset?.id === id ? null : state.selectedAsset,
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'asset_deleted',
+          title: 'Asset Deleted',
+          entityName: `${currentAsset.name} (${currentAsset.assetId})`,
+          entityId: currentAsset.assetId,
+          actor: 'Admin System',
+          department: currentAsset.location,
+          badge: 'Deleted',
+          badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+        });
+
+        return true;
       },
 
       allocateAsset: (id, employee) => {
-        let success = false;
-        let allocatedAssetItem: Asset | null = null;
-        const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        set((state) => {
-          const newAssets = state.assets.map((asset) => {
-            if (asset.id === id) {
-              success = true;
-              allocatedAssetItem = asset;
-              const newRecord: AllocationHistoryRecord = {
-                id: `hist_${crypto.randomUUID()}`,
-                assetId: asset.assetId,
-                employeeId: employee.id || employee.employeeId,
-                employeeName: employee.name,
-                employeeEmail: employee.email,
-                department: employee.department,
-                avatar: employee.avatar,
-                action: 'Allocated',
-                date: dateStr,
-                performedBy: 'IT Operations',
-              };
-
-              const existingHistory = asset.allocationHistory || [];
-
-              return {
-                ...asset,
-                status: 'Allocated' as const,
-                assignedTo: {
-                  ...employee,
-                  assignedDate: dateStr,
-                },
-                allocationHistory: [newRecord, ...existingHistory],
-                updatedAt: now.toISOString(),
-              };
-            }
-            return asset;
-          });
-          return { assets: newAssets };
-        });
-
-        if (success && allocatedAssetItem) {
-          const item = allocatedAssetItem as Asset;
-          useActivityStore.getState().logActivity({
-            type: 'asset_allocated',
-            title: 'Asset Allocated',
-            entityName: `${item.name} (${item.assetId})`,
-            entityId: item.assetId,
-            actor: employee.name || 'Staff Member',
-            department: employee.department || item.location,
-            badge: 'Allocated',
-            badgeClass: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
-          });
+        const currentAsset = get().assets.find((a) => a.id === id);
+        if (!currentAsset) {
+          return false;
         }
 
-        return success;
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        const newRecord: AllocationHistoryRecord = {
+          id: `hist_${crypto.randomUUID()}`,
+          assetId: currentAsset.assetId,
+          employeeId: employee.id || employee.employeeId,
+          employeeName: employee.name,
+          employeeEmail: employee.email,
+          department: employee.department,
+          avatar: employee.avatar,
+          action: 'Allocated',
+          date: dateStr,
+          performedBy: 'IT Operations',
+        };
+
+        const existingHistory = currentAsset.allocationHistory || [];
+        const updatedAsset: Asset = {
+          ...currentAsset,
+          status: 'Allocated',
+          assignedTo: {
+            ...employee,
+            assignedDate: dateStr,
+          },
+          allocationHistory: [newRecord, ...existingHistory],
+          updatedAt: now.toISOString(),
+        };
+
+        set((state) => ({
+          assets: state.assets.map((asset) => (asset.id === id ? updatedAsset : asset)),
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'asset_allocated',
+          title: 'Asset Allocated',
+          entityName: `${updatedAsset.name} (${updatedAsset.assetId})`,
+          entityId: updatedAsset.assetId,
+          actor: employee.name || 'Staff Member',
+          department: employee.department || updatedAsset.location,
+          badge: 'Allocated',
+          badgeClass: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
+        });
+
+        return true;
       },
 
       deallocateAsset: (id) => {
-        let success = false;
-        let deallocatedAssetItem: Asset | null = null;
-        let previousEmployee: AssignedEmployee | null = null;
-        const now = new Date();
-        const dateStr = now.toISOString().split('T')[0];
-        set((state) => {
-          const newAssets = state.assets.map((asset) => {
-            if (asset.id === id) {
-              success = true;
-              deallocatedAssetItem = asset;
-              const prevEmp = asset.assignedTo;
-              previousEmployee = prevEmp || null;
-              const deallocRecord: AllocationHistoryRecord | null = prevEmp
-                ? {
-                    id: `hist_${crypto.randomUUID()}`,
-                    assetId: asset.assetId,
-                    employeeId: prevEmp.id || prevEmp.employeeId,
-                    employeeName: prevEmp.name,
-                    employeeEmail: prevEmp.email,
-                    department: prevEmp.department,
-                    avatar: prevEmp.avatar,
-                    action: 'Deallocated',
-                    date: dateStr,
-                    performedBy: 'IT Operations',
-                  }
-                : null;
-
-              const existingHistory = asset.allocationHistory || [];
-              const updatedHistory = deallocRecord
-                ? [deallocRecord, ...existingHistory]
-                : existingHistory;
-
-              return {
-                ...asset,
-                status: 'Available' as const,
-                assignedTo: null,
-                allocationHistory: updatedHistory,
-                updatedAt: now.toISOString(),
-              };
-            }
-            return asset;
-          });
-          return { assets: newAssets };
-        });
-
-        if (success && deallocatedAssetItem) {
-          const item = deallocatedAssetItem as Asset;
-          const prevEmp = previousEmployee as AssignedEmployee | null;
-          useActivityStore.getState().logActivity({
-            type: 'asset_deallocated',
-            title: 'Hardware Checked In',
-            entityName: `${item.name} (${item.assetId})`,
-            entityId: item.assetId,
-            actor: prevEmp?.name || 'Inventory Custodian',
-            department: prevEmp?.department || item.location,
-            badge: 'Returned',
-            badgeClass: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300',
-          });
+        const currentAsset = get().assets.find((a) => a.id === id);
+        if (!currentAsset) {
+          return false;
         }
 
-        return success;
+        const now = new Date();
+        const dateStr = now.toISOString().split('T')[0];
+        const prevEmp = currentAsset.assignedTo;
+        const deallocRecord: AllocationHistoryRecord | null = prevEmp
+          ? {
+              id: `hist_${crypto.randomUUID()}`,
+              assetId: currentAsset.assetId,
+              employeeId: prevEmp.id || prevEmp.employeeId,
+              employeeName: prevEmp.name,
+              employeeEmail: prevEmp.email,
+              department: prevEmp.department,
+              avatar: prevEmp.avatar,
+              action: 'Deallocated',
+              date: dateStr,
+              performedBy: 'IT Operations',
+            }
+          : null;
+
+        const existingHistory = currentAsset.allocationHistory || [];
+        const updatedHistory = deallocRecord
+          ? [deallocRecord, ...existingHistory]
+          : existingHistory;
+
+        const updatedAsset: Asset = {
+          ...currentAsset,
+          status: 'Available',
+          assignedTo: null,
+          allocationHistory: updatedHistory,
+          updatedAt: now.toISOString(),
+        };
+
+        set((state) => ({
+          assets: state.assets.map((asset) => (asset.id === id ? updatedAsset : asset)),
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'asset_deallocated',
+          title: 'Hardware Checked In',
+          entityName: `${updatedAsset.name} (${updatedAsset.assetId})`,
+          entityId: updatedAsset.assetId,
+          actor: prevEmp?.name || 'Inventory Custodian',
+          department: prevEmp?.department || updatedAsset.location,
+          badge: 'Returned',
+          badgeClass: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300',
+        });
+
+        return true;
       },
 
       bulkAddAssets: (newItems) => {

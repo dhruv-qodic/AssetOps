@@ -180,6 +180,10 @@ export const DashboardRecentActivity: React.FC = () => {
     });
   }, [rawActivities]);
 
+  const handleViewAll = () => {
+    void navigate('/history');
+  };
+
   return (
     <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-5 sm:p-6 shadow-xs flex flex-col justify-between h-full text-left">
       {/* Header */}
@@ -204,7 +208,7 @@ export const DashboardRecentActivity: React.FC = () => {
           </span>
           <button
             type="button"
-            onClick={() => navigate('/history')}
+            onClick={handleViewAll}
             className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1 cursor-pointer"
           >
             <span>View All</span>
