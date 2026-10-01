@@ -12,6 +12,7 @@ import type {
 } from '@/types/employee';
 import { DEFAULT_EMPLOYEE_FILTERS } from '@/constant/employee.constants';
 import { MOCK_EMPLOYEES } from '@/mocks/seed/employees';
+import { useActivityStore } from './useActivityStore';
 
 interface EmployeeStoreState {
   employees: Employee[];
@@ -184,45 +185,68 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
           employees: [newEmployee, ...state.employees],
         }));
 
+        useActivityStore.getState().logActivity({
+          type: 'employee_created',
+          title: 'New Employee Added',
+          entityName: `${firstName} ${lastName} (${employeeId})`,
+          entityId: employeeId,
+          actor: 'HR Operations',
+          department: data.department,
+          badge: 'Onboarded',
+          badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        });
+
         return newEmployee;
       },
 
       updateEmployee: (id, updates) => {
-        let updated = false;
-        set((state) => {
-          let updatedSelected = state.selectedEmployee;
-          const newEmployees = state.employees.map((employee) => {
-            if (employee.id === id || employee.employeeId === id) {
-              updated = true;
-              const newItem = {
-                ...employee,
-                ...updates,
-                updatedAt: new Date().toISOString(),
-              };
-              if (
-                state.selectedEmployee &&
-                (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
-              ) {
-                updatedSelected = newItem;
-              }
-              return newItem;
-            }
-            return employee;
-          });
-          return {
-            employees: newEmployees,
-            selectedEmployee: updatedSelected,
-          };
+        const currentEmployee = get().employees.find(
+          (employee) => employee.id === id || employee.employeeId === id,
+        );
+
+        if (!currentEmployee) {
+          return false;
+        }
+
+        const updatedEmployee: Employee = {
+          ...currentEmployee,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        };
+
+        set((state) => ({
+          employees: state.employees.map((employee) =>
+            employee.id === id || employee.employeeId === id ? updatedEmployee : employee,
+          ),
+          selectedEmployee:
+            state.selectedEmployee &&
+            (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
+              ? updatedEmployee
+              : state.selectedEmployee,
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_updated',
+          title: 'Employee Profile Updated',
+          entityName: `${updatedEmployee.firstName} ${updatedEmployee.lastName} (${updatedEmployee.employeeId})`,
+          entityId: updatedEmployee.employeeId,
+          actor: 'HR Operations',
+          department: updatedEmployee.department,
+          badge: 'Updated',
+          badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
         });
-        return updated;
+
+        return true;
       },
 
       deleteEmployee: (id) => {
-        let deleted = false;
+        const currentEmp = get().employees.find((e) => e.id === id || e.employeeId === id);
+        if (!currentEmp) {
+          return false;
+        }
+
         set((state) => {
-          const initialLength = state.employees.length;
           const filtered = state.employees.filter((e) => e.id !== id && e.employeeId !== id);
-          deleted = filtered.length !== initialLength;
           const newTotalPages = Math.max(1, Math.ceil(filtered.length / state.filters.pageSize));
           const newPage = Math.min(state.filters.page, newTotalPages);
 
@@ -235,7 +259,19 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
             filters: { ...state.filters, page: newPage },
           };
         });
-        return deleted;
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_deleted',
+          title: 'Employee Removed',
+          entityName: `${currentEmp.firstName} ${currentEmp.lastName} (${currentEmp.employeeId})`,
+          entityId: currentEmp.employeeId,
+          actor: 'HR Operations',
+          department: currentEmp.department,
+          badge: 'Removed',
+          badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+        });
+
+        return true;
       },
 
       bulkAddEmployees: (newItems) => {
@@ -269,6 +305,15 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         set((state) => ({
           employees: [...formatted, ...state.employees],
         }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_created',
+          title: 'Bulk Employees Added',
+          entityName: `${newItems.length} Staff Profiles`,
+          actor: 'HR Operations',
+          badge: 'Onboarded',
+          badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        });
 
         return formatted.length;
       },

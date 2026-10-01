@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { Dashboard } from '../Dashboard';
@@ -187,5 +187,32 @@ describe('Dashboard Component', () => {
     expect(screen.getByText(/failed to load dashboard data/i)).toBeInTheDocument();
     expect(screen.getByText('Database connection failed')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /try again/i })).toBeInTheDocument();
+  });
+
+  it('should dynamically update Recent Activity when an asset is added or modified', () => {
+    renderDashboard();
+
+    expect(screen.getByText('Recent Activity')).toBeInTheDocument();
+
+    act(() => {
+      useAssetStore.getState().addAsset({
+        assetId: 'DASH-AST-999',
+        name: 'Dynamic Test Workstation',
+        category: 'Desktop',
+        status: 'Available',
+        location: 'San Francisco',
+        serialNumber: 'SN-DASH-999',
+        purchaseDate: '2026-03-01',
+      });
+    });
+
+    expect(screen.getByText('Dynamic Test Workstation (DASH-AST-999)')).toBeInTheDocument();
+  });
+
+  it('should render the View All button in Recent Activity', () => {
+    renderDashboard();
+
+    const viewAllBtn = screen.getByRole('button', { name: /view all/i });
+    expect(viewAllBtn).toBeInTheDocument();
   });
 });
