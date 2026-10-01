@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { Sparkles } from 'lucide-react';
 import { useDashboardStore } from '@/store/useDashboardStore';
-import { AssetTrendsLineChart } from './AssetTrendsLineChart';
-import { AssetValuationAreaChart } from './AssetValuationAreaChart';
-import { AssetDepreciationChart } from './AssetDepreciationChart';
-import AssetLifecycleChart from './AssetLifecycleChart';
+import { DashboardWidgetSkeleton } from './DashboardWidgetSkeleton';
+
+// Lazy-load heavy recharts visualizations
+const AssetLifecycleChart = lazy(() => import('./AssetLifecycleChart'));
+const AssetTrendsLineChart = lazy(() => import('./AssetTrendsLineChart'));
+const AssetValuationAreaChart = lazy(() => import('./AssetValuationAreaChart'));
+const AssetDepreciationChart = lazy(() => import('./AssetDepreciationChart'));
 
 export const DashboardAnalyticsSection: React.FC = () => {
   const { visibleWidgetIds } = useDashboardStore();
@@ -51,7 +54,9 @@ export const DashboardAnalyticsSection: React.FC = () => {
         {/* Status Lifecycle Chart */}
         {isLifecycleVisible && (
           <div className="flex flex-col w-full">
-            <AssetLifecycleChart />
+            <Suspense fallback={<DashboardWidgetSkeleton minHeight="min-h-[360px]" />}>
+              <AssetLifecycleChart />
+            </Suspense>
           </div>
         )}
 
@@ -61,14 +66,18 @@ export const DashboardAnalyticsSection: React.FC = () => {
             {/* Line Chart */}
             {isLineVisible && (
               <div className="flex flex-col">
-                <AssetTrendsLineChart />
+                <Suspense fallback={<DashboardWidgetSkeleton minHeight="min-h-[360px]" />}>
+                  <AssetTrendsLineChart />
+                </Suspense>
               </div>
             )}
 
             {/* Area Chart */}
             {isAreaVisible && (
               <div className="flex flex-col">
-                <AssetValuationAreaChart />
+                <Suspense fallback={<DashboardWidgetSkeleton minHeight="min-h-[360px]" />}>
+                  <AssetValuationAreaChart />
+                </Suspense>
               </div>
             )}
           </div>
@@ -77,7 +86,13 @@ export const DashboardAnalyticsSection: React.FC = () => {
         {/* Depreciation & Book Value Chart */}
         {isDepreciationVisible && (
           <div className="flex flex-col w-full">
-            <AssetDepreciationChart />
+            <Suspense
+              fallback={
+                <DashboardWidgetSkeleton variant="depreciation" minHeight="min-h-[420px]" />
+              }
+            >
+              <AssetDepreciationChart />
+            </Suspense>
           </div>
         )}
       </div>
