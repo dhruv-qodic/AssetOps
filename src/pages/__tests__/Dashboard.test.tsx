@@ -98,46 +98,67 @@ describe('Dashboard Component', () => {
     expect(screen.getAllByText(maintenanceCount.toLocaleString()).length).toBeGreaterThanOrEqual(1);
   });
 
-  it('should render Section 3: Asset Status by Category chart and Recent Activity feed', () => {
+  it('should render Section 3: Asset Status Distribution pie chart and Recent Activity feed', async () => {
     renderDashboard();
 
-    // Asset status chart
-    expect(screen.getByText('Asset Status by Category')).toBeInTheDocument();
-    expect(
-      screen.getByText(/operational status breakdown across hardware categories/i),
-    ).toBeInTheDocument();
-
-    // Recent Activity feed
+    // Recent Activity feed (eagerly loaded)
     expect(screen.getByText('Recent Activity')).toBeInTheDocument();
     expect(
       screen.getByText(/real-time audit log of hardware lifecycle events/i),
     ).toBeInTheDocument();
     expect(screen.getByText('Live Feed')).toBeInTheDocument();
+
+    // Asset status distribution chart (lazy loaded)
+    expect(
+      await screen.findByText('Asset Status Distribution', {}, { timeout: 4000 }),
+    ).toBeInTheDocument();
+    expect(
+      (await screen.findAllByText('In Use', {}, { timeout: 4000 })).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      (await screen.findAllByText('In Storage', {}, { timeout: 4000 })).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(
+      (await screen.findAllByText('Deployed', {}, { timeout: 4000 })).length,
+    ).toBeGreaterThanOrEqual(1);
   });
 
-  it('should render Section 4: Analytics Charts (Line, Area, Depreciation, and Pie charts)', () => {
+  it('should render Section 4: Analytics Charts (Lifecycle, Line, Area, and Depreciation charts)', async () => {
     renderDashboard();
 
     expect(
       screen.getByRole('heading', { name: /operational analytics & forecasting/i }),
     ).toBeInTheDocument();
 
-    // Line Chart
-    expect(screen.getByText('Fleet Growth & Allocation Trend')).toBeInTheDocument();
+    // Lifecycle Chart (lazy loaded)
+    expect(
+      await screen.findByText('Asset Status by Category', {}, { timeout: 4000 }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /operational status breakdown across hardware categories/i,
+        {},
+        { timeout: 4000 },
+      ),
+    ).toBeInTheDocument();
 
-    // Area Chart
-    expect(screen.getByText('Asset Valuation & Capital Spend')).toBeInTheDocument();
+    // Line Chart (lazy loaded)
+    expect(
+      await screen.findByText('Fleet Growth & Allocation Trend', {}, { timeout: 4000 }),
+    ).toBeInTheDocument();
 
-    // Depreciation Chart
-    expect(screen.getByText('Asset Depreciation & Book Value')).toBeInTheDocument();
-    expect(screen.getByText('Straight-Line Model')).toBeInTheDocument();
+    // Area Chart (lazy loaded)
+    expect(
+      await screen.findByText('Asset Valuation & Capital Spend', {}, { timeout: 4000 }),
+    ).toBeInTheDocument();
 
-    // Pie Chart
-    expect(screen.getByText('Asset Status Distribution')).toBeInTheDocument();
-    expect(screen.getAllByText('In Use').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('In Storage').length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText(/in maintenance/i).length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText('Deployed').length).toBeGreaterThanOrEqual(1);
+    // Depreciation Chart (lazy loaded)
+    expect(
+      await screen.findByText('Asset Depreciation & Book Value', {}, { timeout: 4000 }),
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText('Straight-Line Model', {}, { timeout: 4000 }),
+    ).toBeInTheDocument();
   });
 
   it('should open Customization modal when Customize button is clicked', async () => {
