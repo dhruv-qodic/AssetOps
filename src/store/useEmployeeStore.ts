@@ -12,6 +12,7 @@ import type {
 } from '@/types/employee';
 import { DEFAULT_EMPLOYEE_FILTERS } from '@/constant/employee.constants';
 import { MOCK_EMPLOYEES } from '@/mocks/seed/employees';
+import { useActivityStore } from './useActivityStore';
 
 interface EmployeeStoreState {
   employees: Employee[];
@@ -184,11 +185,23 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
           employees: [newEmployee, ...state.employees],
         }));
 
+        useActivityStore.getState().logActivity({
+          type: 'employee_created',
+          title: 'New Employee Added',
+          entityName: `${firstName} ${lastName} (${employeeId})`,
+          entityId: employeeId,
+          actor: 'HR Operations',
+          department: data.department,
+          badge: 'Onboarded',
+          badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        });
+
         return newEmployee;
       },
 
       updateEmployee: (id, updates) => {
         let updated = false;
+        let updatedEmpItem: Employee | null = null;
         set((state) => {
           let updatedSelected = state.selectedEmployee;
           const newEmployees = state.employees.map((employee) => {
@@ -199,6 +212,7 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
                 ...updates,
                 updatedAt: new Date().toISOString(),
               };
+              updatedEmpItem = newItem;
               if (
                 state.selectedEmployee &&
                 (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
@@ -214,13 +228,31 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
             selectedEmployee: updatedSelected,
           };
         });
+
+        if (updated && updatedEmpItem) {
+          const emp = updatedEmpItem as Employee;
+          useActivityStore.getState().logActivity({
+            type: 'employee_updated',
+            title: 'Employee Profile Updated',
+            entityName: `${emp.firstName} ${emp.lastName} (${emp.employeeId})`,
+            entityId: emp.employeeId,
+            actor: 'HR Operations',
+            department: emp.department,
+            badge: 'Updated',
+            badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+          });
+        }
+
         return updated;
       },
 
       deleteEmployee: (id) => {
         let deleted = false;
+        let deletedEmpItem: Employee | null = null;
         set((state) => {
           const initialLength = state.employees.length;
+          deletedEmpItem =
+            state.employees.find((e) => e.id === id || e.employeeId === id) || null;
           const filtered = state.employees.filter((e) => e.id !== id && e.employeeId !== id);
           deleted = filtered.length !== initialLength;
           const newTotalPages = Math.max(1, Math.ceil(filtered.length / state.filters.pageSize));
@@ -235,6 +267,21 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
             filters: { ...state.filters, page: newPage },
           };
         });
+
+        if (deleted && deletedEmpItem) {
+          const emp = deletedEmpItem as Employee;
+          useActivityStore.getState().logActivity({
+            type: 'employee_deleted',
+            title: 'Employee Removed',
+            entityName: `${emp.firstName} ${emp.lastName} (${emp.employeeId})`,
+            entityId: emp.employeeId,
+            actor: 'HR Operations',
+            department: emp.department,
+            badge: 'Removed',
+            badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+          });
+        }
+
         return deleted;
       },
 
@@ -269,6 +316,15 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
         set((state) => ({
           employees: [...formatted, ...state.employees],
         }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_created',
+          title: 'Bulk Employees Added',
+          entityName: `${newItems.length} Staff Profiles`,
+          actor: 'HR Operations',
+          badge: 'Onboarded',
+          badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        });
 
         return formatted.length;
       },
