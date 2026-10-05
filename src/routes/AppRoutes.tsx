@@ -15,6 +15,7 @@ const AssetListPage = lazy(() => import('@/pages/AssetListPage'));
 const AssetDetailPage = lazy(() => import('@/pages/AssetDetailPage'));
 const EmployeeListPage = lazy(() => import('@/pages/EmployeeListPage'));
 const AllocationsPage = lazy(() => import('@/pages/AllocationsPage'));
+const ActiveAllocationsPage = lazy(() => import('@/pages/ActiveAllocationsPage'));
 const HistoryPage = lazy(() => import('@/pages/HistoryPage'));
 const ReportsPage = lazy(() => import('@/pages/ReportsPage'));
 const SettingsPage = lazy(() => import('@/pages/SettingsPage'));
@@ -55,6 +56,8 @@ function AppRoutes() {
               {/* Allocations / Maintenance Module: ALLOCATE_ASSET permission (Admin, Manager) */}
               <Route element={<PermissionRoute permission="ALLOCATE_ASSET" path="/allocations" />}>
                 <Route path="/allocations" element={<AllocationsPage />} />
+                <Route path="/allocations/active" element={<ActiveAllocationsPage />} />
+                <Route path="/active-allocations" element={<ActiveAllocationsPage />} />
               </Route>
 
               {/* History Module: VIEW_HISTORY permission (Admin, Manager, Viewer) */}

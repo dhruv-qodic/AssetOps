@@ -127,6 +127,13 @@ describe('Sidebar Component & RBAC Submenu Access', () => {
       expect(newAllocationBtn).not.toBeDisabled();
       expect(activeAllocationsBtn).toBeInTheDocument();
       expect(activeAllocationsBtn).not.toBeDisabled();
+
+      // Click New Allocation and verify modal opens
+      fireEvent.click(newAllocationBtn);
+      expect(useAssetStore.getState().isAllocateModalOpen).toBe(true);
+
+      // Click Active Allocations and verify it is clickable
+      fireEvent.click(activeAllocationsBtn);
     });
   });
 

@@ -34,6 +34,7 @@ type SidebarAction = 'add-asset' | 'edit-asset' | 'allocate-asset' | 'add-employ
 
 interface SidebarChild {
   name: string;
+  path?: string;
   action?: SidebarAction;
   permission?: Permission;
 }
@@ -105,6 +106,7 @@ const sidebarGroups: SidebarGroup[] = [
           },
           {
             name: 'Active Allocations',
+            path: '/allocations/active',
             permission: 'ALLOCATE_ASSET',
           },
         ],
@@ -398,6 +400,9 @@ function Sidebar() {
                               const isAllowed = child.permission
                                 ? hasPermission(child.permission)
                                 : true;
+                              const isChildActive = child.path
+                                ? location.pathname === child.path
+                                : false;
 
                               return (
                                 <button
@@ -407,12 +412,18 @@ function Sidebar() {
                                   aria-disabled={!isAllowed}
                                   onClick={() => {
                                     if (!isAllowed) return;
-                                    handleSubmenuAction(child.action, child.permission);
+                                    if (child.path) {
+                                      void navigate(child.path);
+                                    } else {
+                                      handleSubmenuAction(child.action, child.permission);
+                                    }
                                   }}
                                   className={`w-full flex items-center px-3 py-2 rounded-lg text-xs font-medium transition-colors text-left ${
-                                    isAllowed
-                                      ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent cursor-pointer'
-                                      : 'text-sidebar-foreground/30 opacity-50 cursor-not-allowed select-none'
+                                    !isAllowed
+                                      ? 'text-sidebar-foreground/30 opacity-50 cursor-not-allowed select-none'
+                                      : isChildActive
+                                        ? 'text-white bg-sidebar-accent font-semibold'
+                                        : 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent cursor-pointer'
                                   }`}
                                 >
                                   <span>{child.name}</span>
@@ -580,13 +591,19 @@ function Sidebar() {
                                       aria-disabled={!isAllowed}
                                       onClick={() => {
                                         if (!isAllowed) return;
-                                        handleSubmenuAction(child.action, child.permission);
+                                        if (child.path) {
+                                          void navigate(child.path);
+                                        } else {
+                                          handleSubmenuAction(child.action, child.permission);
+                                        }
                                         setMobileOpen(false);
                                       }}
                                       className={`w-full flex items-center px-3 py-2.5 rounded-lg text-xs font-medium transition-colors text-left ${
-                                        isAllowed
-                                          ? 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent cursor-pointer'
-                                          : 'text-sidebar-foreground/30 opacity-50 cursor-not-allowed select-none'
+                                        !isAllowed
+                                          ? 'text-sidebar-foreground/30 opacity-50 cursor-not-allowed select-none'
+                                          : child.path && location.pathname === child.path
+                                            ? 'text-white bg-sidebar-accent font-semibold'
+                                            : 'text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent cursor-pointer'
                                       }`}
                                     >
                                       {child.name}

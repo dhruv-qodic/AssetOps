@@ -24,20 +24,34 @@ import {
   Briefcase,
   TrendingUp,
   Wallet,
+  MapPin,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ASSET_CATEGORIES, ASSET_STATUSES, ASSET_STATUS_CONFIG } from '@/constant/asset.constants';
+import {
+  ASSET_CATEGORIES,
+  ASSET_STATUSES,
+  ASSET_STATUS_CONFIG,
+  ASSET_LOCATIONS,
+} from '@/constant/asset.constants';
 import { EMPLOYEE_DEPARTMENTS } from '@/constant/employee.constants';
 import type { AssetCategory, AssetStatus } from '@/types/asset';
 import { cn } from '@/lib/utils';
 import { useAssetFilterStore } from '@/store/useAssetFilterStore';
 import { useAssetFilterPresetStore } from '@/store/useAssetFilterPresetStore';
 import { useAssetStore } from '@/store/useAssetStore';
+import { useActiveAllocationFilterStore } from '@/store/useActiveAllocationFilterStore';
 import AssetFilterPresetModal from './AssetFilterPresetModel';
 import { toast } from 'sonner';
 
-type FilterTab = 'category' | 'status' | 'department' | 'cost' | 'presets';
+export type AssetFilterDropdownMode = 'assets' | 'allocations';
+
+type FilterTab = 'category' | 'status' | 'department' | 'location' | 'cost' | 'presets';
+
+export interface AssetFilterDropdownProps {
+  mode?: AssetFilterDropdownMode;
+  onFilterChange?: () => void;
+}
 
 const getCategoryIcon = (cat: AssetCategory) => {
   switch (cat) {
@@ -92,7 +106,10 @@ const COST_RANGE_PRESETS: CostPreset[] = [
   { label: '$2,500+', min: 2500, max: null },
 ];
 
-export const AssetFilterDropdown: React.FC = () => {
+export const AssetFilterDropdown: React.FC<AssetFilterDropdownProps> = ({
+  mode = 'assets',
+  onFilterChange,
+}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<FilterTab>('category');
   const [isSavePresetOpen, setIsSavePresetOpen] = useState(false);
@@ -100,31 +117,50 @@ export const AssetFilterDropdown: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Zustand Store Selectors
-  const searchKeyword = useAssetFilterStore((s) => s.searchKeyword);
-  const selectedCategories = useAssetFilterStore((s) => s.selectedCategories);
-  const selectedStatuses = useAssetFilterStore((s) => s.selectedStatuses);
-  const selectedDepartments = useAssetFilterStore((s) => s.selectedDepartments);
-  const costRange = useAssetFilterStore((s) => s.costRange);
+  // Asset Filter Store (used in Assets mode)
+  const assetSearchKeyword = useAssetFilterStore((s) => s.searchKeyword);
+  const assetSelectedCategories = useAssetFilterStore((s) => s.selectedCategories);
+  const assetSelectedStatuses = useAssetFilterStore((s) => s.selectedStatuses);
+  const assetSelectedDepartments = useAssetFilterStore((s) => s.selectedDepartments);
+  const assetCostRange = useAssetFilterStore((s) => s.costRange);
 
-  const setSearchKeyword = useAssetFilterStore((s) => s.setSearchKeyword);
-  const setSelectedCategories = useAssetFilterStore((s) => s.setSelectedCategories);
-  const setSelectedStatuses = useAssetFilterStore((s) => s.setSelectedStatuses);
-  const setSelectedDepartments = useAssetFilterStore((s) => s.setSelectedDepartments);
-  const toggleCategory = useAssetFilterStore((s) => s.toggleCategory);
-  const toggleStatus = useAssetFilterStore((s) => s.toggleStatus);
-  const toggleDepartment = useAssetFilterStore((s) => s.toggleDepartment);
-  const setMinCost = useAssetFilterStore((s) => s.setMinCost);
-  const setMaxCost = useAssetFilterStore((s) => s.setMaxCost);
-  const setCostRange = useAssetFilterStore((s) => s.setCostRange);
-  const resetFilters = useAssetFilterStore((s) => s.resetFilters);
+  const setAssetSearchKeyword = useAssetFilterStore((s) => s.setSearchKeyword);
+  const setAssetSelectedCategories = useAssetFilterStore((s) => s.setSelectedCategories);
+  const setAssetSelectedStatuses = useAssetFilterStore((s) => s.setSelectedStatuses);
+  const setAssetSelectedDepartments = useAssetFilterStore((s) => s.setSelectedDepartments);
+  const toggleAssetCategory = useAssetFilterStore((s) => s.toggleCategory);
+  const toggleAssetStatus = useAssetFilterStore((s) => s.toggleStatus);
+  const toggleAssetDepartment = useAssetFilterStore((s) => s.toggleDepartment);
+  const setAssetMinCost = useAssetFilterStore((s) => s.setMinCost);
+  const setAssetMaxCost = useAssetFilterStore((s) => s.setMaxCost);
+  const setAssetCostRange = useAssetFilterStore((s) => s.setCostRange);
+  const resetAssetFilters = useAssetFilterStore((s) => s.resetFilters);
 
   const resetAssetStoreFilters = useAssetStore((s) => s.resetFilters);
-  const setPage = useAssetStore((s) => s.setPage);
+  const setAssetStorePage = useAssetStore((s) => s.setPage);
 
   const presets = useAssetFilterPresetStore((s) => s.presets);
   const savePreset = useAssetFilterPresetStore((s) => s.savePreset);
   const deletePreset = useAssetFilterPresetStore((s) => s.deletePreset);
+
+  // Active Allocation Filter Store (used in Allocations mode)
+  const allocSelectedCategories = useActiveAllocationFilterStore((s) => s.selectedCategories);
+  const allocSelectedDepartments = useActiveAllocationFilterStore((s) => s.selectedDepartments);
+  const allocSelectedLocations = useActiveAllocationFilterStore((s) => s.selectedLocations);
+  const allocCostRange = useActiveAllocationFilterStore((s) => s.costRange);
+
+  const setAllocSelectedCategories = useActiveAllocationFilterStore((s) => s.setSelectedCategories);
+  const setAllocSelectedDepartments = useActiveAllocationFilterStore(
+    (s) => s.setSelectedDepartments,
+  );
+  const setAllocSelectedLocations = useActiveAllocationFilterStore((s) => s.setSelectedLocations);
+  const toggleAllocCategory = useActiveAllocationFilterStore((s) => s.toggleCategory);
+  const toggleAllocDepartment = useActiveAllocationFilterStore((s) => s.toggleDepartment);
+  const toggleAllocLocation = useActiveAllocationFilterStore((s) => s.toggleLocation);
+  const setAllocMinCost = useActiveAllocationFilterStore((s) => s.setMinCost);
+  const setAllocMaxCost = useActiveAllocationFilterStore((s) => s.setMaxCost);
+  const setAllocCostRange = useActiveAllocationFilterStore((s) => s.setCostRange);
+  const resetAllocFilters = useActiveAllocationFilterStore((s) => s.resetFilters);
 
   // Close dropdown on click outside
   useEffect(() => {
@@ -139,34 +175,125 @@ export const AssetFilterDropdown: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
+  const isAllocations = mode === 'allocations';
+
+  // Active values depending on mode
+  const selectedCategories = isAllocations ? allocSelectedCategories : assetSelectedCategories;
+  const selectedStatuses = isAllocations ? [] : assetSelectedStatuses;
+  const selectedDepartments = isAllocations ? allocSelectedDepartments : assetSelectedDepartments;
+  const selectedLocations = isAllocations ? allocSelectedLocations : [];
+  const costRange = isAllocations ? allocCostRange : assetCostRange;
+
   // Counts of active filters
-  const totalActiveFiltersCount =
-    (searchKeyword.trim() ? 1 : 0) +
-    selectedCategories.length +
-    selectedStatuses.length +
-    selectedDepartments.length +
-    (costRange.min !== null || costRange.max !== null ? 1 : 0);
+  const totalActiveFiltersCount = isAllocations
+    ? selectedCategories.length +
+      selectedDepartments.length +
+      selectedLocations.length +
+      (costRange.min !== null || costRange.max !== null ? 1 : 0)
+    : (assetSearchKeyword.trim() ? 1 : 0) +
+      selectedCategories.length +
+      selectedStatuses.length +
+      selectedDepartments.length +
+      (costRange.min !== null || costRange.max !== null ? 1 : 0);
 
   const handleResetAll = () => {
-    resetFilters();
-    resetAssetStoreFilters();
-    setPage(1);
+    if (isAllocations) {
+      resetAllocFilters();
+      onFilterChange?.();
+    } else {
+      resetAssetFilters();
+      resetAssetStoreFilters();
+      setAssetStorePage(1);
+    }
     toast.success('Filters reset');
   };
 
   const handleCategoryToggle = (category: AssetCategory) => {
-    toggleCategory(category);
-    setPage(1);
+    if (isAllocations) {
+      toggleAllocCategory(category);
+      onFilterChange?.();
+    } else {
+      toggleAssetCategory(category);
+      setAssetStorePage(1);
+    }
   };
 
   const handleStatusToggle = (status: AssetStatus) => {
-    toggleStatus(status);
-    setPage(1);
+    if (!isAllocations) {
+      toggleAssetStatus(status);
+      setAssetStorePage(1);
+    }
   };
 
   const handleDepartmentToggle = (dept: string) => {
-    toggleDepartment(dept);
-    setPage(1);
+    if (isAllocations) {
+      toggleAllocDepartment(dept);
+      onFilterChange?.();
+    } else {
+      toggleAssetDepartment(dept);
+      setAssetStorePage(1);
+    }
+  };
+
+  const handleLocationToggle = (location: string) => {
+    if (isAllocations) {
+      toggleAllocLocation(location);
+      onFilterChange?.();
+    }
+  };
+
+  const handleSelectAllCategories = () => {
+    if (isAllocations) {
+      setAllocSelectedCategories([...ASSET_CATEGORIES]);
+      onFilterChange?.();
+    } else {
+      setAssetSelectedCategories([...ASSET_CATEGORIES]);
+      setAssetStorePage(1);
+    }
+  };
+
+  const handleClearCategories = () => {
+    if (isAllocations) {
+      setAllocSelectedCategories([]);
+      onFilterChange?.();
+    } else {
+      setAssetSelectedCategories([]);
+      setAssetStorePage(1);
+    }
+  };
+
+  const handleSelectAllDepartments = () => {
+    if (isAllocations) {
+      setAllocSelectedDepartments([...EMPLOYEE_DEPARTMENTS]);
+      onFilterChange?.();
+    } else {
+      setAssetSelectedDepartments([...EMPLOYEE_DEPARTMENTS]);
+      setAssetStorePage(1);
+    }
+  };
+
+  const handleClearDepartments = () => {
+    if (isAllocations) {
+      setAllocSelectedDepartments([]);
+      onFilterChange?.();
+    } else {
+      setAssetSelectedDepartments([]);
+      setAssetStorePage(1);
+    }
+  };
+
+  const handleSelectAllLocations = () => {
+    if (isAllocations) {
+      setAllocSelectedLocations([...ASSET_LOCATIONS]);
+      onFilterChange?.();
+    }
+  };
+
+  const handleClearLocations = () => {
+    if (isAllocations) {
+      setAllocSelectedLocations([]);
+      onFilterChange?.();
+    }
   };
 
   const handlePresetClick = (preset: CostPreset) => {
@@ -174,12 +301,21 @@ export const AssetFilterDropdown: React.FC = () => {
     const maxVal = preset.max;
     const isCurrentlyActive = costRange.min === minVal && costRange.max === maxVal;
 
-    if (isCurrentlyActive) {
-      setCostRange({ min: null, max: null });
+    if (isAllocations) {
+      if (isCurrentlyActive) {
+        setAllocCostRange({ min: null, max: null });
+      } else {
+        setAllocCostRange({ min: minVal, max: maxVal });
+      }
+      onFilterChange?.();
     } else {
-      setCostRange({ min: minVal, max: maxVal });
+      if (isCurrentlyActive) {
+        setAssetCostRange({ min: null, max: null });
+      } else {
+        setAssetCostRange({ min: minVal, max: maxVal });
+      }
+      setAssetStorePage(1);
     }
-    setPage(1);
   };
 
   const isPresetActive = (preset: CostPreset) => {
@@ -191,11 +327,11 @@ export const AssetFilterDropdown: React.FC = () => {
     if (!trimmedName) return;
 
     savePreset(trimmedName, {
-      searchKeyword,
-      selectedCategories,
-      selectedStatuses,
-      selectedDepartments,
-      costRange,
+      searchKeyword: assetSearchKeyword,
+      selectedCategories: assetSelectedCategories,
+      selectedStatuses: assetSelectedStatuses,
+      selectedDepartments: assetSelectedDepartments,
+      costRange: assetCostRange,
     });
 
     toast.success(`Filter preset "${trimmedName}" saved`);
@@ -208,12 +344,12 @@ export const AssetFilterDropdown: React.FC = () => {
     if (!preset) return;
 
     const { filters } = preset;
-    setSearchKeyword(filters.searchKeyword);
-    setSelectedCategories(filters.selectedCategories);
-    setSelectedStatuses(filters.selectedStatuses);
-    setSelectedDepartments(filters.selectedDepartments);
-    setCostRange(filters.costRange);
-    setPage(1);
+    setAssetSearchKeyword(filters.searchKeyword);
+    setAssetSelectedCategories(filters.selectedCategories);
+    setAssetSelectedStatuses(filters.selectedStatuses);
+    setAssetSelectedDepartments(filters.selectedDepartments);
+    setAssetCostRange(filters.costRange);
+    setAssetStorePage(1);
 
     toast.success(`Applied preset "${preset.name}"`);
   };
@@ -228,7 +364,7 @@ export const AssetFilterDropdown: React.FC = () => {
 
   return (
     <div className="relative inline-block text-left" ref={dropdownRef}>
-      {/* Trigger Button next to Columns */}
+      {/* Trigger Button */}
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -238,7 +374,8 @@ export const AssetFilterDropdown: React.FC = () => {
             ? 'bg-blue-50/80 dark:bg-blue-950/60 border-[#155DFC] text-[#155DFC] dark:text-blue-400 font-semibold'
             : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:border-slate-300 dark:hover:border-slate-700',
         )}
-        title="Open Asset Filters"
+        title={isAllocations ? 'Filter Active Allocations' : 'Open Asset Filters'}
+        aria-label={isAllocations ? 'Filter active allocations' : 'Open Asset Filters'}
       >
         <Filter className="size-3.5" />
         <span>Filter</span>
@@ -249,7 +386,7 @@ export const AssetFilterDropdown: React.FC = () => {
         )}
       </button>
 
-      {/* Filter Popup Window (Positioned directly below Filter button, aligned right to stay within viewport) */}
+      {/* Filter Popup Window */}
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-[340px] xs:w-[420px] sm:w-[480px] md:w-[520px] max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-2xl z-50 overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
           {/* Popup Header */}
@@ -264,7 +401,7 @@ export const AssetFilterDropdown: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              {totalActiveFiltersCount > 0 && (
+              {!isAllocations && totalActiveFiltersCount > 0 && (
                 <button
                   type="button"
                   onClick={() => {
@@ -290,8 +427,9 @@ export const AssetFilterDropdown: React.FC = () => {
 
           {/* Popup Body: 2-Column Tabs & Facet Options */}
           <div className="flex min-h-[300px] max-h-[360px] overflow-hidden">
-            {/* Left Column: Filter Categories */}
+            {/* Left Column: Filter Tabs */}
             <div className="w-40 sm:w-44 border-r border-slate-100 dark:border-slate-800/80 p-2.5 space-y-1 bg-slate-50/40 dark:bg-slate-900/40 shrink-0 select-none overflow-y-auto">
+              {/* Category Tab */}
               <button
                 type="button"
                 onClick={() => setActiveTab('category')}
@@ -313,27 +451,31 @@ export const AssetFilterDropdown: React.FC = () => {
                 )}
               </button>
 
-              <button
-                type="button"
-                onClick={() => setActiveTab('status')}
-                className={cn(
-                  'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer',
-                  activeTab === 'status'
-                    ? 'bg-blue-50/90 dark:bg-blue-950/60 text-[#155DFC] dark:text-blue-300 font-bold border border-blue-200/70 dark:border-blue-900/50 shadow-2xs'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60',
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Activity className="size-3.5 shrink-0" />
-                  <span>Status</span>
-                </div>
-                {selectedStatuses.length > 0 && (
-                  <span className="size-4.5 rounded-full bg-[#155DFC] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
-                    {selectedStatuses.length}
-                  </span>
-                )}
-              </button>
+              {/* Status Tab (Assets mode only) */}
+              {!isAllocations && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('status')}
+                  className={cn(
+                    'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer',
+                    activeTab === 'status'
+                      ? 'bg-blue-50/90 dark:bg-blue-950/60 text-[#155DFC] dark:text-blue-300 font-bold border border-blue-200/70 dark:border-blue-900/50 shadow-2xs'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60',
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <Activity className="size-3.5 shrink-0" />
+                    <span>Status</span>
+                  </div>
+                  {selectedStatuses.length > 0 && (
+                    <span className="size-4.5 rounded-full bg-[#155DFC] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                      {selectedStatuses.length}
+                    </span>
+                  )}
+                </button>
+              )}
 
+              {/* Department Tab */}
               <button
                 type="button"
                 onClick={() => setActiveTab('department')}
@@ -355,6 +497,31 @@ export const AssetFilterDropdown: React.FC = () => {
                 )}
               </button>
 
+              {/* Location Tab (Allocations mode) */}
+              {isAllocations && (
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('location')}
+                  className={cn(
+                    'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer',
+                    activeTab === 'location'
+                      ? 'bg-blue-50/90 dark:bg-blue-950/60 text-[#155DFC] dark:text-blue-300 font-bold border border-blue-200/70 dark:border-blue-900/50 shadow-2xs'
+                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60',
+                  )}
+                >
+                  <div className="flex items-center gap-2">
+                    <MapPin className="size-3.5 shrink-0" />
+                    <span>Location</span>
+                  </div>
+                  {selectedLocations.length > 0 && (
+                    <span className="size-4.5 rounded-full bg-[#155DFC] text-white text-[10px] font-bold flex items-center justify-center shrink-0">
+                      {selectedLocations.length}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {/* Cost Range Tab */}
               <button
                 type="button"
                 onClick={() => setActiveTab('cost')}
@@ -374,32 +541,35 @@ export const AssetFilterDropdown: React.FC = () => {
                 )}
               </button>
 
-              {/* Divider between standard filters and saved presets */}
-              <div className="pt-2 pb-1">
-                <div className="border-t border-slate-200/80 dark:border-slate-800" />
-              </div>
+              {/* Saved Presets Tab (Assets mode) */}
+              {!isAllocations && (
+                <>
+                  <div className="pt-2 pb-1">
+                    <div className="border-t border-slate-200/80 dark:border-slate-800" />
+                  </div>
 
-              {/* Saved Presets Section */}
-              <button
-                type="button"
-                onClick={() => setActiveTab('presets')}
-                className={cn(
-                  'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer',
-                  activeTab === 'presets'
-                    ? 'bg-blue-50/90 dark:bg-blue-950/60 text-[#155DFC] dark:text-blue-300 font-bold border border-blue-200/70 dark:border-blue-900/50 shadow-2xs'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60',
-                )}
-              >
-                <div className="flex items-center gap-2">
-                  <Bookmark className="size-3.5 shrink-0" />
-                  <span>Saved Presets</span>
-                </div>
-                {presets.length > 0 && (
-                  <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
-                    {presets.length}
-                  </span>
-                )}
-              </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('presets')}
+                    className={cn(
+                      'w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all text-left cursor-pointer',
+                      activeTab === 'presets'
+                        ? 'bg-blue-50/90 dark:bg-blue-950/60 text-[#155DFC] dark:text-blue-300 font-bold border border-blue-200/70 dark:border-blue-900/50 shadow-2xs'
+                        : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100/80 dark:hover:bg-slate-800/60',
+                    )}
+                  >
+                    <div className="flex items-center gap-2">
+                      <Bookmark className="size-3.5 shrink-0" />
+                      <span>Saved Presets</span>
+                    </div>
+                    {presets.length > 0 && (
+                      <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded-full bg-slate-200/80 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                        {presets.length}
+                      </span>
+                    )}
+                  </button>
+                </>
+              )}
             </div>
 
             {/* Right Column: Facet Options */}
@@ -414,10 +584,7 @@ export const AssetFilterDropdown: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelectedCategories([...ASSET_CATEGORIES]);
-                          setPage(1);
-                        }}
+                        onClick={handleSelectAllCategories}
                         className="text-[11px] font-semibold text-[#155DFC] hover:underline cursor-pointer"
                       >
                         Select All
@@ -425,10 +592,7 @@ export const AssetFilterDropdown: React.FC = () => {
                       <span className="text-slate-300 dark:text-slate-700">•</span>
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelectedCategories([]);
-                          setPage(1);
-                        }}
+                        onClick={handleClearCategories}
                         className="text-[11px] font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
                       >
                         Clear
@@ -477,8 +641,8 @@ export const AssetFilterDropdown: React.FC = () => {
                 </div>
               )}
 
-              {/* 2. Status Options */}
-              {activeTab === 'status' && (
+              {/* 2. Status Options (Assets mode only) */}
+              {!isAllocations && activeTab === 'status' && (
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
                     <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -488,8 +652,8 @@ export const AssetFilterDropdown: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          setSelectedStatuses([...ASSET_STATUSES]);
-                          setPage(1);
+                          setAssetSelectedStatuses([...ASSET_STATUSES]);
+                          setAssetStorePage(1);
                         }}
                         className="text-[11px] font-semibold text-[#155DFC] hover:underline cursor-pointer"
                       >
@@ -499,8 +663,8 @@ export const AssetFilterDropdown: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          setSelectedStatuses([]);
-                          setPage(1);
+                          setAssetSelectedStatuses([]);
+                          setAssetStorePage(1);
                         }}
                         className="text-[11px] font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
                       >
@@ -563,10 +727,7 @@ export const AssetFilterDropdown: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelectedDepartments([...EMPLOYEE_DEPARTMENTS]);
-                          setPage(1);
-                        }}
+                        onClick={handleSelectAllDepartments}
                         className="text-[11px] font-semibold text-[#155DFC] hover:underline cursor-pointer"
                       >
                         Select All
@@ -574,10 +735,7 @@ export const AssetFilterDropdown: React.FC = () => {
                       <span className="text-slate-300 dark:text-slate-700">•</span>
                       <button
                         type="button"
-                        onClick={() => {
-                          setSelectedDepartments([]);
-                          setPage(1);
-                        }}
+                        onClick={handleClearDepartments}
                         className="text-[11px] font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
                       >
                         Clear
@@ -626,7 +784,76 @@ export const AssetFilterDropdown: React.FC = () => {
                 </div>
               )}
 
-              {/* 4. Cost Range Options */}
+              {/* 4. Location Options (Allocations mode) */}
+              {isAllocations && activeTab === 'location' && (
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                      Asset Location
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={handleSelectAllLocations}
+                        className="text-[11px] font-semibold text-[#155DFC] hover:underline cursor-pointer"
+                      >
+                        Select All
+                      </button>
+                      <span className="text-slate-300 dark:text-slate-700">•</span>
+                      <button
+                        type="button"
+                        onClick={handleClearLocations}
+                        className="text-[11px] font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {ASSET_LOCATIONS.map((loc) => {
+                      const isChecked = selectedLocations.includes(loc);
+                      return (
+                        <label
+                          key={loc}
+                          className={cn(
+                            'flex items-center justify-between px-3 py-2 rounded-xl text-xs cursor-pointer select-none transition-colors border',
+                            isChecked
+                              ? 'bg-blue-50/70 border-blue-200/80 text-[#155DFC] font-semibold dark:bg-blue-950/40 dark:border-blue-900/50 dark:text-blue-300'
+                              : 'bg-white dark:bg-slate-900 border-slate-100 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/50',
+                          )}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div
+                              className={cn(
+                                'size-4 rounded flex items-center justify-center shrink-0 border transition-all',
+                                isChecked
+                                  ? 'bg-[#155DFC] border-[#155DFC] text-white'
+                                  : 'bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-600',
+                              )}
+                            >
+                              {isChecked && <Check className="size-2.5 stroke-[3]" />}
+                            </div>
+                            <input
+                              type="checkbox"
+                              aria-label={loc}
+                              className="sr-only"
+                              checked={isChecked}
+                              onChange={() => handleLocationToggle(loc)}
+                            />
+                            <span className="truncate">{loc}</span>
+                          </div>
+                          <div className="shrink-0 ml-1">
+                            <MapPin className="size-3.5 text-slate-400" />
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 5. Cost Range Options */}
               {activeTab === 'cost' && (
                 <div className="space-y-3.5">
                   <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
@@ -637,8 +864,13 @@ export const AssetFilterDropdown: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          setCostRange({ min: null, max: null });
-                          setPage(1);
+                          if (isAllocations) {
+                            setAllocCostRange({ min: null, max: null });
+                            onFilterChange?.();
+                          } else {
+                            setAssetCostRange({ min: null, max: null });
+                            setAssetStorePage(1);
+                          }
                         }}
                         className="text-[11px] font-medium text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 cursor-pointer"
                       >
@@ -660,8 +892,13 @@ export const AssetFilterDropdown: React.FC = () => {
                           min="0"
                           value={minCostDisplay}
                           onChange={(e) => {
-                            setMinCost(e.target.value);
-                            setPage(1);
+                            if (isAllocations) {
+                              setAllocMinCost(e.target.value);
+                              onFilterChange?.();
+                            } else {
+                              setAssetMinCost(e.target.value);
+                              setAssetStorePage(1);
+                            }
                           }}
                           placeholder="0"
                           className="h-8.5 pl-7 pr-2 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 rounded-lg focus-visible:ring-1 focus-visible:ring-[#155DFC]"
@@ -680,8 +917,13 @@ export const AssetFilterDropdown: React.FC = () => {
                           min="0"
                           value={maxCostDisplay}
                           onChange={(e) => {
-                            setMaxCost(e.target.value);
-                            setPage(1);
+                            if (isAllocations) {
+                              setAllocMaxCost(e.target.value);
+                              onFilterChange?.();
+                            } else {
+                              setAssetMaxCost(e.target.value);
+                              setAssetStorePage(1);
+                            }
                           }}
                           placeholder="5000"
                           className="h-8.5 pl-7 pr-2 bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700/80 text-xs text-slate-900 dark:text-slate-100 rounded-lg focus-visible:ring-1 focus-visible:ring-[#155DFC]"
@@ -719,8 +961,8 @@ export const AssetFilterDropdown: React.FC = () => {
                 </div>
               )}
 
-              {/* 5. Saved Presets Options */}
-              {activeTab === 'presets' && (
+              {/* 6. Saved Presets Options (Assets mode only) */}
+              {!isAllocations && activeTab === 'presets' && (
                 <div className="space-y-2.5">
                   <div className="flex items-center justify-between pb-1 border-b border-slate-100 dark:border-slate-800">
                     <span className="text-xs font-bold text-slate-800 dark:text-slate-200">
@@ -804,7 +1046,7 @@ export const AssetFilterDropdown: React.FC = () => {
             </div>
           </div>
 
-          {/* Popup Footer (matching Reference Image 2 & 3: Reset on left, Cancel + Apply on right) */}
+          {/* Popup Footer */}
           <div className="px-5 py-3 bg-slate-50/70 dark:bg-slate-900/70 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
             <button
               type="button"
@@ -837,14 +1079,16 @@ export const AssetFilterDropdown: React.FC = () => {
         </div>
       )}
 
-      {/* Save Preset Modal */}
-      <AssetFilterPresetModal
-        isSavePresetOpen={isSavePresetOpen}
-        setPresetName={setPresetName}
-        setIsSavePresetOpen={setIsSavePresetOpen}
-        presetName={presetName}
-        handleSavePreset={handleSavePreset}
-      />
+      {/* Save Preset Modal (Assets mode only) */}
+      {!isAllocations && (
+        <AssetFilterPresetModal
+          isSavePresetOpen={isSavePresetOpen}
+          setPresetName={setPresetName}
+          setIsSavePresetOpen={setIsSavePresetOpen}
+          presetName={presetName}
+          handleSavePreset={handleSavePreset}
+        />
+      )}
     </div>
   );
 };

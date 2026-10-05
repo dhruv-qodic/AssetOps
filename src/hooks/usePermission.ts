@@ -62,6 +62,8 @@ export function usePermission(): UsePermissionReturn {
         case '/employees':
           return hasPermission('VIEW_EMPLOYEES');
         case '/allocations':
+        case '/allocations/active':
+        case '/active-allocations':
           return hasPermission('ALLOCATE_ASSET');
         case '/history':
           return hasPermission('VIEW_HISTORY');
