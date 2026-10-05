@@ -1,22 +1,88 @@
-import { History } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import HistoryHeader from '@/components/history/HistoryHeader';
+import HistoryKpiCards from '@/components/history/HistoryKpiCards';
+import HistoryFilterBar from '@/components/history/HistoryFilterBar';
+import HistoryTable from '@/components/history/HistoryTable';
+import { MOCK_HISTORY_RECORDS, type HistoryCategory } from '@/mocks/seed/history';
 
 export function HistoryPage() {
+  const [activeTab, setActiveTab] = useState<HistoryCategory>('all');
+  const [search, setSearch] = useState('');
+  const [actionFilter, setActionFilter] = useState('All');
+  const [sortOrder, setSortOrder] = useState<'newest' | 'oldest'>('newest');
+
+  const handleClearFilters = () => {
+    setSearch('');
+    setActionFilter('All');
+  };
+
+  // Filtered and sorted history records
+  const filteredRecords = useMemo(() => {
+    const q = search.trim().toLowerCase();
+
+    return MOCK_HISTORY_RECORDS.filter((item) => {
+      // 1. Tab category filter
+      if (activeTab !== 'all' && item.category !== activeTab) {
+        return false;
+      }
+
+      // 2. Action type filter
+      if (
+        actionFilter !== 'All' &&
+        item.statusBadge.label.toLowerCase() !== actionFilter.toLowerCase()
+      ) {
+        return false;
+      }
+
+      // 3. Search query filter
+      if (q) {
+        const matchTitle = item.title.toLowerCase().includes(q);
+        const matchDesc = item.description.toLowerCase().includes(q);
+        const matchEntity =
+          item.entityName.toLowerCase().includes(q) || item.entityId.toLowerCase().includes(q);
+        const matchActor =
+          item.actor.name.toLowerCase().includes(q) || item.actor.role.toLowerCase().includes(q);
+        const matchDept = item.department?.toLowerCase().includes(q) ?? false;
+        const matchLoc = item.location?.toLowerCase().includes(q) ?? false;
+
+        if (!matchTitle && !matchDesc && !matchEntity && !matchActor && !matchDept && !matchLoc) {
+          return false;
+        }
+      }
+
+      return true;
+    }).sort((a, b) => {
+      const timeA = new Date(a.timestamp).getTime();
+      const timeB = new Date(b.timestamp).getTime();
+      return sortOrder === 'newest' ? timeB - timeA : timeA - timeB;
+    });
+  }, [activeTab, search, actionFilter, sortOrder]);
+
   return (
-    <div className="flex-1 p-5 sm:p-7 space-y-6 max-w-[1400px] w-full mx-auto animate-in fade-in duration-200 text-left">
-      {/* Page Header */}
-      <div className="flex items-start sm:items-center gap-3">
-        <div className="p-2.5 rounded-xl bg-[#155DFC]/10 dark:bg-[#155DFC]/20 text-[#155DFC] shadow-xs shrink-0 mt-0.5 sm:mt-0">
-          <History className="size-6 sm:size-7" />
-        </div>
-        <div className="space-y-0.5 text-left">
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
-            Activity History
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-            Audit logs, lifecycle updates, and assignment history across organization assets.
-          </p>
-        </div>
-      </div>
+    <div
+      data-testid="history-page"
+      className="flex-1 p-4 sm:p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto w-full text-left animate-in fade-in duration-200"
+    >
+      {/* 1. Page Header */}
+      <HistoryHeader />
+
+      {/* 2. KPI Cards */}
+      <HistoryKpiCards />
+
+      {/* 3. Filter Bar with Tabs and Unread Badges */}
+      <HistoryFilterBar
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        search={search}
+        onSearchChange={setSearch}
+        actionFilter={actionFilter}
+        onActionFilterChange={setActionFilter}
+        sortOrder={sortOrder}
+        onSortOrderChange={setSortOrder}
+      />
+
+      {/* 4. History Logs Table */}
+      <HistoryTable records={filteredRecords} onClearFilters={handleClearFilters} />
     </div>
   );
 }
