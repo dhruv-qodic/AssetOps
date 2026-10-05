@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Check, X } from 'lucide-react';
+import { Search, ChevronDown, Check, X, User, Package, Tag, MapPin } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { ASSET_CATEGORIES, ASSET_LOCATIONS } from '@/constant/asset.constants';
 import { cn } from '@/lib/utils';
@@ -8,11 +8,12 @@ import type { Employee } from '@/types/employee';
 interface FilterSelectProps {
   label: string;
   value: string;
+  icon?: React.ReactNode;
   options: { label: string; value: string }[];
   onChange: (val: string) => void;
 }
 
-function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
+function FilterSelect({ label, value, icon, options, onChange }: FilterSelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -32,9 +33,16 @@ function FilterSelect({ label, value, options, onChange }: FilterSelectProps) {
 
   return (
     <div className="flex-1 min-w-[120px] sm:min-w-[140px] space-y-1 text-left" ref={dropdownRef}>
-      <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
-        {label}
-      </label>
+      <div className="flex items-center gap-1">
+        {icon && (
+          <span className="text-slate-600 dark:text-slate-400 hover:text-[#155DFC] dark:hover:text-[#155DFC]">
+            {icon}
+          </span>
+        )}
+        <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
+          {label}
+        </label>
+      </div>
       <div className="relative">
         <button
           type="button"
@@ -153,6 +161,9 @@ export const AllocationFiltersBar: React.FC<AllocationFiltersBarProps> = ({
         {/* Asset Filter */}
         <FilterSelect
           label="Asset"
+          icon={
+            <Package className="size-3.5 text-slate-600 dark:text-slate-400 hover:text-[#155DFC] dark:hover:text-[#155DFC]" />
+          }
           value={assetCategory}
           options={assetOptions}
           onChange={onAssetCategoryChange}
@@ -161,6 +172,9 @@ export const AllocationFiltersBar: React.FC<AllocationFiltersBarProps> = ({
         {/* Employee Filter */}
         <FilterSelect
           label="Employee"
+          icon={
+            <User className="size-3.5 text-slate-600 dark:text-slate-400 hover:text-[#155DFC] dark:hover:text-[#155DFC]" />
+          }
           value={employeeFilter}
           options={employeeOptions}
           onChange={onEmployeeFilterChange}
@@ -169,6 +183,9 @@ export const AllocationFiltersBar: React.FC<AllocationFiltersBarProps> = ({
         {/* Status Filter */}
         <FilterSelect
           label="Status"
+          icon={
+            <Tag className="size-3.5 text-slate-600 dark:text-slate-400 hover:text-[#155DFC] dark:hover:text-[#155DFC]" />
+          }
           value={statusFilter}
           options={statusOptions}
           onChange={onStatusFilterChange}
@@ -177,6 +194,9 @@ export const AllocationFiltersBar: React.FC<AllocationFiltersBarProps> = ({
         {/* Location Filter */}
         <FilterSelect
           label="Location"
+          icon={
+            <MapPin className="size-3.5 text-slate-600 dark:text-slate-400 hover:text-[#155DFC] dark:hover:text-[#155DFC]" />
+          }
           value={locationFilter}
           options={locationOptions}
           onChange={onLocationFilterChange}

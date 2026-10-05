@@ -295,7 +295,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
               variant="outline"
               size="sm"
               onClick={handleReset}
-              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300"
+              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300 cursor-pointer"
             >
               <RotateCcw className="size-3.5 mr-1" />
               Reset Defaults
@@ -305,7 +305,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
               variant="outline"
               size="sm"
               onClick={selectAllCardsAndWidgets}
-              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300"
+              className="flex-1 sm:flex-initial text-xs h-8 text-slate-600 dark:text-slate-300 cursor-pointer"
             >
               <Sparkles className="size-3.5 mr-1" />
               Show All ({totalSelected}/{totalAvailable})
@@ -317,7 +317,7 @@ export const DashboardCustomizationModal: React.FC<DashboardCustomizationModalPr
             variant="default"
             size="sm"
             onClick={handleApply}
-            className="w-full sm:w-auto bg-[#155DFC] hover:bg-[#1243b2] text-white text-xs h-8 px-5 font-semibold shadow-xs"
+            className="w-full sm:w-auto bg-[#155DFC] hover:bg-[#1243b2] text-white text-xs h-8 px-5 font-semibold shadow-xs cursor-pointer"
           >
             Apply & Done
           </Button>

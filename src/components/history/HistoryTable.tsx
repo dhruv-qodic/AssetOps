@@ -24,7 +24,8 @@ import {
   ArrowRightLeft,
   Package,
 } from 'lucide-react';
-import type { HistoryRecord, HistoryActionType } from '@/mocks/seed/history';
+import type { HistoryRecord, HistoryActionType } from '@/types/activity';
+import { useActivityStore, formatRelativeTime } from '@/store/useActivityStore';
 import { cn } from '@/lib/utils';
 import HistoryDetailModal from './HistoryDetailModal';
 import { Pagination } from '@/components/common/Pagination';
@@ -38,11 +39,13 @@ interface HistoryTableProps {
 const getActionIcon = (actionType: HistoryActionType) => {
   switch (actionType) {
     case 'allocation_assigned':
+    case 'assigned':
       return {
         icon: UserPlus,
         bg: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400',
       };
     case 'allocation_returned':
+    case 'returned':
       return {
         icon: CornerDownLeft,
         bg: 'bg-blue-50 text-blue-600 dark:bg-blue-950/60 dark:text-blue-400',
@@ -53,27 +56,32 @@ const getActionIcon = (actionType: HistoryActionType) => {
         bg: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-950/60 dark:text-indigo-400',
       };
     case 'asset_created':
+    case 'created':
       return {
         icon: PlusCircle,
         bg: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400',
       };
     case 'asset_updated':
+    case 'updated':
       return {
         icon: Edit3,
         bg: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
       };
     case 'asset_maintenance':
+    case 'maintenance':
       return {
         icon: Wrench,
         bg: 'bg-amber-50 text-amber-600 dark:bg-amber-950/60 dark:text-amber-400',
       };
     case 'asset_retired':
     case 'asset_deleted':
+    case 'deleted':
       return {
         icon: Trash2,
         bg: 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400',
       };
     case 'employee_onboarded':
+    case 'employee_created':
       return {
         icon: UserPlus,
         bg: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/60 dark:text-emerald-400',
@@ -85,6 +93,7 @@ const getActionIcon = (actionType: HistoryActionType) => {
         bg: 'bg-purple-50 text-purple-600 dark:bg-purple-950/60 dark:text-purple-400',
       };
     case 'employee_offboarded':
+    case 'employee_deleted':
       return {
         icon: ShieldAlert,
         bg: 'bg-rose-50 text-rose-600 dark:bg-rose-950/60 dark:text-rose-400',
@@ -134,6 +143,9 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
   const handleOpenDetail = (record: HistoryRecord) => {
     setSelectedRecord(record);
     setIsModalOpen(true);
+    if (record.isUnread) {
+      useActivityStore.getState().markAsRead(record.id);
+    }
   };
 
   if (records.length === 0) {
@@ -141,8 +153,8 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
         <EmptyState
           icon={Package}
-          title="No history logs found"
-          description="No activity logs match your current search and filter criteria. Try clearing filters to see all events."
+          title="No history found"
+          description="No activity logs match your current search and filter criteria, or no actions have been performed yet."
           actionLabel="Clear filters"
           onAction={onClearFilters}
         />
@@ -154,7 +166,10 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
     <div className="space-y-4">
       {/* Table Container */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-xs overflow-hidden">
-        <div className="overflow-x-auto select-none" data-testid="history-table-container">
+        <div
+          className="overflow-x-auto select-none custom-scrollbar"
+          data-testid="history-table-container"
+        >
           <Table>
             <TableHeader>
               <TableRow className="border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 hover:bg-slate-50/50">
@@ -186,7 +201,14 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
               {paginatedRecords.map((item) => {
                 const actionIcon = getActionIcon(item.actionType);
                 const ActionIcon = actionIcon.icon;
-                const badgeClass = getBadgeClasses(item.statusBadge.variant);
+                const badgeVariant = item.statusBadge?.variant || 'slate';
+                const badgeLabel =
+                  item.statusBadge?.label || item.badge || item.action || 'Activity';
+                const badgeClass = getBadgeClasses(badgeVariant);
+
+                const actorName = item.actor.name;
+                const actorRole = item.actor.role;
+                const actorInitials = item.actor.avatarInitials;
 
                 return (
                   <TableRow
@@ -223,7 +245,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
                                 badgeClass,
                               )}
                             >
-                              {item.statusBadge.label}
+                              {badgeLabel}
                             </span>
                             {item.isUnread && (
                               <span
@@ -273,14 +295,14 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
                     <TableCell className="text-xs">
                       <div className="flex items-center gap-2">
                         <div className="size-7 rounded-full bg-blue-600 text-white font-bold text-[10px] flex items-center justify-center shrink-0 shadow-2xs">
-                          {item.actor.avatarInitials}
+                          {actorInitials}
                         </div>
                         <div className="min-w-0">
                           <p className="font-semibold text-slate-800 dark:text-slate-200 truncate">
-                            {item.actor.name}
+                            {actorName}
                           </p>
                           <span className="text-[10px] text-slate-400 truncate block">
-                            {item.actor.role}
+                            {actorRole}
                           </span>
                         </div>
                       </div>
@@ -288,9 +310,14 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ records, onClearFilt
 
                     {/* Timestamp */}
                     <TableCell className="text-slate-600 dark:text-slate-400 text-xs whitespace-nowrap">
-                      <div className="flex items-center gap-1.5">
+                      <div
+                        className="flex items-center gap-1.5"
+                        title={new Date(item.timestamp).toLocaleString()}
+                      >
                         <Clock className="size-3 text-slate-400 shrink-0" />
-                        <span>{item.relativeTime}</span>
+                        <span className="font-medium text-slate-700 dark:text-slate-300">
+                          {formatRelativeTime(item.timestamp)}
+                        </span>
                       </div>
                     </TableCell>
 

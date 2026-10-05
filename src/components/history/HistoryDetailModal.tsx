@@ -7,7 +7,8 @@ import {
   DialogDescription,
 } from '@/components/ui/dialog';
 import { Clock, Building2, MapPin, Tag, Activity, Calendar } from 'lucide-react';
-import type { HistoryRecord } from '@/mocks/seed/history';
+import type { HistoryRecord } from '@/types/activity';
+import { formatRelativeTime } from '@/store/useActivityStore';
 import { Button } from '@/components/ui/button';
 
 interface HistoryDetailModalProps {
@@ -38,7 +39,7 @@ export const HistoryDetailModal: React.FC<HistoryDetailModalProps> = ({
               </span>
               <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
                 <Clock className="size-3 text-slate-400" />
-                <span>{record.relativeTime}</span>
+                <span>{formatRelativeTime(record.timestamp)}</span>
               </span>
             </div>
 
@@ -96,24 +97,33 @@ export const HistoryDetailModal: React.FC<HistoryDetailModalProps> = ({
           </div>
 
           {/* Performed By Section */}
-          <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 space-y-2">
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
-              Executed By (Actor)
-            </span>
-            <div className="flex items-center gap-3">
-              <div className="size-9 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                {record.actor.avatarInitials}
+          {(() => {
+            const actorName = record.actor.name;
+            const actorRole = record.actor.role;
+            const actorEmail = record.actor.email;
+            const actorInitials = record.actor.avatarInitials;
+
+            return (
+              <div className="p-3.5 rounded-xl bg-slate-50/80 dark:bg-slate-800/50 border border-slate-200/60 dark:border-slate-800 space-y-2">
+                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block">
+                  Executed By (Actor)
+                </span>
+                <div className="flex items-center gap-3">
+                  <div className="size-9 rounded-full bg-blue-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
+                    {actorInitials}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                      {actorName}
+                    </p>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      {actorRole} • {actorEmail}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                  {record.actor.name}
-                </p>
-                <p className="text-[11px] text-slate-400 truncate">
-                  {record.actor.role} • {record.actor.email}
-                </p>
-              </div>
-            </div>
-          </div>
+            );
+          })()}
 
           {/* Metadata Records */}
           {record.metadata && Object.keys(record.metadata).length > 0 && (
@@ -134,9 +144,15 @@ export const HistoryDetailModal: React.FC<HistoryDetailModalProps> = ({
 
           {/* Footer Actions */}
           <div className="pt-2 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
-            <span className="text-[11px] text-slate-400 flex items-center gap-1">
+            <span
+              className="text-[11px] text-slate-400 flex items-center gap-1.5"
+              title={new Date(record.timestamp).toISOString()}
+            >
               <Calendar className="size-3 text-slate-400" />
               <span>{new Date(record.timestamp).toLocaleString()}</span>
+              <span className="text-blue-600 dark:text-blue-400 font-medium">
+                ({formatRelativeTime(record.timestamp)})
+              </span>
             </span>
             <Button
               type="button"

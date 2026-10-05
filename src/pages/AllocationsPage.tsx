@@ -9,6 +9,7 @@ import AllocationTable from '@/components/allocations/AllocationTable';
 import AllocationSummaryCard from '@/components/allocations/AllocationSummaryCard';
 import { Pagination } from '@/components/common/Pagination';
 import { Layers, Plus } from 'lucide-react';
+import { AssetAllocationKpiCards } from '@/components/allocations/AssetAllocationKpiCards';
 
 export function AllocationsPage() {
   const assets = useAssetStore((s) => s.assets);
@@ -259,7 +260,11 @@ export function AllocationsPage() {
         </div>
 
         {/* Right Column: Allocation Summary Card with Donut Chart */}
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 space-y-4">
+          {/* KPI Card */}
+          <div className="bg-[#012143] rounded-2xl border border-slate-800/80 shadow-xs text-white overflow-hidden">
+            <AssetAllocationKpiCards />
+          </div>
           <AllocationSummaryCard />
         </div>
       </div>

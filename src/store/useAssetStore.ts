@@ -205,14 +205,26 @@ export const useAssetStore = create<AssetStoreState>()(
         }));
 
         useActivityStore.getState().logActivity({
-          type: 'asset_created',
-          title: 'New Asset Registered',
+          category: 'asset',
+          actionType: 'asset_created',
+          action: 'New Asset Added',
+          title: `Registered ${newAsset.name} in Asset Registry`,
+          description: `Added ${newAsset.category} asset ${newAsset.assetId} with serial ${newAsset.serialNumber} to ${newAsset.location}.`,
           entityName: `${newAsset.name} (${newAsset.assetId})`,
           entityId: newAsset.assetId,
-          actor: 'Admin System',
+          entityType: 'Asset',
+          actor: 'Admin User',
           department: newAsset.location,
+          location: newAsset.location,
+          statusBadge: { label: 'Created', variant: 'emerald' },
           badge: 'Created',
           badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+          metadata: {
+            Category: newAsset.category,
+            Model: newAsset.name,
+            'Serial Number': newAsset.serialNumber,
+            Cost: newAsset.purchaseCost ? `$${newAsset.purchaseCost}` : 'N/A',
+          },
         });
 
         return newAsset;
@@ -236,12 +248,25 @@ export const useAssetStore = create<AssetStoreState>()(
 
         const isMaintenance = updatedAssetItem.status === 'Maintenance';
         useActivityStore.getState().logActivity({
-          type: isMaintenance ? 'asset_maintenance' : 'asset_updated',
-          title: isMaintenance ? 'Moved to Maintenance' : 'Asset Updated',
+          category: 'asset',
+          actionType: isMaintenance ? 'asset_maintenance' : 'asset_updated',
+          action: isMaintenance ? 'Maintenance Scheduled' : 'Specifications Updated',
+          title: isMaintenance
+            ? `Diagnostic Maintenance on ${updatedAssetItem.name}`
+            : `Updated ${updatedAssetItem.name} Specifications`,
+          description: isMaintenance
+            ? `Hardware asset ${updatedAssetItem.assetId} scheduled for service maintenance inspection.`
+            : `Asset ${updatedAssetItem.assetId} specifications and records updated.`,
           entityName: `${updatedAssetItem.name} (${updatedAssetItem.assetId})`,
           entityId: updatedAssetItem.assetId,
-          actor: isMaintenance ? 'IT Operations Desk' : 'IT Operations',
+          entityType: 'Asset',
+          actor: isMaintenance ? 'IT Hardware Lab' : 'IT Operations',
           department: updatedAssetItem.location,
+          location: updatedAssetItem.location,
+          statusBadge: {
+            label: isMaintenance ? 'Maintenance' : 'Updated',
+            variant: isMaintenance ? 'amber' : 'slate',
+          },
           badge: isMaintenance ? 'Maintenance' : 'Updated',
           badgeClass: isMaintenance
             ? 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300'
@@ -263,12 +288,18 @@ export const useAssetStore = create<AssetStoreState>()(
         }));
 
         useActivityStore.getState().logActivity({
-          type: 'asset_deleted',
-          title: 'Asset Deleted',
+          category: 'asset',
+          actionType: 'asset_deleted',
+          action: 'Asset Deleted',
+          title: `Deleted Asset ${currentAsset.name}`,
+          description: `Hardware asset ${currentAsset.assetId} was removed from active inventory registry.`,
           entityName: `${currentAsset.name} (${currentAsset.assetId})`,
           entityId: currentAsset.assetId,
-          actor: 'Admin System',
+          entityType: 'Asset',
+          actor: 'Admin User',
           department: currentAsset.location,
+          location: currentAsset.location,
+          statusBadge: { label: 'Deleted', variant: 'rose' },
           badge: 'Deleted',
           badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
         });
@@ -315,13 +346,24 @@ export const useAssetStore = create<AssetStoreState>()(
 
         useActivityStore.getState().logActivity({
           type: 'asset_allocated',
-          title: 'Asset Allocated',
+          category: 'allocation',
+          actionType: 'allocation_assigned',
+          action: 'Hardware Allocated',
+          title: `Allocated ${updatedAsset.name} to ${employee.name}`,
+          description: `Assigned hardware asset ${updatedAsset.assetId} to ${employee.name} in ${employee.department || 'Operations'}.`,
           entityName: `${updatedAsset.name} (${updatedAsset.assetId})`,
           entityId: updatedAsset.assetId,
+          entityType: 'Allocation',
           actor: employee.name || 'Staff Member',
           department: employee.department || updatedAsset.location,
+          location: updatedAsset.location,
+          statusBadge: { label: 'Allocated', variant: 'indigo' },
           badge: 'Allocated',
           badgeClass: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300',
+          metadata: {
+            'Serial Number': updatedAsset.serialNumber,
+            'Assigned Employee': `${employee.name} (${employee.id || employee.employeeId})`,
+          },
         });
 
         return true;
@@ -370,11 +412,18 @@ export const useAssetStore = create<AssetStoreState>()(
 
         useActivityStore.getState().logActivity({
           type: 'asset_deallocated',
-          title: 'Hardware Checked In',
+          category: 'allocation',
+          actionType: 'allocation_returned',
+          action: 'Hardware Returned',
+          title: `${updatedAsset.name} Returned to Inventory`,
+          description: `Returned monitor/hardware ${updatedAsset.assetId} by ${prevEmp?.name || 'Staff'}. Marked Available in stock.`,
           entityName: `${updatedAsset.name} (${updatedAsset.assetId})`,
           entityId: updatedAsset.assetId,
+          entityType: 'Allocation',
           actor: prevEmp?.name || 'Inventory Custodian',
           department: prevEmp?.department || updatedAsset.location,
+          location: updatedAsset.location,
+          statusBadge: { label: 'Returned', variant: 'blue' },
           badge: 'Returned',
           badgeClass: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300',
         });
@@ -397,10 +446,17 @@ export const useAssetStore = create<AssetStoreState>()(
         }));
 
         useActivityStore.getState().logActivity({
-          type: 'asset_created',
+          category: 'asset',
+          actionType: 'asset_created',
+          action: 'New Asset Added',
           title: 'Bulk Assets Registered',
+          description: `Registered ${newItems.length} hardware assets into the inventory registry.`,
           entityName: `${newItems.length} Hardware Assets`,
-          actor: 'Admin System',
+          entityId: `BULK-${newItems.length}`,
+          entityType: 'Asset',
+          actor: 'Admin User',
+          department: 'IT',
+          statusBadge: { label: 'Created', variant: 'emerald' },
           badge: 'Created',
           badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
         });

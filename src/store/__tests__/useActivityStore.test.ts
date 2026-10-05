@@ -110,7 +110,7 @@ describe('useActivityStore', () => {
 
     const activities = useActivityStore.getState().activities;
     expect(activities[0].type).toBe('asset_allocated');
-    expect(activities[0].actor).toBe('John Test');
+    expect(activities[0].actor.name).toBe('John Test');
     expect(activities[0].badge).toBe('Allocated');
   });
 
@@ -176,5 +176,96 @@ describe('useActivityStore', () => {
     expect(activities[0].type).toBe('employee_deleted');
     expect(activities[0].entityName).toContain(emp.firstName);
     expect(activities[0].badge).toBe('Removed');
+  });
+
+  it('should compute dynamic KPI metrics and unread counts accurately', () => {
+    useActivityStore.getState().clearActivities();
+
+    useActivityStore.getState().logActivity({
+      category: 'asset',
+      actionType: 'asset_created',
+      title: 'Added Laptop',
+      entityName: 'MacBook Pro',
+      isUnread: true,
+    });
+    useActivityStore.getState().logActivity({
+      category: 'asset',
+      actionType: 'asset_updated',
+      title: 'Updated Laptop',
+      entityName: 'MacBook Pro',
+      isUnread: false,
+    });
+    useActivityStore.getState().logActivity({
+      category: 'employee',
+      actionType: 'employee_onboarded',
+      title: 'Added Employee',
+      entityName: 'Jane Doe',
+      isUnread: true,
+    });
+    useActivityStore.getState().logActivity({
+      category: 'allocation',
+      actionType: 'allocation_assigned',
+      title: 'Assigned Device',
+      entityName: 'MacBook Pro',
+      isUnread: true,
+    });
+
+    const kpi = useActivityStore.getState().getKpiSummary();
+    expect(kpi.totalHistory).toBe(4);
+    expect(kpi.assetActions).toBe(2);
+    expect(kpi.employeeActions).toBe(1);
+    expect(kpi.allocationActions).toBe(1);
+
+    expect(kpi.unreadCounts.all).toBe(3);
+    expect(kpi.unreadCounts.asset).toBe(1);
+    expect(kpi.unreadCounts.employee).toBe(1);
+    expect(kpi.unreadCounts.allocation).toBe(1);
+
+    expect(useActivityStore.getState().getUnreadCount('all')).toBe(3);
+    expect(useActivityStore.getState().getUnreadCount('asset')).toBe(1);
+  });
+
+  it('should mark all activities as read when markAllAsRead is invoked', () => {
+    useActivityStore.getState().clearActivities();
+    useActivityStore.getState().logActivity({
+      title: 'Event 1',
+      entityName: 'Device 1',
+      isUnread: true,
+    });
+    useActivityStore.getState().logActivity({
+      title: 'Event 2',
+      entityName: 'Device 2',
+      isUnread: true,
+    });
+
+    expect(useActivityStore.getState().getUnreadCount('all')).toBe(2);
+
+    useActivityStore.getState().markAllAsRead();
+
+    expect(useActivityStore.getState().getUnreadCount('all')).toBe(0);
+    expect(useActivityStore.getState().activities.every((a) => !a.isUnread)).toBe(true);
+  });
+
+  it('should mark an individual activity as read when markAsRead is called', () => {
+    useActivityStore.getState().clearActivities();
+    const act1 = useActivityStore.getState().logActivity({
+      title: 'Event 1',
+      entityName: 'Device 1',
+      isUnread: true,
+    });
+    const act2 = useActivityStore.getState().logActivity({
+      title: 'Event 2',
+      entityName: 'Device 2',
+      isUnread: true,
+    });
+
+    useActivityStore.getState().markAsRead(act1.id);
+
+    const updated1 = useActivityStore.getState().activities.find((a) => a.id === act1.id);
+    const updated2 = useActivityStore.getState().activities.find((a) => a.id === act2.id);
+
+    expect(updated1?.isUnread).toBe(false);
+    expect(updated2?.isUnread).toBe(true);
+    expect(useActivityStore.getState().getUnreadCount('all')).toBe(1);
   });
 });

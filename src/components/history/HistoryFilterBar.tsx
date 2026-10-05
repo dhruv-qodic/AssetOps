@@ -19,8 +19,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Select } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
-import type { HistoryCategory } from '@/mocks/seed/history';
-import { HISTORY_KPI_SUMMARY } from '@/mocks/seed/history';
+import type { HistoryCategory } from '@/types/activity';
+import { useActivityStore } from '@/store/useActivityStore';
 
 interface HistoryFilterBarProps {
   activeTab: HistoryCategory;
@@ -91,30 +91,41 @@ export const HistoryFilterBar: React.FC<HistoryFilterBarProps> = ({
   sortOrder,
   onSortOrderChange,
 }) => {
+  const activities = useActivityStore((s) => s.activities);
+
+  const unreadCounts = React.useMemo(() => {
+    return {
+      all: activities.filter((a) => a.isUnread).length,
+      asset: activities.filter((a) => a.category === 'asset' && a.isUnread).length,
+      employee: activities.filter((a) => a.category === 'employee' && a.isUnread).length,
+      allocation: activities.filter((a) => a.category === 'allocation' && a.isUnread).length,
+    };
+  }, [activities]);
+
   const tabs = [
     {
       id: 'all' as HistoryCategory,
       label: 'All History',
       icon: Layers,
-      badgeCount: HISTORY_KPI_SUMMARY.unreadCounts.all,
+      badgeCount: unreadCounts.all,
     },
     {
       id: 'asset' as HistoryCategory,
       label: 'Asset History',
       icon: Package,
-      badgeCount: HISTORY_KPI_SUMMARY.unreadCounts.asset,
+      badgeCount: unreadCounts.asset,
     },
     {
       id: 'employee' as HistoryCategory,
       label: 'Employee History',
       icon: Users,
-      badgeCount: HISTORY_KPI_SUMMARY.unreadCounts.employee,
+      badgeCount: unreadCounts.employee,
     },
     {
       id: 'allocation' as HistoryCategory,
       label: 'Allocation History',
       icon: GitCommit,
-      badgeCount: HISTORY_KPI_SUMMARY.unreadCounts.allocation,
+      badgeCount: unreadCounts.allocation,
     },
   ];
 
@@ -136,8 +147,8 @@ export const HistoryFilterBar: React.FC<HistoryFilterBarProps> = ({
               className={cn(
                 'flex items-center gap-2 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer shrink-0 select-none',
                 isActive
-                  ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs border border-slate-200/60 dark:border-slate-700'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/50 dark:hover:bg-slate-800/50',
+                  ? 'bg-[#012145] dark:bg-[#012145] text-white dark:text-white shadow-xs border border-slate-200/60 dark:border-slate-700'
+                  : 'text-[#012145] dark:text-[#012145] hover:text-[#012145] dark:hover:text-[#012145] hover:bg-white/50 dark:hover:bg-slate-800/50',
               )}
             >
               <Icon className="size-4" />
