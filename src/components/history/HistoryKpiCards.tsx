@@ -1,8 +1,41 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { History, Users, GitCommit, TrendingUp, Clock, Package } from 'lucide-react';
-import { HISTORY_KPI_SUMMARY } from '@/mocks/seed/history';
+import { useActivityStore } from '@/store/useActivityStore';
 
 export const HistoryKpiCards: React.FC = () => {
+  const activities = useActivityStore((s) => s.activities);
+
+  const kpi = useMemo(() => {
+    const totalHistory = activities.length;
+    const assetActions = activities.filter((a) => a.category === 'asset').length;
+    const employeeActions = activities.filter((a) => a.category === 'employee').length;
+    const allocationActions = activities.filter((a) => a.category === 'allocation').length;
+
+    const assetRate =
+      totalHistory > 0
+        ? `${((assetActions / totalHistory) * 100).toFixed(1)}% of total logs`
+        : '0.0% of total logs';
+    const empRate =
+      totalHistory > 0
+        ? `${((employeeActions / totalHistory) * 100).toFixed(1)}% of total logs`
+        : '0.0% of total logs';
+    const allocRate =
+      totalHistory > 0
+        ? `${((allocationActions / totalHistory) * 100).toFixed(1)}% of total logs`
+        : '0.0% of total logs';
+
+    return {
+      totalHistory,
+      totalHistoryGrowth: '+14.2% this month',
+      assetActions,
+      assetActionsRate: assetRate,
+      employeeActions,
+      employeeActionsRate: empRate,
+      allocationActions,
+      allocationActionsRate: allocRate,
+    };
+  }, [activities]);
+
   return (
     <div
       data-testid="history-kpi-cards"
@@ -36,13 +69,13 @@ export const HistoryKpiCards: React.FC = () => {
 
             <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
               <TrendingUp className="size-3" />
-              <span>{HISTORY_KPI_SUMMARY.totalHistoryGrowth}</span>
+              <span>{kpi.totalHistoryGrowth}</span>
             </div>
           </div>
 
           <div className="pt-1">
             <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              {HISTORY_KPI_SUMMARY.totalHistory.toLocaleString()}
+              {kpi.totalHistory.toLocaleString()}
             </div>
             <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5 font-medium">
               <Clock className="size-3.5 text-blue-400" />
@@ -75,11 +108,11 @@ export const HistoryKpiCards: React.FC = () => {
 
         <div className="pt-4">
           <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            {HISTORY_KPI_SUMMARY.assetActions.toLocaleString()}
+            {kpi.assetActions.toLocaleString()}
           </div>
           <div className="flex items-center gap-1.5 mt-1.5">
             <span className="inline-flex items-center text-xs font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md">
-              {HISTORY_KPI_SUMMARY.assetActionsRate}
+              {kpi.assetActionsRate}
             </span>
             <span className="text-[11px] text-slate-400 font-medium">
               Created, updated & retired
@@ -111,11 +144,11 @@ export const HistoryKpiCards: React.FC = () => {
 
         <div className="pt-4">
           <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            {HISTORY_KPI_SUMMARY.employeeActions.toLocaleString()}
+            {kpi.employeeActions.toLocaleString()}
           </div>
           <div className="flex items-center gap-1.5 mt-1.5">
             <span className="inline-flex items-center text-xs font-semibold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded-md">
-              {HISTORY_KPI_SUMMARY.employeeActionsRate}
+              {kpi.employeeActionsRate}
             </span>
             <span className="text-[11px] text-slate-400 font-medium">
               Onboard, transfer & update
@@ -147,11 +180,11 @@ export const HistoryKpiCards: React.FC = () => {
 
         <div className="pt-4">
           <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-            {HISTORY_KPI_SUMMARY.allocationActions.toLocaleString()}
+            {kpi.allocationActions.toLocaleString()}
           </div>
           <div className="flex items-center gap-1.5 mt-1.5">
             <span className="inline-flex items-center text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-md">
-              {HISTORY_KPI_SUMMARY.allocationActionsRate}
+              {kpi.allocationActionsRate}
             </span>
             <span className="text-[11px] text-slate-400 font-medium">
               Assigned, returned & replaced

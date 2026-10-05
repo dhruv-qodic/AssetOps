@@ -165,7 +165,8 @@ export const DashboardRecentActivity: React.FC = () => {
   // Take top 5 dynamic recent activities
   const recentActivities = useMemo<ActivityItem[]>(() => {
     return rawActivities.slice(0, 5).map((act) => {
-      const config = getActivityConfig(act.type);
+      const actionType = act.actionType;
+      const config = getActivityConfig(actionType);
       return {
         ...act,
         assetName: act.entityName,
@@ -272,7 +273,7 @@ export const DashboardRecentActivity: React.FC = () => {
                     </p>
 
                     <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                      <span>by {item.actor}</span>
+                      <span>by {item.actor.name}</span>
                       {item.department && (
                         <>
                           <span>•</span>

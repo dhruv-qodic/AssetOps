@@ -1,5 +1,6 @@
 import { Menu, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import UserDropdown from './UserDropdown';
+import NotificationDropdown from './NotificationDropdown';
 import { useSidebarStore } from '@/store/useSidebarStore';
 
 function Navbar() {
@@ -42,7 +43,10 @@ function Navbar() {
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-3">
+        {/* Notification Bell Dropdown */}
+        <NotificationDropdown />
+
         {/* Avatar Dropdown with User Details and Login/Logout Buttons */}
         <UserDropdown />
       </div>

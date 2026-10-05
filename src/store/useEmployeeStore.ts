@@ -187,13 +187,31 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
 
         useActivityStore.getState().logActivity({
           type: 'employee_created',
-          title: 'New Employee Added',
+          category: 'employee',
+          actionType: 'employee_onboarded',
+          action: 'Employee Onboarded',
+          title: `Onboarded ${firstName} ${lastName} to ${data.department} Team`,
+          description: `Created employee profile ${employeeId} for ${firstName} ${lastName} (${data.position}).`,
           entityName: `${firstName} ${lastName} (${employeeId})`,
           entityId: employeeId,
-          actor: 'HR Operations',
+          entityType: 'Employee',
+          actor: {
+            name: 'HR Operations',
+            email: 'hr@assetops.com',
+            role: 'HR Lead',
+            avatarInitials: 'HR',
+          },
           department: data.department,
+          location: data.location,
+          statusBadge: { label: 'Onboarded', variant: 'emerald' },
           badge: 'Onboarded',
           badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+          metadata: {
+            Position: data.position,
+            'Work Type': data.type,
+            Manager: 'Staff Directorate',
+            Email: data.email,
+          },
         });
 
         return newEmployee;
@@ -227,11 +245,23 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
 
         useActivityStore.getState().logActivity({
           type: 'employee_updated',
-          title: 'Employee Profile Updated',
+          category: 'employee',
+          actionType: 'employee_updated',
+          action: 'Profile Updated',
+          title: `Updated ${updatedEmployee.firstName} ${updatedEmployee.lastName} Profile`,
+          description: `Modified employee profile ${updatedEmployee.employeeId} (${updatedEmployee.position}) in ${updatedEmployee.department}.`,
           entityName: `${updatedEmployee.firstName} ${updatedEmployee.lastName} (${updatedEmployee.employeeId})`,
           entityId: updatedEmployee.employeeId,
-          actor: 'HR Operations',
+          entityType: 'Employee',
+          actor: {
+            name: 'HR Operations',
+            email: 'hr@assetops.com',
+            role: 'HR Lead',
+            avatarInitials: 'HR',
+          },
           department: updatedEmployee.department,
+          location: updatedEmployee.location,
+          statusBadge: { label: 'Updated', variant: 'purple' },
           badge: 'Updated',
           badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
         });
@@ -262,11 +292,23 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
 
         useActivityStore.getState().logActivity({
           type: 'employee_deleted',
-          title: 'Employee Removed',
+          category: 'employee',
+          actionType: 'employee_offboarded',
+          action: 'Employee Removed',
+          title: `Offboarded ${currentEmp.firstName} ${currentEmp.lastName}`,
+          description: `Archived and decommissioned employee profile ${currentEmp.employeeId}.`,
           entityName: `${currentEmp.firstName} ${currentEmp.lastName} (${currentEmp.employeeId})`,
           entityId: currentEmp.employeeId,
-          actor: 'HR Operations',
+          entityType: 'Employee',
+          actor: {
+            name: 'HR Operations',
+            email: 'hr@assetops.com',
+            role: 'HR Lead',
+            avatarInitials: 'HR',
+          },
           department: currentEmp.department,
+          location: currentEmp.location,
+          statusBadge: { label: 'Removed', variant: 'rose' },
           badge: 'Removed',
           badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
         });
@@ -308,9 +350,17 @@ export const useEmployeeStore = create<EmployeeStoreState>()(
 
         useActivityStore.getState().logActivity({
           type: 'employee_created',
+          category: 'employee',
+          actionType: 'employee_onboarded',
+          action: 'Employee Onboarded',
           title: 'Bulk Employees Added',
+          description: `Onboarded ${newItems.length} new employee profiles to organization roster.`,
           entityName: `${newItems.length} Staff Profiles`,
+          entityId: `BULK-${newItems.length}`,
+          entityType: 'Employee',
           actor: 'HR Operations',
+          department: 'HR',
+          statusBadge: { label: 'Onboarded', variant: 'emerald' },
           badge: 'Onboarded',
           badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
         });

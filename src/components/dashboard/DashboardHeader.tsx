@@ -73,7 +73,7 @@ export const DashboardHeader: React.FC = () => {
           type="button"
           variant="outline"
           onClick={openCustomization}
-          className="flex items-center gap-2 h-9 px-3.5 text-xs sm:text-sm font-medium border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-2xs hover:text-[#155DFC] dark:hover:text-[#155DFC] transition-colors shrink-0"
+          className="flex items-center gap-2 h-9 px-3.5 text-xs sm:text-sm font-medium border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-2xs hover:text-[#155DFC] dark:hover:text-[#155DFC] transition-colors shrink-0 cursor-pointer"
         >
           <SlidersHorizontal className="size-3.5 text-slate-500" />
           <span>Customize</span>
