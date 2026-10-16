@@ -1,0 +1,548 @@
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+import type {
+  Employee,
+  EmployeeStatus,
+  EmployeeType,
+  EmployeeSortOption,
+  EmployeeFilters,
+  CreateEmployeeInput,
+  UpdateEmployeeInput,
+  EmployeeStats,
+} from '@/types/employee';
+import { DEFAULT_EMPLOYEE_FILTERS } from '@/constant/employee.constants';
+import { MOCK_EMPLOYEES } from '@/mocks/seed/employees';
+import { useActivityStore } from './useActivityStore';
+
+interface EmployeeStoreState {
+  employees: Employee[];
+  filters: EmployeeFilters;
+  isLoading: boolean;
+  error: string | null;
+  selectedEmployee: Employee | null;
+
+  // Modal dialog states
+  isAddModalOpen: boolean;
+  isEditModalOpen: boolean;
+  isDeleteModalOpen: boolean;
+  isViewModalOpen: boolean;
+  isImportModalOpen: boolean;
+
+  // State actions
+  setIsLoading: (loading: boolean) => void;
+  setError: (error: string | null) => void;
+  reloadEmployees: () => Promise<void>;
+
+  // Filter & Pagination actions
+  setSearch: (search: string) => void;
+  setStatus: (status: EmployeeStatus | 'All') => void;
+  setType: (type: EmployeeType | 'All') => void;
+  setDepartment: (department: string) => void;
+  setLocation: (location: string) => void;
+  setSortBy: (sortBy: EmployeeSortOption) => void;
+  setPage: (page: number) => void;
+  setPageSize: (pageSize: number) => void;
+  resetFilters: () => void;
+
+  // CRUD actions
+  addEmployee: (data: CreateEmployeeInput) => Employee;
+  updateEmployee: (id: string, updates: Partial<UpdateEmployeeInput>) => boolean;
+  deleteEmployee: (id: string) => boolean;
+  bulkAddEmployees: (inputs: CreateEmployeeInput[]) => number;
+
+  // Asset allocation helpers
+  assignAssetToEmployee: (employeeId: string, assetId: string) => boolean;
+  unassignAssetFromEmployee: (employeeId: string, assetId: string) => boolean;
+
+  // Query helpers
+  getFilteredEmployees: () => {
+    paginatedEmployees: Employee[];
+    totalFiltered: number;
+    totalPages: number;
+    startIndex: number;
+    endIndex: number;
+  };
+  getStats: () => EmployeeStats;
+  getEmployeeById: (id: string) => Employee | undefined;
+
+  // Modal actions
+  openAddModal: () => void;
+  openEditModal: (employee: Employee) => void;
+  openDeleteModal: (employee: Employee) => void;
+  openViewModal: (employee: Employee) => void;
+  openImportModal: () => void;
+  closeModals: () => void;
+}
+
+export const useEmployeeStore = create<EmployeeStoreState>()(
+  persist(
+    (set, get) => ({
+      employees: MOCK_EMPLOYEES,
+      filters: DEFAULT_EMPLOYEE_FILTERS,
+      isLoading: false,
+      error: null,
+      selectedEmployee: null,
+
+      isAddModalOpen: false,
+      isEditModalOpen: false,
+      isDeleteModalOpen: false,
+      isViewModalOpen: false,
+      isImportModalOpen: false,
+
+      // State Actions
+      setIsLoading: (loading) => set({ isLoading: loading }),
+      setError: (error) => set({ error }),
+      reloadEmployees: async () => {
+        set({ isLoading: true, error: null });
+        try {
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          set({ isLoading: false, error: null });
+        } catch {
+          set({
+            isLoading: false,
+            error: 'Failed to reload employee directory. Please try again.',
+          });
+        }
+      },
+
+      // Filter Actions
+      setSearch: (search) =>
+        set((state) => ({
+          filters: { ...state.filters, search, page: 1 },
+        })),
+
+      setStatus: (status) =>
+        set((state) => ({
+          filters: { ...state.filters, status, page: 1 },
+        })),
+
+      setType: (type) =>
+        set((state) => ({
+          filters: { ...state.filters, type, page: 1 },
+        })),
+
+      setDepartment: (department) =>
+        set((state) => ({
+          filters: { ...state.filters, department, page: 1 },
+        })),
+
+      setLocation: (location) =>
+        set((state) => ({
+          filters: { ...state.filters, location, page: 1 },
+        })),
+
+      setSortBy: (sortBy) =>
+        set((state) => ({
+          filters: { ...state.filters, sortBy, page: 1 },
+        })),
+
+      setPage: (page) =>
+        set((state) => ({
+          filters: { ...state.filters, page },
+        })),
+
+      setPageSize: (pageSize) =>
+        set((state) => ({
+          filters: { ...state.filters, pageSize, page: 1 },
+        })),
+
+      resetFilters: () =>
+        set(() => ({
+          filters: DEFAULT_EMPLOYEE_FILTERS,
+        })),
+
+      // CRUD Actions
+      addEmployee: (data) => {
+        const now = new Date().toISOString();
+        const firstName = data.firstName || data.name?.split(' ')[0] || 'Employee';
+        const lastName = data.lastName || data.name?.split(' ').slice(1).join(' ') || '';
+        const newEmpIdNum = get().employees.length + 1001;
+        const employeeId = data.employeeId || `EMP-${newEmpIdNum}`;
+
+        const newEmployee: Employee = {
+          id: `emp_${crypto.randomUUID()}`,
+          employeeId,
+          firstName,
+          lastName,
+          email: data.email,
+          phone: data.phone || '',
+          department: data.department,
+          position: data.position,
+          status: data.status,
+          type: data.type,
+          location: data.location,
+          avatar:
+            data.avatar ||
+            `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+              `${firstName}${lastName}`,
+            )}`,
+          assignedAssets: [],
+          createdAt: now,
+          updatedAt: now,
+        };
+
+        set((state) => ({
+          employees: [newEmployee, ...state.employees],
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_created',
+          category: 'employee',
+          actionType: 'employee_onboarded',
+          action: 'Employee Onboarded',
+          title: `Onboarded ${firstName} ${lastName} to ${data.department} Team`,
+          description: `Created employee profile ${employeeId} for ${firstName} ${lastName} (${data.position}).`,
+          entityName: `${firstName} ${lastName} (${employeeId})`,
+          entityId: employeeId,
+          entityType: 'Employee',
+          actor: {
+            name: 'HR Operations',
+            email: 'hr@assetops.com',
+            role: 'HR Lead',
+            avatarInitials: 'HR',
+          },
+          department: data.department,
+          location: data.location,
+          statusBadge: { label: 'Onboarded', variant: 'emerald' },
+          badge: 'Onboarded',
+          badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+          metadata: {
+            Position: data.position,
+            'Work Type': data.type,
+            Manager: 'Staff Directorate',
+            Email: data.email,
+          },
+        });
+
+        return newEmployee;
+      },
+
+      updateEmployee: (id, updates) => {
+        const currentEmployee = get().employees.find(
+          (employee) => employee.id === id || employee.employeeId === id,
+        );
+
+        if (!currentEmployee) {
+          return false;
+        }
+
+        const updatedEmployee: Employee = {
+          ...currentEmployee,
+          ...updates,
+          updatedAt: new Date().toISOString(),
+        };
+
+        set((state) => ({
+          employees: state.employees.map((employee) =>
+            employee.id === id || employee.employeeId === id ? updatedEmployee : employee,
+          ),
+          selectedEmployee:
+            state.selectedEmployee &&
+            (state.selectedEmployee.id === id || state.selectedEmployee.employeeId === id)
+              ? updatedEmployee
+              : state.selectedEmployee,
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_updated',
+          category: 'employee',
+          actionType: 'employee_updated',
+          action: 'Profile Updated',
+          title: `Updated ${updatedEmployee.firstName} ${updatedEmployee.lastName} Profile`,
+          description: `Modified employee profile ${updatedEmployee.employeeId} (${updatedEmployee.position}) in ${updatedEmployee.department}.`,
+          entityName: `${updatedEmployee.firstName} ${updatedEmployee.lastName} (${updatedEmployee.employeeId})`,
+          entityId: updatedEmployee.employeeId,
+          entityType: 'Employee',
+          actor: {
+            name: 'HR Operations',
+            email: 'hr@assetops.com',
+            role: 'HR Lead',
+            avatarInitials: 'HR',
+          },
+          department: updatedEmployee.department,
+          location: updatedEmployee.location,
+          statusBadge: { label: 'Updated', variant: 'purple' },
+          badge: 'Updated',
+          badgeClass: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300',
+        });
+
+        return true;
+      },
+
+      deleteEmployee: (id) => {
+        const currentEmp = get().employees.find((e) => e.id === id || e.employeeId === id);
+        if (!currentEmp) {
+          return false;
+        }
+
+        set((state) => {
+          const filtered = state.employees.filter((e) => e.id !== id && e.employeeId !== id);
+          const newTotalPages = Math.max(1, Math.ceil(filtered.length / state.filters.pageSize));
+          const newPage = Math.min(state.filters.page, newTotalPages);
+
+          return {
+            employees: filtered,
+            selectedEmployee:
+              state.selectedEmployee?.id === id || state.selectedEmployee?.employeeId === id
+                ? null
+                : state.selectedEmployee,
+            filters: { ...state.filters, page: newPage },
+          };
+        });
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_deleted',
+          category: 'employee',
+          actionType: 'employee_offboarded',
+          action: 'Employee Removed',
+          title: `Offboarded ${currentEmp.firstName} ${currentEmp.lastName}`,
+          description: `Archived and decommissioned employee profile ${currentEmp.employeeId}.`,
+          entityName: `${currentEmp.firstName} ${currentEmp.lastName} (${currentEmp.employeeId})`,
+          entityId: currentEmp.employeeId,
+          entityType: 'Employee',
+          actor: {
+            name: 'HR Operations',
+            email: 'hr@assetops.com',
+            role: 'HR Lead',
+            avatarInitials: 'HR',
+          },
+          department: currentEmp.department,
+          location: currentEmp.location,
+          statusBadge: { label: 'Removed', variant: 'rose' },
+          badge: 'Removed',
+          badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300',
+        });
+
+        return true;
+      },
+
+      bulkAddEmployees: (newItems) => {
+        const now = new Date().toISOString();
+        const formatted: Employee[] = newItems.map((item) => {
+          const firstName = item.firstName || item.name?.split(' ')[0] || 'Employee';
+          const lastName = item.lastName || item.name?.split(' ').slice(1).join(' ') || '';
+          return {
+            id: `emp_${crypto.randomUUID()}`,
+            employeeId: item.employeeId || `EMP-${crypto.randomUUID()}`,
+            firstName,
+            lastName,
+            email: item.email,
+            phone: item.phone || '',
+            department: item.department,
+            position: item.position,
+            status: item.status,
+            type: item.type,
+            location: item.location,
+            avatar:
+              item.avatar ||
+              `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
+                `${firstName}${lastName}`,
+              )}`,
+            assignedAssets: [],
+            createdAt: now,
+            updatedAt: now,
+          };
+        });
+
+        set((state) => ({
+          employees: [...formatted, ...state.employees],
+        }));
+
+        useActivityStore.getState().logActivity({
+          type: 'employee_created',
+          category: 'employee',
+          actionType: 'employee_onboarded',
+          action: 'Employee Onboarded',
+          title: 'Bulk Employees Added',
+          description: `Onboarded ${newItems.length} new employee profiles to organization roster.`,
+          entityName: `${newItems.length} Staff Profiles`,
+          entityId: `BULK-${newItems.length}`,
+          entityType: 'Employee',
+          actor: 'HR Operations',
+          department: 'HR',
+          statusBadge: { label: 'Onboarded', variant: 'emerald' },
+          badge: 'Onboarded',
+          badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300',
+        });
+
+        return formatted.length;
+      },
+
+      assignAssetToEmployee: (employeeId, assetId) => {
+        let success = false;
+        set((state) => {
+          const newEmployees = state.employees.map((emp) => {
+            if (emp.id === employeeId || emp.employeeId === employeeId) {
+              const currentAssets = emp.assignedAssets;
+              if (!currentAssets.includes(assetId)) {
+                success = true;
+                return {
+                  ...emp,
+                  assignedAssets: [...currentAssets, assetId],
+                  updatedAt: new Date().toISOString(),
+                };
+              }
+            }
+            return emp;
+          });
+          return { employees: newEmployees };
+        });
+        return success;
+      },
+
+      unassignAssetFromEmployee: (employeeId, assetId) => {
+        let success = false;
+        set((state) => {
+          const newEmployees = state.employees.map((emp) => {
+            if (emp.id === employeeId || emp.employeeId === employeeId) {
+              if (emp.assignedAssets.includes(assetId)) {
+                success = true;
+                return {
+                  ...emp,
+                  assignedAssets: emp.assignedAssets.filter((a) => a !== assetId),
+                  updatedAt: new Date().toISOString(),
+                };
+              }
+            }
+            return emp;
+          });
+          return { employees: newEmployees };
+        });
+        return success;
+      },
+
+      // Query Helpers
+      getFilteredEmployees: () => {
+        const { employees, filters } = get();
+        const { search, status, type, department, location, sortBy, page, pageSize } = filters;
+
+        let filtered = [...employees];
+
+        // 1. Text Search (name, employeeId, email, position, department)
+        if (search.trim()) {
+          const query = search.trim().toLowerCase();
+          filtered = filtered.filter((emp) => {
+            const fullName = `${emp.firstName} ${emp.lastName}`.toLowerCase();
+            const matchName = fullName.includes(query);
+            const matchId = emp.employeeId.toLowerCase().includes(query);
+            const matchEmail = emp.email.toLowerCase().includes(query);
+            const matchPosition = emp.position.toLowerCase().includes(query);
+            const matchDept = emp.department.toLowerCase().includes(query);
+
+            return matchName || matchId || matchEmail || matchPosition || matchDept;
+          });
+        }
+
+        // 2. Status Filter
+        if (status !== 'All') {
+          filtered = filtered.filter((e) => e.status === status);
+        }
+
+        // 3. Type Filter
+        if (type && type !== 'All') {
+          filtered = filtered.filter((e) => e.type === type);
+        }
+
+        // 3. Department Filter
+        if (department !== 'All') {
+          filtered = filtered.filter((e) => e.department === department);
+        }
+
+        // 4. Location Filter
+        if (location !== 'All') {
+          filtered = filtered.filter((e) => e.location === location);
+        }
+
+        // 5. Sorting
+        filtered.sort((a, b) => {
+          const nameA = `${a.firstName} ${a.lastName}`;
+          const nameB = `${b.firstName} ${b.lastName}`;
+
+          switch (sortBy) {
+            case 'name_asc':
+              return nameA.localeCompare(nameB);
+            case 'name_desc':
+              return nameB.localeCompare(nameA);
+            case 'employee_id_asc':
+              return a.employeeId.localeCompare(b.employeeId, undefined, {
+                numeric: true,
+              });
+            case 'employee_id_desc':
+              return b.employeeId.localeCompare(a.employeeId, undefined, {
+                numeric: true,
+              });
+            case 'date_created_desc':
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            case 'recently_added':
+            default:
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          }
+        });
+
+        const totalFiltered = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(totalFiltered / pageSize));
+        const safePage = Math.min(page, totalPages);
+        const startIndex = (safePage - 1) * pageSize;
+        const endIndex = Math.min(startIndex + pageSize, totalFiltered);
+        const paginatedEmployees = filtered.slice(startIndex, endIndex);
+
+        return {
+          paginatedEmployees,
+          totalFiltered,
+          totalPages,
+          startIndex: totalFiltered === 0 ? 0 : startIndex + 1,
+          endIndex,
+        };
+      },
+
+      getStats: () => {
+        const { employees } = get();
+        const byDepartment: Record<string, number> = {};
+        const byType: Record<string, number> = {};
+        const byLocation: Record<string, number> = {};
+
+        employees.forEach((emp) => {
+          byDepartment[emp.department] = (byDepartment[emp.department] || 0) + 1;
+          byType[emp.type] = (byType[emp.type] || 0) + 1;
+          byLocation[emp.location] = (byLocation[emp.location] || 0) + 1;
+        });
+
+        return {
+          totalEmployees: employees.length,
+          active: employees.filter((e) => e.status === 'active').length,
+          inactive: employees.filter((e) => e.status === 'inactive').length,
+          terminated: employees.filter((e) => e.status === 'terminated').length,
+          byDepartment,
+          byType,
+          byLocation,
+        };
+      },
+
+      getEmployeeById: (id) => {
+        return get().employees.find((e) => e.id === id || e.employeeId === id);
+      },
+
+      // Modal Actions
+      openAddModal: () => set({ isAddModalOpen: true, selectedEmployee: null }),
+      openEditModal: (employee) => set({ isEditModalOpen: true, selectedEmployee: employee }),
+      openDeleteModal: (employee) => set({ isDeleteModalOpen: true, selectedEmployee: employee }),
+      openViewModal: (employee) => set({ isViewModalOpen: true, selectedEmployee: employee }),
+      openImportModal: () => set({ isImportModalOpen: true }),
+      closeModals: () =>
+        set({
+          isAddModalOpen: false,
+          isEditModalOpen: false,
+          isDeleteModalOpen: false,
+          isViewModalOpen: false,
+          isImportModalOpen: false,
+          selectedEmployee: null,
+        }),
+    }),
+    {
+      name: 'assetops_employees_store_v2',
+      partialize: (state) => ({
+        employees: state.employees,
+      }),
+    },
+  ),
+);

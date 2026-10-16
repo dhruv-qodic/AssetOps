@@ -1,0 +1,301 @@
+import { useState, useRef, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import {
+  LogOut,
+  ShieldCheck,
+  UserCheck,
+  Eye,
+  Mail,
+  Fingerprint,
+  CheckCircle2,
+  ChevronDown,
+  Sparkles,
+  Palette,
+  Check,
+} from 'lucide-react';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+import { useThemeStore } from '@/store/useThemeStore';
+import { THEME_COLORS } from '@/constant/theme';
+
+/**
+ * @description: Renders user profile menu trigger with avatar, role badge, permissions summary, and sign out button
+ * @return {JSX.Element}: React user dropdown component or null if not authenticated
+ */
+export default function UserDropdown() {
+  const { t: translateAuth } = useTranslation('auth');
+  const { t: translateSettings } = useTranslation('setting');
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const themeColor = useThemeStore((state) => state.themeColor);
+  const setThemeColor = useThemeStore((state) => state.setThemeColor);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false);
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
+
+  if (!user) return null;
+
+  /**
+   * @description: Clears authentication state and redirects user to login screen
+   * @return {void}: void
+   */
+  const handleLogout = () => {
+    setIsOpen(false);
+    logout();
+    toast.success(translateAuth('toast.signedOut'));
+    void navigate('/login');
+  };
+
+  /**
+   * @description: Returns role presentation styles, descriptions, and accessible feature modules
+   * @return {Object}: Role configuration object containing title, color classes, icon, and permissions list
+   */
+  const getRoleConfig = () => {
+    switch (user.role) {
+      case 'ADMIN':
+        return {
+          title: translateAuth('profile.adminTitle'),
+          color:
+            'bg-purple-100 text-purple-700 dark:bg-purple-950/70 dark:text-purple-300 border-purple-200 dark:border-purple-800',
+          badgeGradient: 'from-purple-600 to-indigo-600',
+          icon: ShieldCheck,
+          description: translateAuth('profile.adminDesc'),
+          modules: [
+            translateSettings('sidebar.dashboard'),
+            translateSettings('sidebar.assets'),
+            translateSettings('sidebar.employees'),
+            translateSettings('sidebar.allocations'),
+            translateSettings('sidebar.history'),
+            translateSettings('sidebar.reports'),
+            translateSettings('sidebar.settings'),
+          ],
+        };
+      case 'MANAGER':
+        return {
+          title: translateAuth('profile.managerTitle'),
+          color:
+            'bg-blue-100 text-blue-700 dark:bg-blue-950/70 dark:text-blue-300 border-blue-200 dark:border-blue-800',
+          badgeGradient: 'from-blue-600 to-cyan-600',
+          icon: UserCheck,
+          description: translateAuth('profile.managerDesc'),
+          modules: [
+            translateSettings('sidebar.dashboard'),
+            translateSettings('sidebar.assets'),
+            translateSettings('sidebar.employees'),
+            translateSettings('sidebar.allocations'),
+            translateSettings('sidebar.history'),
+          ],
+        };
+      case 'VIEWER':
+        return {
+          title: translateAuth('profile.viewerTitle'),
+          color:
+            'bg-emerald-100 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+          badgeGradient: 'from-emerald-600 to-teal-600',
+          icon: Eye,
+          description: translateAuth('profile.viewerDesc'),
+          modules: [
+            translateSettings('sidebar.dashboard'),
+            translateSettings('sidebar.assets'),
+            translateSettings('sidebar.history'),
+          ],
+        };
+    }
+  };
+
+  const roleConfig = getRoleConfig();
+  const RoleIcon = roleConfig.icon;
+
+  return (
+    <div className="relative" ref={dropdownRef}>
+      {/* Avatar Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen((prev) => !prev)}
+        className="flex items-center gap-3 p-1.5 rounded-xl hover:bg-muted/60 transition-all cursor-pointer group text-left focus:outline-hidden"
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        aria-label="User account menu"
+      >
+        <div className="text-right hidden sm:block">
+          <div className="text-sm font-semibold leading-tight text-foreground group-hover:text-primary transition-colors">
+            {user.name}
+          </div>
+          <div className="mt-0.5">
+            <span
+              className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.2 rounded-full border ${roleConfig.color}`}
+            >
+              <RoleIcon className="size-2.5" />
+              {user.role}
+            </span>
+          </div>
+        </div>
+
+        <div className="relative">
+          <div className="size-9 rounded-full bg-primary text-primary-foreground font-bold text-sm flex items-center justify-center border border-border ring-2 ring-primary/15 group-hover:ring-primary transition-all shadow-xs shrink-0 select-none">
+            {user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'}
+          </div>
+          <span className="absolute bottom-0 right-0 size-2.5 bg-emerald-500 border-2 border-background rounded-full" />
+        </div>
+
+        <ChevronDown
+          className={`size-3.5 text-muted-foreground group-hover:text-foreground transition-transform duration-200 hidden sm:block ${
+            isOpen ? 'rotate-180 text-foreground' : ''
+          }`}
+        />
+      </button>
+
+      {/* Dropdown Menu */}
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-80 sm:w-88 bg-background border border-border rounded-2xl shadow-xl z-50 overflow-hidden animate-in fade-in zoom-in-95 duration-150 text-left">
+          {/* Header with Avatar & Details */}
+          <div className="p-4 bg-muted/30 border-b border-border">
+            <div className="flex items-start gap-3">
+              <div className="relative shrink-0">
+                <div className="size-12 rounded-xl bg-primary text-primary-foreground font-bold text-lg flex items-center justify-center border border-border shadow-sm select-none">
+                  {user.name ? user.name.trim().charAt(0).toUpperCase() : 'U'}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 size-3 bg-emerald-500 border-2 border-background rounded-full" />
+              </div>
+
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-bold text-foreground truncate">{user.name}</h3>
+                <p className="text-xs text-muted-foreground truncate flex items-center gap-1 mt-0.5">
+                  <Mail className="size-3 shrink-0" />
+                  <span className="truncate">{user.email}</span>
+                </p>
+                <div className="mt-1.5">
+                  <span
+                    className={`inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${roleConfig.color}`}
+                  >
+                    <RoleIcon className="size-3" />
+                    {roleConfig.title}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* User Details Section */}
+          <div className="p-3.5 space-y-2.5 text-xs bg-background">
+            <div className="flex items-center justify-between text-muted-foreground py-0.5">
+              <span className="flex items-center gap-1.5">
+                <Fingerprint className="size-3.5" /> User ID
+              </span>
+              <span className="font-mono text-foreground font-medium text-[11px] bg-muted/60 px-1.5 py-0.5 rounded">
+                {user.id}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between text-muted-foreground py-0.5">
+              <span className="flex items-center gap-1.5">
+                <CheckCircle2 className="size-3.5 text-emerald-500" /> Account Status
+              </span>
+              <span className="text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1">
+                Active
+              </span>
+            </div>
+
+            {/* Modules / Permissions */}
+            <div className="pt-1">
+              <span className="text-muted-foreground font-medium flex items-center gap-1 mb-1.5">
+                <Sparkles className="size-3 text-amber-500" /> Role Permissions (
+                {roleConfig.modules.length}):
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {roleConfig.modules.map((mod) => (
+                  <span
+                    key={mod}
+                    className="px-2 py-0.5 bg-muted/60 text-foreground text-[10.5px] rounded-md font-medium border border-border/50"
+                  >
+                    {mod}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Theme Color Selector */}
+          <div className="border-t border-border p-3">
+            <div className="mb-2 flex items-center gap-2 text-xs font-semibold text-foreground">
+              <Palette className="size-4 text-primary" />
+              <span>{translateAuth('profile.colorTheme')}</span>
+            </div>
+
+            <div className="grid grid-cols-5 gap-2">
+              {THEME_COLORS.map((option) => {
+                const isSelected = themeColor === option.value;
+
+                return (
+                  <button
+                    key={option.value}
+                    type="button"
+                    onClick={() => setThemeColor(option.value)}
+                    title={option.label}
+                    aria-label={`Select ${option.label} theme color`}
+                    aria-pressed={isSelected}
+                    className="flex flex-col items-center gap-1.5 rounded-lg p-2
+            transition-colors hover:bg-muted cursor-pointer
+            focus-visible:outline-none focus-visible:ring-2
+            focus-visible:ring-ring"
+                  >
+                    <span
+                      className="flex size-8 items-center justify-center rounded-full
+              border border-border/60 shadow-sm"
+                      style={{ backgroundColor: option.color }}
+                    >
+                      {isSelected && <Check className="size-4 text-white" />}
+                    </span>
+
+                    <span className="text-[10px] font-medium text-muted-foreground">
+                      {option.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Actions: Login & Logout Buttons */}
+          <div className="p-2 bg-muted/20 border-t border-border space-y-1">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors cursor-pointer text-left"
+            >
+              <LogOut className="size-4" />
+              <span>{translateAuth('profile.signOut')}</span>
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

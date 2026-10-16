@@ -1,0 +1,67 @@
+import React from 'react';
+import { Package, Loader2 } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+interface LoadingStateProps {
+  icon?: React.ElementType;
+  title?: string;
+  description?: string;
+  className?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+/**
+ * @description: Displays a centered animated spinner and status message during async loading operations
+ * @param {LoadingStateProps} props: LoadingStateProps containing icon, title, description, size, and className
+ * @return{JSX.Element}: React loading indicator component
+ */
+export const LoadingState: React.FC<LoadingStateProps> = ({
+  icon: Icon = Package,
+  title = 'Loading data...',
+  description = 'Please wait while we retrieve the latest information.',
+  className,
+  size = 'md',
+}) => {
+  const isSmall = size === 'sm';
+  const isLarge = size === 'lg';
+
+  return (
+    <div
+      role="status"
+      aria-live="polite"
+      className={cn(
+        'flex flex-col items-center justify-center text-center p-8 sm:p-12 animate-in fade-in duration-300',
+        isSmall && 'p-4 sm:p-6',
+        isLarge && 'p-12 sm:p-16 min-h-[360px]',
+        className,
+      )}
+    >
+      {/* Asset-related icon integrated into an animated loader */}
+      <div className="relative flex items-center justify-center mb-4">
+        {/* Outer glowing pulsing aura */}
+        <div className="absolute size-16 rounded-full bg-primary/10 dark:bg-primary/20 animate-ping opacity-75" />
+
+        {/* Outer spinning border ring */}
+        <div className="relative flex size-14 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20 shadow-xs">
+          <Icon className="size-6 text-primary animate-pulse" />
+
+          {/* Absolute corner spinner */}
+          <div className="absolute -inset-1 pointer-events-none">
+            <Loader2 className="size-16 text-primary/60 animate-spin" />
+          </div>
+        </div>
+      </div>
+
+      <h3 className="text-sm sm:text-base font-semibold text-slate-800 dark:text-slate-100 tracking-tight">
+        {title}
+      </h3>
+      {description && (
+        <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mt-1 leading-relaxed">
+          {description}
+        </p>
+      )}
+    </div>
+  );
+};
+
+export default LoadingState;

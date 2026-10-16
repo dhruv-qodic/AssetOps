@@ -1,0 +1,390 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    /* Main Layout & App Page Surfaces */
+    --background: hsl(210 40% 98%);
+    /* #F8FAFC - Clean light slate background */
+    --foreground: hsl(222 47% 11%);
+    /* #0F172A - Deep navy text */
+    --card: hsl(0 0% 100%);
+    /* #FFFFFF - Clean white card panels */
+    --card-foreground: hsl(222 47% 11%);
+    --popover: hsl(0 0% 100%);
+    --popover-foreground: hsl(222 47% 11%);
+
+    /* Header Navbar Theme (Related Light Ice Blue) */
+    --navbar: hsl(214 90% 97%);
+    /* #EFF6FF / #F0F5FD - Related soft light blue */
+    --navbar-foreground: hsl(222 47% 11%);
+    /* #0F172A - Deep slate text */
+    --navbar-border: hsl(214 70% 90%);
+    /* #DBEAFE / #DCE7F7 - Soft light blue border */
+
+    /* Primary Accent Brand Color (Signature Royal Indigo Blue) */
+    --primary: hsl(221 98% 54%);
+    /* #155DFC - Primary Blue */
+    --primary-foreground: hsl(0 0% 100%);
+
+    /* Secondary & Muted UI Tokens */
+    --secondary: hsl(214.3 31.8% 91.4%);
+    /* #E2E8F0 */
+    --secondary-foreground: hsl(222.2 47.4% 11.2%);
+    --muted: hsl(210 40% 96.1%);
+    /* #F1F5F9 */
+    --muted-foreground: hsl(215.4 16.3% 46.9%);
+    /* #64748B */
+    --accent: hsl(210 40% 96.1%);
+    --accent-foreground: hsl(222.2 47.4% 11.2%);
+
+    /* Status Badges & Alerts */
+    --destructive: hsl(0 84.2% 60.2%);
+    /* #EF4444 - Red */
+    --destructive-foreground: hsl(0 0% 100%);
+    --success: hsl(142 71% 45%);
+    /* #10B981 - Green */
+    --success-foreground: hsl(0 0% 100%);
+    --warning: hsl(38 92% 50%);
+    /* #F59E0B - Amber */
+    --warning-foreground: hsl(0 0% 100%);
+
+    /* Form Borders & Inputs */
+    --border: hsl(214.3 31.8% 91.4%);
+    /* #E2E8F0 */
+    --input: hsl(214.3 31.8% 91.4%);
+    --ring: hsl(221 98% 54%);
+    --radius: 0.75rem;
+    /* 12px smooth rounded corners */
+
+    /* Chart & Graphical Visual Tokens */
+    --chart-1: hsl(221 98% 54%);
+    /* Royal Indigo */
+    --chart-2: hsl(217 91% 60%);
+    /* Ocean Blue */
+    --chart-3: hsl(187 92% 41%);
+    /* Cyan/Teal */
+    --chart-4: hsl(38 92% 50%);
+    /* Amber/Yellow */
+    --chart-5: hsl(270 91% 65%);
+    /* Violet/Purple */
+
+    /* Dark Navy Sidebar Theme (matching exact AssetOps design) */
+    --sidebar: hsl(228 60% 9%);
+    /* #080E24 - Deep Dark Navy Background */
+    --sidebar-foreground: hsl(215 20% 68%);
+    /* #94A3B8 - Soft Slate Gray text */
+    --sidebar-primary: #1760fd;
+    /* #1760FD - Signature Blue Active Tab */
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(226 42% 16%);
+    /* #182042 - Dark Navy Hover State */
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(226 40% 14%);
+    /* #161D3A - Subtle Dark Border */
+    --sidebar-ring: hsl(221 98% 54%);
+  }
+
+  .dark {
+    /* Main Layout & App Page Surfaces - Deep Navy Slate Canvas */
+    --background: hsl(222.2 84% 4.9%);
+    /* #020617 - Sleek dark slate background */
+    --foreground: hsl(210 40% 98%);
+    --card: hsl(222.2 47.4% 11.2%);
+    /* #0F172A - Cohesive slate-900 surface for cards/panels */
+    --card-foreground: hsl(210 40% 98%);
+    --popover: hsl(222.2 47.4% 11.2%);
+    --popover-foreground: hsl(210 40% 98%);
+
+    /* Header Navbar Theme */
+    --navbar: hsl(223 47% 9%);
+    /* #0C1322 - Sleek slate-navy navbar surface */
+    --navbar-foreground: hsl(210 40% 98%);
+    --navbar-border: hsl(217.2 32.6% 17.5%);
+    /* #1E293B - Crisp slate-800 border */
+
+    /* Primary Accent Brand Color */
+    --primary: hsl(221 98% 54%);
+    /* #155DFC - Primary Royal Blue */
+    --primary-foreground: hsl(0 0% 100%);
+
+    /* Secondary & Muted UI Tokens */
+    --secondary: hsl(217.2 32.6% 17.5%);
+    /* #1E293B */
+    --secondary-foreground: hsl(210 40% 98%);
+    --muted: hsl(217.2 32.6% 17.5%);
+    /* #1E293B */
+    --muted-foreground: hsl(215 20.2% 65.1%);
+    /* #94A3B8 */
+    --accent: hsl(217.2 32.6% 17.5%);
+    --accent-foreground: hsl(210 40% 98%);
+
+    /* Status Badges & Alerts */
+    --destructive: hsl(0 72% 51%);
+    /* Clear crimson red */
+    --destructive-foreground: hsl(0 0% 100%);
+    --success: hsl(142 70% 45%);
+    /* Clear emerald green */
+    --success-foreground: hsl(0 0% 100%);
+    --warning: hsl(38 92% 50%);
+    /* Amber warning */
+    --warning-foreground: hsl(0 0% 100%);
+
+    /* Form Borders & Inputs */
+    --border: hsl(217.2 32.6% 17.5%);
+    /* #1E293B - Slate-800 */
+    --input: hsl(217.2 32.6% 17.5%);
+    --ring: hsl(221 98% 54%);
+
+    /* Chart & Graphical Visual Tokens for Dark Surfaces */
+    --chart-1: hsl(221 98% 62%);
+    --chart-2: hsl(217 91% 65%);
+    --chart-3: hsl(187 92% 48%);
+    --chart-4: hsl(38 92% 55%);
+    --chart-5: hsl(270 91% 70%);
+
+    /* Dark Navy Sidebar Theme */
+    --sidebar: hsl(228 60% 8%);
+    /* #070D21 - Deep Dark Navy Background */
+    --sidebar-foreground: hsl(215 20% 68%);
+    --sidebar-primary: #1760fd;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-accent: hsl(226 42% 15%);
+    /* #161E3E - Dark Navy Hover State */
+    --sidebar-accent-foreground: hsl(0 0% 100%);
+    --sidebar-border: hsl(226 40% 13%);
+    /* #141B37 - Subtle Dark Border */
+    --sidebar-ring: hsl(221 98% 54%);
+  }
+
+  /* ==========================================================================
+     Theme Color Presets (Purple, Blue, Pink, Green, Orange)
+     ========================================================================== */
+
+  /* PURPLE */
+  [data-theme-color='purple'] {
+    --primary: hsl(262 83% 58%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(262 83% 58%);
+    --sidebar-primary: #7c3aed;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(262 83% 58%);
+    --navbar-border: hsl(262 60% 92%);
+    --chart-1: hsl(262 83% 58%);
+    --chart-2: hsl(280 85% 65%);
+    --chart-3: hsl(295 80% 60%);
+    --chart-4: hsl(250 85% 65%);
+    --chart-5: hsl(315 75% 65%);
+  }
+
+  .dark[data-theme-color='purple'],
+  [data-theme-color='purple'] .dark {
+    --primary: hsl(263 90% 66%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(263 90% 66%);
+    --sidebar-primary: #7c3aed;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(263 90% 66%);
+    --navbar-border: hsl(263 30% 18%);
+    --chart-1: hsl(263 90% 66%);
+    --chart-2: hsl(280 85% 70%);
+    --chart-3: hsl(295 80% 65%);
+    --chart-4: hsl(250 85% 70%);
+    --chart-5: hsl(315 75% 70%);
+  }
+
+  /* BLUE (Default) */
+  [data-theme-color='blue'] {
+    --primary: hsl(221 98% 54%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(221 98% 54%);
+    --sidebar-primary: #155dfc;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(221 98% 54%);
+    --navbar-border: hsl(214 70% 90%);
+    --chart-1: hsl(221 98% 54%);
+    --chart-2: hsl(217 91% 60%);
+    --chart-3: hsl(187 92% 41%);
+    --chart-4: hsl(38 92% 50%);
+    --chart-5: hsl(270 91% 65%);
+  }
+
+  .dark[data-theme-color='blue'],
+  [data-theme-color='blue'] .dark {
+    --primary: hsl(221 98% 54%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(221 98% 54%);
+    --sidebar-primary: #1760fd;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(221 98% 54%);
+    --navbar-border: hsl(217.2 32.6% 17.5%);
+    --chart-1: hsl(221 98% 62%);
+    --chart-2: hsl(217 91% 65%);
+    --chart-3: hsl(187 92% 48%);
+    --chart-4: hsl(38 92% 55%);
+    --chart-5: hsl(270 91% 70%);
+  }
+
+  /* PINK */
+  [data-theme-color='pink'] {
+    --primary: hsl(330 81% 60%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(330 81% 60%);
+    --sidebar-primary: #db2777;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(330 81% 60%);
+    --navbar-border: hsl(330 60% 92%);
+    --chart-1: hsl(330 81% 60%);
+    --chart-2: hsl(340 85% 65%);
+    --chart-3: hsl(320 80% 60%);
+    --chart-4: hsl(355 85% 65%);
+    --chart-5: hsl(305 75% 65%);
+  }
+
+  .dark[data-theme-color='pink'],
+  [data-theme-color='pink'] .dark {
+    --primary: hsl(330 81% 65%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(330 81% 65%);
+    --sidebar-primary: #db2777;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(330 81% 65%);
+    --navbar-border: hsl(330 30% 18%);
+    --chart-1: hsl(330 81% 65%);
+    --chart-2: hsl(340 85% 70%);
+    --chart-3: hsl(320 80% 65%);
+    --chart-4: hsl(355 85% 70%);
+    --chart-5: hsl(305 75% 70%);
+  }
+
+  /* GREEN */
+  [data-theme-color='green'] {
+    --primary: oklch(0.5234 0.1347 144.1672);
+    --primary-foreground: oklch(1 0 0);
+    --ring: oklch(0.5234 0.1347 144.1672);
+    --sidebar-primary: oklch(0.5234 0.1347 144.1672);
+    --sidebar-primary-foreground: oklch(1 0 0);
+    --sidebar-ring: oklch(0.5234 0.1347 144.1672);
+    --navbar-border: oklch(0.8805 0.0208 74.6428);
+    --chart-1: oklch(0.6731 0.1624 144.2083);
+    --chart-2: oklch(0.5752 0.1446 144.1813);
+    --chart-3: oklch(0.5234 0.1347 144.1672);
+    --chart-4: oklch(0.4254 0.1159 144.3078);
+    --chart-5: oklch(0.2157 0.0453 145.7256);
+  }
+
+  .dark[data-theme-color='green'],
+  [data-theme-color='green'] .dark {
+    --primary: oklch(0.6731 0.1624 144.2083);
+    --primary-foreground: oklch(0.2157 0.0453 145.7256);
+    --ring: oklch(0.6731 0.1624 144.2083);
+    --sidebar-primary: oklch(0.6731 0.1624 144.2083);
+    --sidebar-primary-foreground: oklch(0.2157 0.0453 145.7256);
+    --sidebar-ring: oklch(0.6731 0.1624 144.2083);
+    --navbar-border: oklch(0.3942 0.0265 142.9926);
+    --chart-1: oklch(0.766 0.1179 145.295);
+    --chart-2: oklch(0.7185 0.1417 144.8887);
+    --chart-3: oklch(0.6731 0.1624 144.2083);
+    --chart-4: oklch(0.6291 0.1543 144.2031);
+    --chart-5: oklch(0.5752 0.1446 144.1813);
+  }
+
+  /* ORANGE */
+  [data-theme-color='orange'] {
+    --primary: hsl(24.6 95% 53.1%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(24.6 95% 53.1%);
+    --sidebar-primary: #ea580c;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(24.6 95% 53.1%);
+    --navbar-border: hsl(25 70% 90%);
+    --chart-1: hsl(24.6 95% 53.1%);
+    --chart-2: hsl(35 92% 55%);
+    --chart-3: hsl(15 90% 55%);
+    --chart-4: hsl(45 95% 50%);
+    --chart-5: hsl(10 85% 60%);
+  }
+
+  .dark[data-theme-color='orange'],
+  [data-theme-color='orange'] .dark {
+    --primary: hsl(24.6 95% 55%);
+    --primary-foreground: hsl(0 0% 100%);
+    --ring: hsl(24.6 95% 55%);
+    --sidebar-primary: #ea580c;
+    --sidebar-primary-foreground: hsl(0 0% 100%);
+    --sidebar-ring: hsl(24.6 95% 55%);
+    --navbar-border: hsl(25 30% 18%);
+    --chart-1: hsl(24.6 95% 55%);
+    --chart-2: hsl(35 92% 60%);
+    --chart-3: hsl(15 90% 60%);
+    --chart-4: hsl(45 95% 55%);
+    --chart-5: hsl(10 85% 65%);
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-navbar: var(--navbar);
+  --color-navbar-foreground: var(--navbar-foreground);
+  --color-navbar-border: var(--navbar-border);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}

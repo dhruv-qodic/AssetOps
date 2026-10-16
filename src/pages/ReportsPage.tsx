@@ -1,0 +1,164 @@
+import { useState } from 'react';
+import { BarChart3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import ReportsFilterBar from '@/components/reports/ReportsFilterBar';
+import ReportsKpiCards from '@/components/reports/ReportsKpiCards';
+import AssetCategoryDistributionChart from '@/components/reports/AssetCategoryDistributionChart';
+import AssetGrowthTrendChart from '@/components/reports/AssetGrowthTrendChart';
+import TopDepartmentsChart from '@/components/reports/TopDepartmentsChart';
+import GenerateReportModal from '@/components/reports/GenerateReportModal';
+import AddAssetModal from '@/components/assets/AddAssetModal';
+import LoadingState from '@/components/common/LoadingState';
+import ErrorState from '@/components/common/ErrorState';
+import EmptyState from '@/components/common/EmptyState';
+import { useAssetStore } from '@/store/useAssetStore';
+import { useEmployeeStore } from '@/store/useEmployeeStore';
+import { REPORTS_PAGE_CONSTANTS } from './constants/ReportsPage.constants';
+
+export function ReportsPage() {
+  const { t: translateReports } = useTranslation('report');
+  const assets = useAssetStore((s) => s.assets);
+  const isAssetLoading = useAssetStore((s) => s.isLoading);
+  const assetError = useAssetStore((s) => s.error);
+  const reloadAssets = useAssetStore((s) => s.reloadAssets);
+  const openAddModal = useAssetStore((s) => s.openAddModal);
+
+  const isEmpLoading = useEmployeeStore((s) => s.isLoading);
+  const empError = useEmployeeStore((s) => s.error);
+  const reloadEmployees = useEmployeeStore((s) => s.reloadEmployees);
+
+  const [reportType, setReportType] = useState<string>(REPORTS_PAGE_CONSTANTS.DEFAULTS.REPORT_TYPE);
+  const [timeRange, setTimeRange] = useState<string>(REPORTS_PAGE_CONSTANTS.DEFAULTS.TIME_RANGE);
+  const [department, setDepartment] = useState<string>(REPORTS_PAGE_CONSTANTS.DEFAULTS.DEPARTMENT);
+  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
+
+  const isLoading = isAssetLoading || isEmpLoading;
+  const error = assetError || empError;
+
+  const handleRetry = () => {
+    void reloadAssets();
+    void reloadEmployees();
+  };
+
+  return (
+    <div className="flex-1 p-5 sm:p-7 space-y-6 max-w-[1400px] w-full mx-auto animate-in fade-in duration-200 text-left">
+      {/* Page Header */}
+      <div className="flex items-start sm:items-center gap-3">
+        <div className="p-2.5 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary shadow-xs shrink-0 mt-0.5 sm:mt-0">
+          <BarChart3 className="size-6 sm:size-7" />
+        </div>
+        <div className="space-y-0.5 text-left">
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            {translateReports('title', { defaultValue: REPORTS_PAGE_CONSTANTS.HEADER.TITLE })}
+          </h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+            {translateReports('subtitle', { defaultValue: REPORTS_PAGE_CONSTANTS.HEADER.SUBTITLE })}
+          </p>
+        </div>
+      </div>
+
+      {/* Interactive Filter Bar */}
+      <ReportsFilterBar
+        reportType={reportType}
+        setReportType={setReportType}
+        timeRange={timeRange}
+        setTimeRange={setTimeRange}
+        department={department}
+        setDepartment={setDepartment}
+        onGenerateReport={() => setIsExportModalOpen(true)}
+      />
+
+      {/* 1. Loading State */}
+      {isLoading && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
+          <LoadingState
+            icon={BarChart3}
+            title={translateReports('loading.title', {
+              defaultValue: REPORTS_PAGE_CONSTANTS.LOADING.TITLE,
+            })}
+            description={translateReports('loading.description', {
+              defaultValue: REPORTS_PAGE_CONSTANTS.LOADING.DESCRIPTION,
+            })}
+            size="lg"
+          />
+        </div>
+      )}
+
+      {/* 2. Error State */}
+      {!isLoading && error && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
+          <ErrorState
+            title={translateReports('error.title', {
+              defaultValue: REPORTS_PAGE_CONSTANTS.ERROR_TITLE,
+            })}
+            message={error}
+            onRetry={handleRetry}
+          />
+        </div>
+      )}
+
+      {/* 3. Empty State */}
+      {!isLoading && !error && assets.length === 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/80 dark:border-slate-800 p-12 shadow-xs">
+          <EmptyState
+            icon={BarChart3}
+            title={translateReports('empty.title', {
+              defaultValue: REPORTS_PAGE_CONSTANTS.EMPTY.TITLE,
+            })}
+            description={translateReports('empty.description', {
+              defaultValue: REPORTS_PAGE_CONSTANTS.EMPTY.DESCRIPTION,
+            })}
+            actionLabel={translateReports('empty.addAsset', {
+              defaultValue: REPORTS_PAGE_CONSTANTS.EMPTY.ACTION_LABEL,
+            })}
+            onAction={openAddModal}
+          />
+        </div>
+      )}
+
+      {/* 4. Success State (KPIs and Visualization Grid) */}
+      {!isLoading && !error && assets.length > 0 && (
+        <>
+          {/* KPI Metrics Summary Row */}
+          <ReportsKpiCards
+            departmentFilter={department}
+            timeRange={timeRange}
+            reportType={reportType}
+          />
+
+          {/* Visual Analytics Grid (3 Charts Matching Reference Layout) */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
+            {/* Left: Asset Category Distribution (Donut Chart) */}
+            <div className="lg:col-span-4 xl:col-span-3 flex flex-col">
+              <AssetCategoryDistributionChart departmentFilter={department} />
+            </div>
+
+            {/* Center: Asset Growth Trend (Area / Line Chart) */}
+            <div className="lg:col-span-8 xl:col-span-6 flex flex-col">
+              <AssetGrowthTrendChart timeRange={timeRange} />
+            </div>
+
+            {/* Right: Top Departments Breakdown */}
+            <div className="lg:col-span-12 xl:col-span-3 flex flex-col">
+              <TopDepartmentsChart selectedDepartment={department} />
+            </div>
+          </div>
+        </>
+      )}
+
+      {/* Export & Generate Report Dialog */}
+      <GenerateReportModal
+        isOpen={isExportModalOpen}
+        onClose={() => setIsExportModalOpen(false)}
+        reportType={reportType}
+        timeRange={timeRange}
+        department={department}
+      />
+
+      {/* Add Asset Modal */}
+      <AddAssetModal />
+    </div>
+  );
+}
+
+export default ReportsPage;

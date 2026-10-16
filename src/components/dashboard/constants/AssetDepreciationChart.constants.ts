@@ -1,0 +1,25 @@
+export const ASSET_DEPRECIATION_CHART_TEXT = {
+  TITLE: 'Asset Depreciation & Book Value',
+  SUBTITLE: 'Straight-line annual amortization curve & net book value forecast',
+  MODEL_BADGE: 'Straight-Line Model',
+  getSubtitleWithRate: (years: number) =>
+    `Annual rate = Purchase Cost / Useful Life (${years} Years)`,
+  USEFUL_LIFE_LABEL: 'Useful Life:',
+  getYearsTitle: (years: number) => `Calculate depreciation for ${years} years useful life`,
+  PER_YEAR_SUFFIX: '/ yr',
+  EMPTY_TITLE: 'No depreciation data available',
+  EMPTY_DESC:
+    'Hardware assets with recorded acquisition costs are required to project straight-line depreciation.',
+  NET_BOOK_VALUE: 'Net Book Value',
+  ACCUMULATED_DEP: 'Accumulated Depreciation',
+  ACCUMULATED_DEP_SHORT: 'Accumulated Dep:',
+  ANNUAL_DEP: 'Annual Depreciation',
+  ANNUAL_EXPENSE: 'Annual Expense:',
+  NET_BOOK_VALUE_COLON: 'Net Book Value:',
+  TOTAL_ASSET_COST: 'Total Asset Cost',
+  ANNUAL_DEP_RATE: 'Annual Dep Rate',
+  USEFUL_LIFE: 'Useful Life',
+  ASSETS_COUNT: 'Assets Count',
+  YEARS_SUFFIX: 'Years',
+  ASSETS_SUFFIX: 'Assets',
+} as const;
